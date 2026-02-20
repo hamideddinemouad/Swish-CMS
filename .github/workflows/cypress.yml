@@ -1,7 +1,7 @@
 name: Cypress CI
 
 on:
-  workflow_run:
+  workflow_call:
     workflows:
       - Frontend CI
     types:
