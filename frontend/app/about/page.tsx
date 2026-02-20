@@ -7,4 +7,6 @@ export default function About() {
       <Link href="/">Home</Link>
     </div>
   )
+
+  
 }

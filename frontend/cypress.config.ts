@@ -11,6 +11,7 @@ export default defineConfig({
     screenshotOnRunFailure: true,
     setupNodeEvents(on, config) {
 
+      
       // implement node event listeners here
       return config
     },
