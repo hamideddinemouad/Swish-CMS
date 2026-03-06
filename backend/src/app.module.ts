@@ -8,6 +8,8 @@ import { env } from './config/env';
 import { UsersModule } from './users/users.module';
 import { ContentDefinitionsModule } from './content-definitions/content-definitions.module';
 import { ContentEntriesModule } from './content-entries/content-entries.module';
+import { PagesModule } from './pages/pages.module';
+import { TenantEventsModule } from './tenant-events/tenant-events.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { ContentEntriesModule } from './content-entries/content-entries.module';
     UsersModule,
     ContentDefinitionsModule,
     ContentEntriesModule,
+    PagesModule,
+    TenantEventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
