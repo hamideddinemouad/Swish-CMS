@@ -1,24 +1,62 @@
 import dotenv from 'dotenv';
-import { z } from 'zod';
 
 dotenv.config();
 
-const envSchema = z.object({
-  PORT: z.coerce.number().int().positive().default(3000),
-  POSTGRES_PORT: z.coerce.number().int().positive().default(5432),
-  POSTGRES_USER: z.string().min(1),
-  POSTGRES_PASSWORD: z.string().min(1),
-  POSTGRES_DB: z.string().min(1),
-});
+type Env = {
+  PORT: number;
+  POSTGRES_PORT: number;
+  POSTGRES_USER: string;
+  POSTGRES_PASSWORD: string;
+  POSTGRES_DB: string;
+};
 
-const parsedEnv = envSchema.safeParse(process.env);
+const errors: string[] = [];
 
-if (!parsedEnv.success) {
-  const formattedErrors = parsedEnv.error.issues
-    .map(({ path, message }) => `${path.join('.')}: ${message}`)
-    .join('\n');
+function readRequiredString(name: keyof Env): string {
+  const value = process.env[name];
 
-  throw new Error(`Invalid environment variables:\n${formattedErrors}`);
+  if (typeof value !== 'string') {
+    errors.push(`${name}: expected string, received undefined`);
+    return '';
+  }
+
+  if (value.length === 0) {
+    errors.push(`${name}: String must contain at least 1 character(s)`);
+  }
+
+  return value;
 }
 
-export const env = parsedEnv.data;
+function readPositiveInt(name: keyof Env, defaultValue: number): number {
+  const rawValue = process.env[name];
+
+  if (rawValue === undefined) {
+    errors.push(`${name}: expected number, received undefined`);
+    return defaultValue;
+  }
+
+  const value = Number(rawValue);
+
+  if (!Number.isInteger(value)) {
+    errors.push(`${name}: expected integer, received ${Number.isNaN(value) ? 'nan' : 'float'}`);
+    return defaultValue;
+  }
+
+  if (value <= 0) {
+    errors.push(`${name}: Number must be greater than 0`);
+  }
+
+  return value;
+}
+
+export const env: Env = {
+  PORT: readPositiveInt('PORT', 0),
+  POSTGRES_PORT: readPositiveInt('POSTGRES_PORT', 0),
+  POSTGRES_USER: readRequiredString('POSTGRES_USER'),
+  POSTGRES_PASSWORD: readRequiredString('POSTGRES_PASSWORD'),
+  POSTGRES_DB: readRequiredString('POSTGRES_DB'),
+};
+
+if (errors.length > 0) {
+  throw new Error(`Invalid environment variables:\n${errors.join('\n')}`);
+}
