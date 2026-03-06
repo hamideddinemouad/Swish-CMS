@@ -16,13 +16,13 @@ export class Tenant {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'text', unique: true, nullable: false })
+  @Column({ unique: true })
   subdomain: string;
 
-  @Column({ type: 'text', nullable: false })
+  @Column()
   name: string;
 
-  @Column({ type: 'jsonb', nullable: false, default: () => "'{}'::jsonb" })
+  @Column({ type: 'jsonb', default: () => "'{}'::jsonb" })
   settings: Record<string, unknown>;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })

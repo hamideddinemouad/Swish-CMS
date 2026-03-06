@@ -11,16 +11,16 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'first_name', type: 'varchar', nullable: false })
+  @Column({ name: 'first_name' })
   firstName: string;
 
-  @Column({ name: 'last_name', type: 'varchar', nullable: false })
+  @Column({ name: 'last_name' })
   lastName: string;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column()
   email: string;
 
-  @Column({ name: 'password_hash', type: 'varchar', nullable: false })
+  @Column({ name: 'password_hash'})
   passwordHash: string;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })

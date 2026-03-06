@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { MembershipsService } from './memberships.service';
 import { CreateMembershipDto } from './dto/create-membership.dto';
 import { UpdateMembershipDto } from './dto/update-membership.dto';
@@ -17,18 +17,32 @@ export class MembershipsController {
     return this.membershipsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.membershipsService.findOne(+id);
+  @Get(':userId/:tenantId')
+  findOne(
+    @Param('userId') userId: string,
+    @Param('tenantId') tenantId: string,
+  ) {
+    return this.membershipsService.findOne(userId, tenantId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMembershipDto: UpdateMembershipDto) {
-    return this.membershipsService.update(+id, updateMembershipDto);
+  @Patch(':userId/:tenantId')
+  update(
+    @Param('userId') userId: string,
+    @Param('tenantId') tenantId: string,
+    @Body() updateMembershipDto: UpdateMembershipDto,
+  ) {
+    return this.membershipsService.update(
+      userId,
+      tenantId,
+      updateMembershipDto,
+    );
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.membershipsService.remove(+id);
+  @Delete(':userId/:tenantId')
+  remove(
+    @Param('userId') userId: string,
+    @Param('tenantId') tenantId: string,
+  ) {
+    return this.membershipsService.remove(userId, tenantId);
   }
 }

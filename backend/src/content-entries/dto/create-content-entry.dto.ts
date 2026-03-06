@@ -4,5 +4,5 @@ export class CreateContentEntryDto {
   slug: string;
   data: Record<string, unknown>;
   isPublished: boolean;
-  publishedAt: Date | null;
+  publishedAt: Date;
 }

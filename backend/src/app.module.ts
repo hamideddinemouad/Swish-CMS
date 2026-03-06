@@ -20,7 +20,7 @@ import { TenantEventsModule } from './tenant-events/tenant-events.module';
       password: env.POSTGRES_PASSWORD,
       database: env.POSTGRES_DB,
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
     }),
     TenantsModule,
     MembershipsModule,
