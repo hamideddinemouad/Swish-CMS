@@ -7,6 +7,7 @@ import { MembershipsModule } from './memberships/memberships.module';
 import { env } from './config/env';
 import { UsersModule } from './users/users.module';
 import { ContentDefinitionsModule } from './content-definitions/content-definitions.module';
+import { ContentEntriesModule } from './content-entries/content-entries.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ContentDefinitionsModule } from './content-definitions/content-definiti
     MembershipsModule,
     UsersModule,
     ContentDefinitionsModule,
+    ContentEntriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
