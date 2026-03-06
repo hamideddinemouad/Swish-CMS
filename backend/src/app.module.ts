@@ -6,6 +6,7 @@ import { TenantsModule } from './tenants/tenants.module';
 import { MembershipsModule } from './memberships/memberships.module';
 import { env } from './config/env';
 import { UsersModule } from './users/users.module';
+import { ContentDefinitionsModule } from './content-definitions/content-definitions.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UsersModule } from './users/users.module';
     TenantsModule,
     MembershipsModule,
     UsersModule,
+    ContentDefinitionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
