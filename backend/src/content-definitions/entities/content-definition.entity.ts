@@ -4,10 +4,15 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
+import { ContentEntry } from '../../content-entries/entities/content-entry.entity';
+import { Tenant } from '../../tenants/entities/tenant.entity';
 
 @Entity({ name: 'content_definitions' })
 @Index('idx_content_definitions_tenant_slug', ['tenantId', 'slug'])
@@ -34,4 +39,13 @@ export class ContentDefinition {
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
   updatedAt: Date;
+
+  @ManyToOne(() => Tenant, (tenant) => tenant.contentDefinitions, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'tenant_id' })
+  tenant: Tenant;
+
+  @OneToMany(() => ContentEntry, (contentEntry) => contentEntry.definition)
+  contentEntries: ContentEntry[];
 }

@@ -3,8 +3,12 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Tenant } from '../../tenants/entities/tenant.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity({ name: 'tenant_events' })
 @Index('idx_tenant_events_tenant_created', ['tenantId', 'createdAt'])
@@ -26,4 +30,17 @@ export class TenantEvent {
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt: Date;
+
+  @ManyToOne(() => Tenant, (tenant) => tenant.tenantEvents, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'tenant_id' })
+  tenant: Tenant;
+
+  @ManyToOne(() => User, (user) => user.tenantEvents, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'actor_user_id' })
+  actorUser: User | null;
 }
