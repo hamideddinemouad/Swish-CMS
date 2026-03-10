@@ -10,6 +10,7 @@ import { ContentDefinitionsModule } from './content-definitions/content-definiti
 import { ContentEntriesModule } from './content-entries/content-entries.module';
 import { PagesModule } from './pages/pages.module';
 import { TenantEventsModule } from './tenant-events/tenant-events.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { TenantEventsModule } from './tenant-events/tenant-events.module';
     ContentEntriesModule,
     PagesModule,
     TenantEventsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

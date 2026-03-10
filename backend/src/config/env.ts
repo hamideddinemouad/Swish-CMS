@@ -8,6 +8,7 @@ type Env = {
   POSTGRES_USER: string;
   POSTGRES_PASSWORD: string;
   POSTGRES_DB: string;
+  AUTH_SECRET_KEY: string;
 };
 
 const errors: string[] = [];
@@ -55,6 +56,7 @@ export const env: Env = {
   POSTGRES_USER: readRequiredString('POSTGRES_USER'),
   POSTGRES_PASSWORD: readRequiredString('POSTGRES_PASSWORD'),
   POSTGRES_DB: readRequiredString('POSTGRES_DB'),
+  AUTH_SECRET_KEY: readRequiredString('AUTH_SECRET_KEY'),
 };
 
 if (errors.length > 0) {
