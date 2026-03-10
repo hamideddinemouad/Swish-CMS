@@ -1,15 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { CreateContentDefinitionDto } from './dto/create-content-definition.dto';
 import { UpdateContentDefinitionDto } from './dto/update-content-definition.dto';
 import { ContentDefinition } from './entities/content-definition.entity';
+import dataSource from 'src/data-source';
 
 @Injectable()
 export class ContentDefinitionsService {
   constructor(
     @InjectRepository(ContentDefinition)
     private readonly contentDefinitionsRepository: Repository<ContentDefinition>,
+    private readonly dataSource : DataSource,
+    private readonly entityManger : EntityManager
   ) {}
 
   create(
@@ -22,8 +25,13 @@ export class ContentDefinitionsService {
     return this.contentDefinitionsRepository.save(contentDefinition);
   }
 
-  findAll(): Promise<ContentDefinition[]> {
-    return this.contentDefinitionsRepository.find();
+  async findAll(): Promise<ContentDefinition[]> {
+    return await this.dataSource.transaction(async (manager) => {
+      const demo = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa";
+      await manager.query(`SET LOCAL app.tenant_id = '${demo}'`);
+      return await manager.find(ContentDefinition);
+    })
+    // return this.contentDefinitionsRepository.find();
   }
 
   async findOne(id: string): Promise<ContentDefinition> {
@@ -64,3 +72,4 @@ export class ContentDefinitionsService {
     }
   }
 }
+

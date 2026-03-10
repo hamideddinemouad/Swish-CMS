@@ -7,6 +7,6 @@ import { ContentDefinition } from './entities/content-definition.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([ContentDefinition])],
   controllers: [ContentDefinitionsController],
-  providers: [ContentDefinitionsService],
+  providers: [ContentDefinitionsService,],
 })
 export class ContentDefinitionsModule {}

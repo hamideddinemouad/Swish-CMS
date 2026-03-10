@@ -1,0 +1,12 @@
+createQueryRunner()
+connect()
+startTransaction()
+query("SET LOCAL app.tenant_id = ...")
+use queryRunner.manager for entity operations
+commitTransaction() or rollbackTransaction()
+release()
+ou must call release() when finished to return the connection to the pool
+ you must use SET LOCAL (rather than just SET)
+ Middleware (to extract the tenant) or The Interceptor 
+ does this take care of commitTransaction or rollbackTransaction and release to return
+ the connection to the pool
