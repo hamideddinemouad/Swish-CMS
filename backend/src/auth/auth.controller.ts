@@ -1,99 +1,73 @@
 import {
   Body,
   Controller,
-  HttpCode,
-  HttpStatus,
+  Get,
   Post,
-  Req,
-  Res,
-  UnauthorizedException,
+  SetMetadata,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import type { Request, Response } from 'express';
-import {
-  REFRESH_TOKEN_COOKIE_MAX_AGE_MS,
-  REFRESH_TOKEN_COOKIE_NAME,
-  refreshTokenCookieOptions,
-} from './constants';
 import { AuthService } from './auth.service';
+import { SetAccessPayload } from './decorators/access.payload.decorator';
+import { SetRefreshPayload } from './decorators/refresh.payload.decorator';
+import { CookieInterceptor } from './interceptors/cookie.interceptor';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { ResetPasswordWithSecretPhraseDto } from './dto/reset-password-with-secret-phrase.dto';
+import { AccessGuard } from './guards/access.guard';
+import { RefreshGuard } from './guards/refresh.guard';
+import type { AccessPayload } from './decorators/access.payload.decorator';
+import type { RefreshPayload } from './decorators/refresh.payload.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  async register(
-    @Body() registerDto: RegisterDto,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    const result = await this.authService.register(registerDto);
-    this.setRefreshTokenCookie(response, result.refreshToken);
-
-    return this.toResponseBody(result);
+  @SetMetadata('routeName', 'register')
+  @UseInterceptors(CookieInterceptor)
+  async register(@Body() registerDto: RegisterDto) {
+    return this.authService.register(registerDto);
   }
 
   @Post('login')
-  @HttpCode(HttpStatus.OK)
-  async login(
-    @Body() loginDto: LoginDto,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    const result = await this.authService.login(loginDto);
-    this.setRefreshTokenCookie(response, result.refreshToken);
+  @SetMetadata('routeName', 'login')
+  @UseInterceptors(CookieInterceptor)
+  async login(@Body() loginDto: LoginDto) {
+    return this.authService.login(loginDto);
+  }
 
-    return this.toResponseBody(result);
+  @Get('me')
+  @UseGuards(AccessGuard)
+  me(@SetAccessPayload() payload: AccessPayload) {
+    return this.authService.me(payload);
   }
 
   @Post('refresh')
-  @HttpCode(HttpStatus.OK)
-  async refresh(
-    @Req() request: Request,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    const refreshToken = request.cookies?.[REFRESH_TOKEN_COOKIE_NAME];
-
-    if (!refreshToken) {
-      throw new UnauthorizedException('Refresh token is missing');
-    }
-
-    const result = await this.authService.refresh(refreshToken);
-    this.setRefreshTokenCookie(response, result.refreshToken);
-
-    return this.toResponseBody(result);
+  @UseGuards(RefreshGuard)
+  @UseInterceptors(CookieInterceptor)
+  @SetMetadata('routeName', 'refresh')
+  async refresh(@SetRefreshPayload() payload: RefreshPayload) {
+    // console.log(payload);
+    return this.authService.refresh(payload);
   }
 
   @Post('logout')
-  @HttpCode(HttpStatus.OK)
-  logout(@Res({ passthrough: true }) response: Response) {
-    response.clearCookie(REFRESH_TOKEN_COOKIE_NAME, refreshTokenCookieOptions);
-
+  @SetMetadata('routeName', 'logout')
+  @UseInterceptors(CookieInterceptor)
+  logout() {
     return {
       message: 'Logged out successfully',
     };
   }
 
-  private setRefreshTokenCookie(
-    response: Response,
-    refreshToken: string,
-  ): void {
-    response.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
-      ...refreshTokenCookieOptions,
-      maxAge: REFRESH_TOKEN_COOKIE_MAX_AGE_MS,
-    });
-  }
-
-  private toResponseBody(result: {
-    accessToken: string;
-    refreshToken: string;
-    user: {
-      id: string;
-      firstName: string;
-      lastName: string;
-      email: string;
-    };
-  }) {
-    const { refreshToken: _refreshToken, ...responseBody } = result;
-    return responseBody;
+  @Post('reset-password/secret-phrase')
+  resetPasswordWithSecretPhrase(
+    @Body()
+    resetPasswordWithSecretPhraseDto: ResetPasswordWithSecretPhraseDto,
+  ) {
+    return this.authService.resetPasswordWithSecretPhrase(
+      resetPasswordWithSecretPhraseDto,
+    );
   }
 }

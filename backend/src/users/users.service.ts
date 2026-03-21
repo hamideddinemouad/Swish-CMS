@@ -34,6 +34,10 @@ export class UsersService {
       lastName: createUserDto.lastName.trim(),
       email,
       passwordHash: await bcrypt.hash(createUserDto.password, 10),
+      secretPhraseHash: await bcrypt.hash(
+        this.normalizeSecretPhrase(createUserDto.secretPhrase),
+        10,
+      ),
     });
     const savedUser = await this.usersRepository.save(user);
 
@@ -81,6 +85,13 @@ export class UsersService {
       user.passwordHash = await bcrypt.hash(updateUserDto.password, 10);
     }
 
+    if (updateUserDto.secretPhrase !== undefined) {
+      user.secretPhraseHash = await bcrypt.hash(
+        this.normalizeSecretPhrase(updateUserDto.secretPhrase),
+        10,
+      );
+    }
+
     const savedUser = await this.usersRepository.save(user);
 
     return this.toSafeUser(savedUser);
@@ -106,6 +117,10 @@ export class UsersService {
 
   private normalizeEmail(email: string): string {
     return email.trim().toLowerCase();
+  }
+
+  private normalizeSecretPhrase(secretPhrase: string): string {
+    return secretPhrase.trim();
   }
 
   private toSafeUser(user: User): SafeUser {

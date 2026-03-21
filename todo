@@ -1,3 +1,8 @@
 Middleware (to extract the tenant) or The Interceptor
 or put tenant in payload 
 SECRETKEY
+
+auth.guard.ts](/Users/mouad/Desktop/Fil Rouge/Swish-CMS/backend/src/auth/guards/auth.guard.ts) is now a refresh-token guard in behavior, but it is still named AuthGuard, which is misleading
+[me.controller.ts](/Users/mouad/Desktop/Fil Rouge/Swish-CMS/backend/src/auth/me.controller.ts) still does its own bearer-token extraction and does not use a guard, so auth handling is not unified
+[auth.service.ts](/Users/mouad/Desktop/Fil Rouge/Swish-CMS/backend/src/auth/auth.service.ts) still contains old access/refresh token verification helpers even though refresh verification moved to the guard; not broken, just mixed responsibilities
+I have not run the app, so this is a code-structure check, not runtime confirmation

@@ -23,8 +23,11 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({ name: 'password_hash'})
+  @Column({ name: 'password_hash' })
   passwordHash: string;
+
+  @Column({ name: 'secret_phrase_hash'})
+  secretPhraseHash: string 
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt: Date;
