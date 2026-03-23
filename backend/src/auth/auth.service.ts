@@ -6,14 +6,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
+import type { JwtSignOptions } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { env } from '../config/env';
 import { User } from '../users/entities/user.entity';
-import {
-  ACCESS_TOKEN_EXPIRES_IN,
-  REFRESH_TOKEN_EXPIRES_IN,
-} from './constants';
 import type { AccessPayload } from './decorators/access.payload.decorator';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { LoginDto } from './dto/login.dto';
@@ -22,9 +19,7 @@ import { ResetPasswordWithSecretPhraseDto } from './dto/reset-password-with-secr
 import type { RefreshPayload } from './decorators/refresh.payload.decorator';
 
 type TokenType = 'access' | 'refresh';
-type TokenExpiresIn =
-  | typeof ACCESS_TOKEN_EXPIRES_IN
-  | typeof REFRESH_TOKEN_EXPIRES_IN;
+type TokenExpiresIn = NonNullable<JwtSignOptions['expiresIn']>;
 
 type JwtPayload = {
   sub: string;
@@ -46,7 +41,7 @@ export class AuthService {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     private readonly jwtService: JwtService,
-  ) { }
+  ) {}
 
   async register(registerDto: RegisterDto): Promise<AuthTokens> {
     const email = this.normalizeEmail(registerDto.email);
@@ -108,7 +103,7 @@ export class AuthService {
     changePasswordDto: ChangePasswordDto,
   ): Promise<{ message: string }> {
     const payload = await this.jwtService.verifyAsync<JwtPayload>(accessToken, {
-      secret: env.AUTH_SECRET_KEY,
+      secret: env.AUTH_ACCESS_SECRET_KEY,
     }).catch(() => {
       throw new UnauthorizedException('Invalid access token');
     });
@@ -165,7 +160,9 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or secret phrase');
     }
 
-    const isSecretPhraseValid = this.normalizeSecretPhrase(resetPasswordWithSecretPhraseDto.secretPhrase) === user.secretPhraseHash;
+    const isSecretPhraseValid =
+      this.normalizeSecretPhrase(resetPasswordWithSecretPhraseDto.secretPhrase) ===
+      user.secretPhraseHash;
 
     if (!isSecretPhraseValid) {
       throw new UnauthorizedException('Invalid email or secret phrase');
@@ -196,8 +193,16 @@ export class AuthService {
   private async buildAuthTokens(user: User | AuthUser): Promise<AuthTokens> {
     const safeUser = this.toAuthUser(user);
     const [accessToken, refreshToken] = await Promise.all([
-      this.signToken(safeUser, 'access', ACCESS_TOKEN_EXPIRES_IN),
-      this.signToken(safeUser, 'refresh', REFRESH_TOKEN_EXPIRES_IN),
+      this.signToken(
+        safeUser,
+        'access',
+        env.AUTH_ACCESS_TOKEN_EXPIRES_IN as TokenExpiresIn,
+      ),
+      this.signToken(
+        safeUser,
+        'refresh',
+        env.AUTH_REFRESH_TOKEN_EXPIRES_IN as TokenExpiresIn,
+      ),
     ]);
 
     return {
@@ -219,10 +224,16 @@ export class AuthService {
         type,
       },
       {
-        secret: env.AUTH_SECRET_KEY,
+        secret: this.getTokenSecret(type),
         expiresIn,
       },
     );
+  }
+
+  private getTokenSecret(type: TokenType): string {
+    return type === 'access'
+      ? env.AUTH_ACCESS_SECRET_KEY
+      : env.AUTH_REFRESH_SECRET_KEY;
   }
 
   private normalizeEmail(email: string): string {

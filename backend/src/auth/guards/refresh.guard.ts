@@ -10,8 +10,9 @@ import type { Request } from 'express';
 import { Repository } from 'typeorm';
 import { env } from '../../config/env';
 import { User } from '../../users/entities/user.entity';
-import { REFRESH_TOKEN_COOKIE_NAME } from '../constants';
 import type { RefreshPayload } from '../decorators/refresh.payload.decorator';
+
+const REFRESH_TOKEN_COOKIE_NAME = 'refreshToken';
 
 type JwtPayload = {
   sub: string;
@@ -29,11 +30,10 @@ export class RefreshGuard implements CanActivate {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     private readonly jwtService: JwtService,
-  ) { }
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request =
-      context.switchToHttp().getRequest<RequestWithRefreshPayload>();
+    const request = context.switchToHttp().getRequest<RequestWithRefreshPayload>();
     const token = this.extractRefreshToken(request);
     const payload = await this.verifyRefreshToken(token);
     const user = await this.findUser(payload);
@@ -42,7 +42,7 @@ export class RefreshGuard implements CanActivate {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      type: "refresh"
+      type: 'refresh',
     };
 
     return true;
@@ -59,10 +59,9 @@ export class RefreshGuard implements CanActivate {
   }
 
   private async verifyRefreshToken(token: string): Promise<JwtPayload> {
-    console.log(token);
     try {
       const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
-        secret: env.AUTH_SECRET_KEY,
+        secret: env.AUTH_REFRESH_SECRET_KEY,
       });
 
       if (payload.type !== 'refresh') {

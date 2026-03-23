@@ -12,7 +12,7 @@ import { RefreshGuard } from './guards/refresh.guard';
   imports: [
     TypeOrmModule.forFeature([User]),
     JwtModule.register({
-      secret: env.AUTH_SECRET_KEY,
+      secret: env.AUTH_ACCESS_SECRET_KEY,
     }),
   ],
   controllers: [AuthController],

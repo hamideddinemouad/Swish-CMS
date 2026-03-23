@@ -42,7 +42,7 @@ export class AccessGuard implements CanActivate {
   private async verifyAccessToken(token: string): Promise<AccessPayload> {
     try {
       const payload = await this.jwtService.verifyAsync<AccessPayload>(token, {
-        secret: env.AUTH_SECRET_KEY,
+        secret: env.AUTH_ACCESS_SECRET_KEY,
       });
 
       if (payload.type !== 'access') {

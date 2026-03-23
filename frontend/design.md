@@ -23,6 +23,13 @@ Source: https://cs.wix.com/about/design-assets/design-assets
 | `wix-green` | Wix Green | `#60BC57` | `96 / 188 / 87` | `64 / 0 / 81 / 0` | Success states, confirmations, positive metrics |
 | `wix-orange` | Wix Orange | `#FB7D33` | `251 / 125 / 51` | `0 / 61 / 81 / 0` | Attention states, featured elements, warm accents |
 
+## Swish Status Extension
+Wix's public design asset palette does not include a red token. Swish adds one as an implementation extension for destructive and validation error states.
+
+| Token | Name | HEX | RGB | Suggested Use In Swish |
+| --- | --- | --- | --- | --- |
+| `wix-red` | Wix Red | `#E02B4A` | `224 / 43 / 74` | Error states, destructive actions, invalid form feedback |
+
 ## Supporting Neutral Palette
 These values appear in Wix's official design assets under typography and black hues. They are useful as Swish neutrals.
 
@@ -38,6 +45,7 @@ These values appear in Wix's official design assets under typography and black h
 - Default text color: `ink-900`
 - Default secondary text color: `ink-700`
 - Use `wix-green` only for success and positive feedback.
+- Use `wix-red` for destructive actions and validation errors.
 - Use `wix-orange` for attention and featured UI, not destructive actions.
 - Use `wix-yellow` sparingly because it is visually loud.
 - Use `wix-purple` as a supporting accent, not the main action color.
@@ -51,6 +59,7 @@ These values appear in Wix's official design assets under typography and black h
   --color-wix-purple: #aa4dc8;
   --color-wix-green: #60bc57;
   --color-wix-orange: #fb7d33;
+  --color-wix-red: #e02b4a;
 
   --color-ink-900: #363636;
   --color-ink-700: #555555;
@@ -71,11 +80,12 @@ These values appear in Wix's official design assets under typography and black h
 - Cards: neutral base with one accent color maximum.
 - Badges: yellow, green, or purple depending on meaning.
 - Navigation: mostly neutral, with blue for active and interactive states.
-- Forms: neutral structure with blue focus, green success, orange for warnings if needed.
+- Forms: neutral structure with blue focus, green success, red errors, orange for warnings if needed.
 
 ## Do Not Do
 - Do not turn the whole interface into a rainbow.
 - Do not use purple as the default primary CTA.
 - Do not use orange for delete or destructive actions.
+- Do not use red as a general accent outside error or destructive meaning.
 - Do not combine yellow text on white backgrounds.
 - Do not rely on color alone to communicate status.

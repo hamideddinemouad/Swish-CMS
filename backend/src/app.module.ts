@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CookieInterceptor } from './auth/interceptors/cookie.interceptor';
 import { TenantsModule } from './tenants/tenants.module';
 import { MembershipsModule } from './memberships/memberships.module';
 import { env } from './config/env';
@@ -35,12 +33,6 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    // {
-    //   provide: APP_INTERCEPTOR,
-    //   useClass: CookieInterceptor,
-    // },
-  ],
+  providers: [AppService],
 })
 export class AppModule {}
