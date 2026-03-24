@@ -42,13 +42,6 @@ export class AuthController {
     return this.authService.refresh(payload);
   }
 
-  @Post('logout')
-  logout() {
-    return {
-      message: 'Logged out successfully',
-    };
-  }
-
   @Post('reset-password/secret-phrase')
   resetPasswordWithSecretPhrase(
     @Body()

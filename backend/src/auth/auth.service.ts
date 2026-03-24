@@ -91,6 +91,7 @@ export class AuthService {
   }
 
   async refresh(payload: RefreshPayload): Promise<AuthTokens> {
+    console.log("refresh function from auth service called")
     return this.buildAuthTokens(payload);
   }
 
