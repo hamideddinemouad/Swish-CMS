@@ -12,7 +12,6 @@ type AccessTokenPayload = JWTPayload & {
 };
 
 async function verifyAccessToken(token: string): Promise<boolean> {
-  console.log("verify ran")
   try {
     const { payload } = await jwtVerify<AccessTokenPayload>(
       token,
@@ -44,7 +43,7 @@ export async function proxy(request: NextRequest) {
 
     return NextResponse.redirect(refreshUrl);
   }
-
+  console.log("request url = " + request.url)
   const loginResponse = NextResponse.redirect(new URL('/login', request.url));
 
   loginResponse.cookies.delete({ name: ACCESS_TOKEN_COOKIE_NAME, path: '/' });

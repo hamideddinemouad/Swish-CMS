@@ -2,8 +2,8 @@
 
 import axios from "axios";
 import Link from "next/link";
-import { setUser, type User } from "@/lib/features/userSlice";
-import { useAppDispatch } from "@/lib/hooks";
+import { setUser, type User } from "@/redux/slices/userSlice";
+import { useAppDispatch } from "@/redux/hooks";
 import {
   type ChangeEvent,
   type FocusEvent,

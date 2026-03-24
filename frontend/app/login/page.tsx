@@ -1,8 +1,32 @@
-"use client"
+"use client";
+
 import Link from "next/link";
 import { LoginForm } from "@/app/login/components/LoginForm";
+import { useAppSelector } from "@/redux/hooks";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Loading from "./loading";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const user = useAppSelector((state) => state.user.user);
+  console.log(user);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && user) {
+      router.replace("/dashboard");
+    }
+  }, [mounted, router, user]);
+
+  if (!mounted || user) {
+    return <Loading />;
+  }
+
   return (
     <main className="flex min-h-screen items-center justify-center px-6 py-16">
       <section className="w-full max-w-md rounded-[28px] border border-[color:rgb(146_146_146_/_0.18)] bg-white p-8 shadow-[0_20px_50px_rgb(54_54_54_/_0.08)]">
