@@ -5,6 +5,8 @@ export type User = {
   firstName: string;
   lastName: string;
   email: string;
+  tenantId: string | null;
+  tenantSubdomain: string | null;
 };
 
 type UserState = {

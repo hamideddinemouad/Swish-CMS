@@ -1,0 +1,2 @@
+this is the visualizer engine takes jsonb from db he has components those components expect props and have default in case a props of the props not given it will be used to generate tenant specific ocontent according to jsonb in database there will some preanalyzing phase that will give each component its specific props
+for now im experimenting with it fill home page components with html and ready to use props that can change its colors content.

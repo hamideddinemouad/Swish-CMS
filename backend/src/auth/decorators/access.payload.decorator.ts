@@ -4,6 +4,8 @@ import type { Request } from 'express';
 export type AccessPayload = {
   sub: string;
   email: string;
+  tenantId: string | null;
+  tenantSubdomain: string | null;
   type: 'access';
 };
 

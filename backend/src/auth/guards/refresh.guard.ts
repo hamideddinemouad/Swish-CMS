@@ -17,6 +17,8 @@ const REFRESH_TOKEN_COOKIE_NAME = 'refreshToken';
 type JwtPayload = {
   sub: string;
   email: string;
+  tenantId: string | null;
+  tenantSubdomain: string | null;
   type: 'access' | 'refresh' | 'password-reset';
 };
 
@@ -42,6 +44,8 @@ export class RefreshGuard implements CanActivate {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      tenantId: user.tenant?.id ?? null,
+      tenantSubdomain: user.tenant?.subdomain ?? null,
       type: 'refresh',
     };
 
@@ -77,6 +81,9 @@ export class RefreshGuard implements CanActivate {
   private async findUser(payload: JwtPayload): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: { id: payload.sub, email: payload.email },
+      relations: {
+        tenant: true,
+      },
     });
 
     if (!user) {

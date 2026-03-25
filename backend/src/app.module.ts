@@ -3,14 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TenantsModule } from './tenants/tenants.module';
-import { MembershipsModule } from './memberships/memberships.module';
 import { env } from './config/env';
 import { UsersModule } from './users/users.module';
-import { ContentDefinitionsModule } from './content-definitions/content-definitions.module';
-import { ContentEntriesModule } from './content-entries/content-entries.module';
 import { PagesModule } from './pages/pages.module';
-import { TenantEventsModule } from './tenant-events/tenant-events.module';
 import { AuthModule } from './auth/auth.module';
+import { ComponentsModule } from './components/components.module';
 
 @Module({
   imports: [
@@ -24,12 +21,9 @@ import { AuthModule } from './auth/auth.module';
       synchronize: false,
     }),
     TenantsModule,
-    MembershipsModule,
     UsersModule,
-    ContentDefinitionsModule,
-    ContentEntriesModule,
     PagesModule,
-    TenantEventsModule,
+    ComponentsModule,
     AuthModule,
   ],
   controllers: [AppController],

@@ -24,10 +24,15 @@ type TokenExpiresIn = NonNullable<JwtSignOptions['expiresIn']>;
 type JwtPayload = {
   sub: string;
   email: string;
+  tenantId: string | null;
+  tenantSubdomain: string | null;
   type: TokenType;
 };
 
-type AuthUser = Pick<User, 'id' | 'firstName' | 'lastName' | 'email'>;
+type AuthUser = Pick<User, 'id' | 'firstName' | 'lastName' | 'email'> & {
+  tenantId: string | null;
+  tenantSubdomain: string | null;
+};
 
 type AuthTokens = {
   accessToken: string;
@@ -72,6 +77,9 @@ export class AuthService {
     const email = this.normalizeEmail(loginDto.email);
     const user = await this.usersRepository.findOne({
       where: { email },
+      relations: {
+        tenant: true,
+      },
     });
 
     if (!user) {
@@ -91,7 +99,6 @@ export class AuthService {
   }
 
   async refresh(payload: RefreshPayload): Promise<AuthTokens> {
-    console.log("refresh function from auth service called")
     return this.buildAuthTokens(payload);
   }
 
@@ -222,6 +229,8 @@ export class AuthService {
       {
         sub: user.id,
         email: user.email,
+        tenantId: user.tenantId,
+        tenantSubdomain: user.tenantSubdomain,
         type,
       },
       {
@@ -246,11 +255,22 @@ export class AuthService {
   }
 
   private toAuthUser(user: User | AuthUser): AuthUser {
+    const tenantId =
+      'tenantId' in user
+        ? user.tenantId
+        : user.tenant?.id ?? null;
+    const tenantSubdomain =
+      'tenantSubdomain' in user
+        ? user.tenantSubdomain
+        : user.tenant?.subdomain ?? null;
+
     return {
       id: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      tenantId,
+      tenantSubdomain,
     };
   }
 }

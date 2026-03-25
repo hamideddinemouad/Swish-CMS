@@ -18,9 +18,8 @@ export function Header() {
     });
 
     dispatch(clearUser());
-    await persistor.purge();
-    router.push("/login");
-    router.refresh();
+    persistor.purge();
+    router.replace("/login");
   };
 
   const navLinks = user

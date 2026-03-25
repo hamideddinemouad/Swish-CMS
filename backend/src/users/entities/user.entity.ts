@@ -2,12 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Membership } from '../../memberships/entities/membership.entity';
-import { TenantEvent } from '../../tenant-events/entities/tenant-event.entity';
+import { Tenant } from '../../tenants/entities/tenant.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -35,9 +34,6 @@ export class User {
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
   updatedAt: Date;
 
-  @OneToMany(() => Membership, (membership) => membership.user)
-  memberships: Membership[];
-
-  @OneToMany(() => TenantEvent, (tenantEvent) => tenantEvent.actorUser)
-  tenantEvents: TenantEvent[];
+  @OneToOne(() => Tenant, (tenant) => tenant.user)
+  tenant: Tenant | null;
 }

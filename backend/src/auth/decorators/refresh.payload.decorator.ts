@@ -6,7 +6,9 @@ export type RefreshPayload = {
   firstName: string;
   lastName: string;
   email: string;
-  type : "refresh"
+  tenantId: string | null;
+  tenantSubdomain: string | null;
+  type: 'refresh';
 };
 
 type RequestWithPayload = Request & {

@@ -53,141 +53,9 @@ const sharedStatements = [
       name = EXCLUDED.name,
       settings = EXCLUDED.settings
   `,
-  `
-    INSERT INTO memberships (user_id, tenant_id, role)
-    VALUES
-      ('11111111-1111-1111-1111-111111111111', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'OWNER'),
-      ('22222222-2222-2222-2222-222222222222', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'EDITOR'),
-      ('33333333-3333-3333-3333-333333333333', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'OWNER'),
-      ('44444444-4444-4444-4444-444444444444', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'EDITOR')
-    ON CONFLICT (user_id, tenant_id) DO UPDATE
-    SET role = EXCLUDED.role
-  `,
 ] as const;
 
 const acmeStatements = [
-  `
-    INSERT INTO content_definitions (id, tenant_id, slug, name, schema)
-    VALUES
-      (
-        'c0c0c0c0-0000-0000-0000-000000000001',
-        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        'posts',
-        'Post',
-        '{
-          "type": "object",
-          "required": ["title", "excerpt", "bodyHtml"],
-          "properties": {
-            "title": { "type": "string", "minLength": 1, "maxLength": 140 },
-            "excerpt": { "type": "string", "minLength": 1, "maxLength": 300 },
-            "bodyHtml": { "type": "string", "minLength": 1, "maxLength": 20000 },
-            "coverImageUrl": { "type": "string", "maxLength": 2048 }
-          },
-          "additionalProperties": false
-        }'::jsonb
-      ),
-      (
-        'c0c0c0c0-0000-0000-0000-000000000011',
-        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        'case-studies',
-        'Case Study',
-        '{
-          "type": "object",
-          "required": ["title", "summary", "bodyHtml", "client"],
-          "properties": {
-            "title": { "type": "string", "minLength": 1, "maxLength": 140 },
-            "summary": { "type": "string", "minLength": 1, "maxLength": 300 },
-            "client": { "type": "string", "minLength": 1, "maxLength": 140 },
-            "bodyHtml": { "type": "string", "minLength": 1, "maxLength": 20000 },
-            "metrics": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "required": ["label", "value"],
-                "properties": {
-                  "label": { "type": "string" },
-                  "value": { "type": "string" }
-                },
-                "additionalProperties": false
-              }
-            }
-          },
-          "additionalProperties": false
-        }'::jsonb
-      )
-    ON CONFLICT (tenant_id, slug) DO UPDATE
-    SET
-      name = EXCLUDED.name,
-      schema = EXCLUDED.schema
-  `,
-  `
-    INSERT INTO content_entries (id, tenant_id, definition_id, slug, data, is_published, published_at)
-    VALUES
-      (
-        'e0e0e0e0-0000-0000-0000-000000000001',
-        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        'c0c0c0c0-0000-0000-0000-000000000001',
-        'hello-world',
-        '{
-          "title": "Hello World",
-          "excerpt": "Welcome to the new Acme Swish site.",
-          "bodyHtml": "<p>This is the first post on Acme. You can edit content from the tenant dashboard.</p>",
-          "coverImageUrl": "/images/hello-world.jpg"
-        }'::jsonb,
-        TRUE,
-        now()
-      ),
-      (
-        'e0e0e0e0-0000-0000-0000-000000000002',
-        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        'c0c0c0c0-0000-0000-0000-000000000001',
-        'roadmap',
-        '{
-          "title": "Roadmap",
-          "excerpt": "What we are building next.",
-          "bodyHtml": "<p>This is a draft post. Publish it when ready.</p>"
-        }'::jsonb,
-        FALSE,
-        NULL
-      ),
-      (
-        'e0e0e0e0-0000-0000-0000-000000000004',
-        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        'c0c0c0c0-0000-0000-0000-000000000001',
-        'launch-checklist',
-        '{
-          "title": "Launch Checklist",
-          "excerpt": "A repeatable list for shipping new tenant sites.",
-          "bodyHtml": "<p>Review content, verify SEO metadata, confirm published pages, and run smoke tests before launch.</p>",
-          "coverImageUrl": "/images/launch-checklist.jpg"
-        }'::jsonb,
-        TRUE,
-        now()
-      ),
-      (
-        'e0e0e0e0-0000-0000-0000-000000000011',
-        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        'c0c0c0c0-0000-0000-0000-000000000011',
-        'rocket-redesign',
-        '{
-          "title": "Rocket Redesign",
-          "summary": "How Acme refreshed its launch funnel in two weeks.",
-          "client": "Acme Internal Ventures",
-          "bodyHtml": "<p>The redesign improved conversions by simplifying navigation and moving proof points above the fold.</p>",
-          "metrics": [
-            { "label": "Conversion lift", "value": "+18%" },
-            { "label": "Build time", "value": "2 weeks" }
-          ]
-        }'::jsonb,
-        TRUE,
-        now()
-      )
-    ON CONFLICT (tenant_id, definition_id, slug) DO UPDATE
-    SET
-      data = EXCLUDED.data,
-      is_published = EXCLUDED.is_published,
-      published_at = EXCLUDED.published_at
-  `,
   `
     INSERT INTO pages (id, tenant_id, slug, title, components)
     VALUES
@@ -203,7 +71,11 @@ const acmeStatements = [
             { "label": "Avg. publish time", "value": "8 min" },
             { "label": "Tenant uptime", "value": "99.9%" }
           ] } },
-          { "type": "PostGrid", "props": { "contentTypeSlug": "posts", "limit": 6, "sort": "newest" } }
+          { "type": "PostGrid", "props": { "items": [
+            { "title": "Hello World", "excerpt": "Welcome to the new Acme Swish site." },
+            { "title": "Roadmap", "excerpt": "What we are building next." },
+            { "title": "Launch Checklist", "excerpt": "A repeatable list for shipping new tenant sites." }
+          ] } }
         ]'::jsonb
       ),
       (
@@ -228,7 +100,10 @@ const acmeStatements = [
         'Blog',
         '[
           { "type": "SectionHeading", "props": { "title": "Latest Writing", "eyebrow": "Journal" } },
-          { "type": "PostGrid", "props": { "contentTypeSlug": "posts", "limit": 12, "sort": "newest" } }
+          { "type": "PostGrid", "props": { "items": [
+            { "title": "Hello World", "excerpt": "Welcome to the new Acme Swish site." },
+            { "title": "Launch Checklist", "excerpt": "A repeatable list for shipping new tenant sites." }
+          ] } }
         ]'::jsonb
       ),
       (
@@ -246,139 +121,9 @@ const acmeStatements = [
       title = EXCLUDED.title,
       components = EXCLUDED.components
   `,
-  `
-    INSERT INTO tenant_events (id, tenant_id, actor_user_id, type, payload)
-    VALUES
-      (
-        'd0d0d0d0-0000-0000-0000-000000000001',
-        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        '11111111-1111-1111-1111-111111111111',
-        'TENANT_CREATED',
-        '{"subdomain":"acme"}'::jsonb
-      ),
-      (
-        'd0d0d0d0-0000-0000-0000-000000000002',
-        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        '11111111-1111-1111-1111-111111111111',
-        'CONTENT_PUBLISHED',
-        '{"type":"posts","slug":"hello-world"}'::jsonb
-      ),
-      (
-        'd0d0d0d0-0000-0000-0000-000000000003',
-        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        '22222222-2222-2222-2222-222222222222',
-        'MEMBER_ADDED',
-        '{"userEmail":"editor@acme.com","role":"EDITOR"}'::jsonb
-      ),
-      (
-        'd0d0d0d0-0000-0000-0000-000000000004',
-        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        '11111111-1111-1111-1111-111111111111',
-        'PAGE_UPDATED',
-        '{"slug":"home","components":["Hero","StatStrip","PostGrid"]}'::jsonb
-      )
-    ON CONFLICT (id) DO UPDATE
-    SET
-      type = EXCLUDED.type,
-      payload = EXCLUDED.payload,
-      actor_user_id = EXCLUDED.actor_user_id
-  `,
 ] as const;
 
 const bravoStatements = [
-  `
-    INSERT INTO content_definitions (id, tenant_id, slug, name, schema)
-    VALUES
-      (
-        'c0c0c0c0-0000-0000-0000-000000000002',
-        'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-        'posts',
-        'Post',
-        '{
-          "type": "object",
-          "required": ["title", "bodyHtml"],
-          "properties": {
-            "title": { "type": "string", "minLength": 1, "maxLength": 140 },
-            "bodyHtml": { "type": "string", "minLength": 1, "maxLength": 20000 },
-            "coverImageUrl": { "type": "string", "maxLength": 2048 }
-          },
-          "additionalProperties": false
-        }'::jsonb
-      ),
-      (
-        'c0c0c0c0-0000-0000-0000-000000000022',
-        'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-        'projects',
-        'Project',
-        '{
-          "type": "object",
-          "required": ["title", "summary", "services"],
-          "properties": {
-            "title": { "type": "string", "minLength": 1, "maxLength": 140 },
-            "summary": { "type": "string", "minLength": 1, "maxLength": 300 },
-            "services": {
-              "type": "array",
-              "items": { "type": "string" }
-            },
-            "bodyHtml": { "type": "string", "maxLength": 20000 }
-          },
-          "additionalProperties": false
-        }'::jsonb
-      )
-    ON CONFLICT (tenant_id, slug) DO UPDATE
-    SET
-      name = EXCLUDED.name,
-      schema = EXCLUDED.schema
-  `,
-  `
-    INSERT INTO content_entries (id, tenant_id, definition_id, slug, data, is_published, published_at)
-    VALUES
-      (
-        'e0e0e0e0-0000-0000-0000-000000000003',
-        'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-        'c0c0c0c0-0000-0000-0000-000000000002',
-        'welcome',
-        '{
-          "title": "Welcome to Bravo",
-          "bodyHtml": "<p>Bravo Studio launches their new site on Swish.</p>",
-          "coverImageUrl": "/images/bravo-welcome.jpg"
-        }'::jsonb,
-        TRUE,
-        now()
-      ),
-      (
-        'e0e0e0e0-0000-0000-0000-000000000005',
-        'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-        'c0c0c0c0-0000-0000-0000-000000000002',
-        'spring-release',
-        '{
-          "title": "Spring Release",
-          "bodyHtml": "<p>Bravo shipped a refreshed design system and a faster editorial workflow.</p>",
-          "coverImageUrl": "/images/spring-release.jpg"
-        }'::jsonb,
-        TRUE,
-        now()
-      ),
-      (
-        'e0e0e0e0-0000-0000-0000-000000000022',
-        'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-        'c0c0c0c0-0000-0000-0000-000000000022',
-        'neon-rebrand',
-        '{
-          "title": "Neon Rebrand",
-          "summary": "A crisp identity system for a product launch.",
-          "services": ["Brand", "Web", "Motion"],
-          "bodyHtml": "<p>The team delivered a modular launch site with reusable campaign sections and editor-friendly content models.</p>"
-        }'::jsonb,
-        TRUE,
-        now()
-      )
-    ON CONFLICT (tenant_id, definition_id, slug) DO UPDATE
-    SET
-      data = EXCLUDED.data,
-      is_published = EXCLUDED.is_published,
-      published_at = EXCLUDED.published_at
-  `,
   `
     INSERT INTO pages (id, tenant_id, slug, title, components)
     VALUES
@@ -389,7 +134,10 @@ const bravoStatements = [
         'Home',
         '[
           { "type": "Hero", "props": { "title": "Bravo Studio", "subtitle": "Design. Build. Launch.", "imageUrl": "/hero/bravo.png" } },
-          { "type": "PostGrid", "props": { "contentTypeSlug": "posts", "limit": 3, "sort": "newest" } },
+          { "type": "PostGrid", "props": { "items": [
+            { "title": "Welcome to Bravo", "excerpt": "Bravo Studio launches their new site on Swish." },
+            { "title": "Spring Release", "excerpt": "Bravo shipped a refreshed design system and a faster editorial workflow." }
+          ] } },
           { "type": "LogoCloud", "props": { "items": ["Northstar", "Parallel", "Elm", "Cinder"] } }
         ]'::jsonb
       ),
@@ -414,50 +162,15 @@ const bravoStatements = [
         'Work',
         '[
           { "type": "SectionHeading", "props": { "title": "Selected Projects", "eyebrow": "Portfolio" } },
-          { "type": "CollectionGrid", "props": { "contentTypeSlug": "projects", "limit": 6, "sort": "newest" } }
+          { "type": "CollectionGrid", "props": { "items": [
+            { "title": "Neon Rebrand", "summary": "A crisp identity system for a product launch." }
+          ] } }
         ]'::jsonb
       )
     ON CONFLICT (tenant_id, slug) DO UPDATE
     SET
       title = EXCLUDED.title,
       components = EXCLUDED.components
-  `,
-  `
-    INSERT INTO tenant_events (id, tenant_id, actor_user_id, type, payload)
-    VALUES
-      (
-        'd0d0d0d0-0000-0000-0000-000000000011',
-        'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-        '33333333-3333-3333-3333-333333333333',
-        'TENANT_CREATED',
-        '{"subdomain":"bravo"}'::jsonb
-      ),
-      (
-        'd0d0d0d0-0000-0000-0000-000000000012',
-        'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-        '33333333-3333-3333-3333-333333333333',
-        'CONTENT_PUBLISHED',
-        '{"type":"posts","slug":"welcome"}'::jsonb
-      ),
-      (
-        'd0d0d0d0-0000-0000-0000-000000000013',
-        'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-        '44444444-4444-4444-4444-444444444444',
-        'MEMBER_ADDED',
-        '{"userEmail":"editor@bravo.com","role":"EDITOR"}'::jsonb
-      ),
-      (
-        'd0d0d0d0-0000-0000-0000-000000000014',
-        'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-        '33333333-3333-3333-3333-333333333333',
-        'CONTENT_PUBLISHED',
-        '{"type":"projects","slug":"neon-rebrand"}'::jsonb
-      )
-    ON CONFLICT (id) DO UPDATE
-    SET
-      type = EXCLUDED.type,
-      payload = EXCLUDED.payload,
-      actor_user_id = EXCLUDED.actor_user_id
   `,
 ] as const;
 
@@ -487,9 +200,7 @@ async function runStatements() {
     }
 
     await queryRunner.commitTransaction();
-    console.log(
-      'Seed complete: users, tenants, memberships, content, pages, and events.',
-    );
+    console.log('Seed complete: users, tenants, pages, and components.');
   } catch (error) {
     await queryRunner.rollbackTransaction();
     throw error;

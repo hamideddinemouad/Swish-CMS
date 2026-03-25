@@ -1,35 +1,31 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { jwtVerify, type JWTPayload } from 'jose';
-import { env } from '@/lib/env';
-
-const ACCESS_TOKEN_COOKIE_NAME = 'accessToken';
-const REFRESH_TOKEN_COOKIE_NAME = 'refreshToken';
-const ACCESS_TOKEN_SECRET = new TextEncoder().encode(env.AUTH_ACCESS_SECRET_KEY);
-
-type AccessTokenPayload = JWTPayload & {
-  type?: string;
-};
-
-async function verifyAccessToken(token: string): Promise<boolean> {
-  try {
-    const { payload } = await jwtVerify<AccessTokenPayload>(
-      token,
-      ACCESS_TOKEN_SECRET,
-      {
-        algorithms: ['HS256'],
-      },
-    );
-
-    return payload.type === 'access';
-  } catch {
-    return false;
-  }
-}
+import { verifyAccessToken } from '@/lib/proxy/auth';
+import {
+  clearAuthCookies,
+  getAccessTokenCookie,
+  getRefreshTokenCookie,
+} from '@/lib/proxy/cookies';
+import { extractSubdomain} from '@/lib/proxy/subdomain';
+import { isProtectedPath } from '@/lib/proxy/path';
 
 export async function proxy(request: NextRequest) {
-  const accessToken = request.cookies.get(ACCESS_TOKEN_COOKIE_NAME)?.value;
-  const refreshToken = request.cookies.get(REFRESH_TOKEN_COOKIE_NAME)?.value;
+  const requestHeaders = new Headers(request.headers);
+  const pathname = request.nextUrl.pathname;
+  const subdomain = extractSubdomain(request);
+
+  if (subdomain) requestHeaders.set('x-tenant', subdomain);
+
+  if (!isProtectedPath(pathname) ) {
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+  }
+
+  const accessToken = getAccessTokenCookie(request);
+  const refreshToken = getRefreshTokenCookie(request);
 
   if (accessToken && (await verifyAccessToken(accessToken))) {
     return NextResponse.next();
@@ -43,15 +39,11 @@ export async function proxy(request: NextRequest) {
 
     return NextResponse.redirect(refreshUrl);
   }
-  console.log("request url = " + request.url)
   const loginResponse = NextResponse.redirect(new URL('/login', request.url));
 
-  loginResponse.cookies.delete({ name: ACCESS_TOKEN_COOKIE_NAME, path: '/' });
-  loginResponse.cookies.delete({ name: REFRESH_TOKEN_COOKIE_NAME, path: '/' });
-
-  return loginResponse;
+  return clearAuthCookies(loginResponse);
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };
