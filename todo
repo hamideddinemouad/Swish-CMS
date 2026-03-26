@@ -3,3 +3,7 @@ page visualiser
 page modifier
 
 i was trying to create subdomain then i found out that tenant entity is still the old design
+coming back to subdomain
+
+im thinking about formulating the default json and how should they be implemented
+ plural /api/tenants

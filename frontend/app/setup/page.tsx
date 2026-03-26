@@ -1,10 +1,31 @@
 "use client";
 
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
+import { setUser } from "@/redux/slices/userSlice";
+import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hooks";
 
 type AvailabilityResponse = {
   available: boolean;
+};
+
+type CreateTenantResponse = {
+  id: string;
+  subdomain: string;
+  name: string;
+  settings: Record<string, unknown>;
+  userId: string | null;
+};
+
+type MeResponse = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  tenantId: string | null;
+  tenantSubdomain: string | null;
 };
 
 const SUBDOMAIN_REGEX = /^[a-z0-9-]+$/;
@@ -32,27 +53,38 @@ function isReservedSubdomain(value: string) {
 }
 
 export default function SetupPage() {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const currentUser = useAppSelector((state) => state.user.user);
   const [subdomain, setSubdomain] = useState("");
+  const [name, setName] = useState("");
   const [touched, setTouched] = useState(false);
-  const [isChecking, setIsChecking] = useState(false);
+  const [nameTouched, setNameTouched] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
 
   const normalizedSubdomain = normalizeSubdomain(subdomain);
+  const normalizedName = name.trim();
+  const userId = currentUser?.id ?? null;
   const hasValidFormat = isValidSubdomain(normalizedSubdomain);
   const isReserved = isReservedSubdomain(normalizedSubdomain);
   const showValidation = touched && normalizedSubdomain.length > 0;
+  const showNameValidation = nameTouched;
+  const hasValidName = normalizedName.length > 0;
   const inputStateClass = showValidation
     ? hasValidFormat && !isReserved
       ? "border-[var(--color-wix-green)] bg-[color:rgb(96_188_87_/_0.05)]"
       : "border-[var(--color-wix-red)] bg-[color:rgb(224_43_74_/_0.05)]"
     : "border-[color:rgb(146_146_146_/_0.28)] bg-white";
+  const nameInputStateClass = showNameValidation
+    ? hasValidName
+      ? "border-[var(--color-wix-green)] bg-[color:rgb(96_188_87_/_0.05)]"
+      : "border-[var(--color-wix-red)] bg-[color:rgb(224_43_74_/_0.05)]"
+    : "border-[color:rgb(146_146_146_/_0.28)] bg-white";
 
-  function handleChange(event: ChangeEvent<HTMLInputElement>) {
-    const nextValue = event.currentTarget.value;
-    setSubdomain(nextValue);
-
+  function resetFeedback() {
     if (isAvailable !== null || message) {
       setIsAvailable(null);
       setMessage("");
@@ -60,15 +92,27 @@ export default function SetupPage() {
     }
   }
 
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    const nextValue = event.currentTarget.value;
+    setSubdomain(nextValue);
+    resetFeedback();
+  }
+
+  function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
+    setName(event.currentTarget.value);
+    resetFeedback();
+  }
+
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     setTouched(true);
+    setNameTouched(true);
     setMessage("");
     setIsError(false);
     setIsAvailable(null);
 
     if (!normalizedSubdomain) {
-      setMessage("Enter a subdomain to check.");
+      setMessage("Enter a subdomain to create your tenant.");
       setIsError(true);
       return;
     }
@@ -84,34 +128,66 @@ export default function SetupPage() {
       setIsError(true);
       return;
     }
-    //
 
-    setIsChecking(true);
+    if (!hasValidName) {
+      setMessage("Enter a tenant name.");
+      setIsError(true);
+      return;
+    }
+
+    if (!userId) {
+      setMessage("Your session is missing. Please sign in again.");
+      setIsError(true);
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       const response = await axios.get<AvailabilityResponse>(
         `/api/tenants/availability/${encodeURIComponent(normalizedSubdomain)}`
       );
 
-      if (response.status >= 200 && response.status < 300) {
-        setIsAvailable(response.data.available);
-        setMessage(
-          response.data.available
-            ? `${normalizedSubdomain} is available.`
-            : `${normalizedSubdomain} is already taken.`
+      if (!response.data.available) {
+        setIsAvailable(false);
+        setMessage(`${normalizedSubdomain} is already taken.`);
+        setIsError(true);
+        return;
+      }
+
+      const createResponse = await axios.post<CreateTenantResponse>("/api/tenants", {
+        subdomain: normalizedSubdomain,
+        name: normalizedName,
+        userId,
+        settings: {},
+      });
+
+      if (createResponse.status >= 200 && createResponse.status < 300) {
+        const meResponse = await axios.get<MeResponse>(
+          "/api/users/update-user-info"
         );
-        setIsError(!response.data.available);
+        dispatch(
+          setUser({
+            id: meResponse.data.id,
+            firstName: meResponse.data.firstName,
+            lastName: meResponse.data.lastName,
+            email: meResponse.data.email,
+            tenantId: meResponse.data.tenantId,
+            tenantSubdomain: meResponse.data.tenantSubdomain,
+          })
+        );
+        router.replace("/dashboard");
       }
     } catch (error) {
       setIsError(true);
 
       if (axios.isAxiosError<{ message?: string }>(error)) {
-        setMessage(error.response?.data?.message ?? "Availability check failed");
+        setMessage(error.response?.data?.message ?? "Tenant creation failed");
       } else {
-        setMessage("Availability check failed");
+        setMessage("Tenant creation failed");
       }
     } finally {
-      setIsChecking(false);
+      setIsSubmitting(false);
     }
   }
 
@@ -122,13 +198,39 @@ export default function SetupPage() {
           Setup
         </p>
         <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[var(--color-ink-900)]">
-          Choose your subdomain
+          Create your tenant
         </h1>
         <p className="mt-4 text-sm leading-7 text-[var(--color-ink-700)]">
-          Pick a unique tenant subdomain and check if it is available before you continue.
+          Pick a tenant name and unique subdomain. We will verify availability before
+          creating the tenant.
         </p>
 
         <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+          <div>
+            <label
+              htmlFor="name"
+              className="mb-2 block text-sm font-semibold text-[var(--color-ink-900)]"
+            >
+              Tenant name
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              value={name}
+              onChange={handleNameChange}
+              onBlur={() => setNameTouched(true)}
+              placeholder="Acme Studio"
+              autoComplete="off"
+              spellCheck={false}
+              required
+              className={`w-full rounded-2xl border px-4 py-3 text-sm text-[var(--color-ink-900)] outline-none ring-0 transition focus:border-[var(--color-wix-blue)] ${nameInputStateClass}`}
+            />
+            <p className="mt-2 text-sm text-[var(--color-ink-500)]">
+              This is the display name for the tenant.
+            </p>
+          </div>
+
           <div>
             <label
               htmlFor="subdomain"
@@ -146,6 +248,7 @@ export default function SetupPage() {
               placeholder="acme"
               autoComplete="off"
               spellCheck={false}
+              required
               className={`w-full rounded-2xl border px-4 py-3 text-sm text-[var(--color-ink-900)] outline-none ring-0 transition focus:border-[var(--color-wix-blue)] ${inputStateClass}`}
             />
             <p className="mt-2 text-sm text-[var(--color-ink-500)]">
@@ -156,10 +259,10 @@ export default function SetupPage() {
 
           <button
             type="submit"
-            disabled={isChecking}
+            disabled={isSubmitting}
             className="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-wix-blue)] px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_30px_rgb(56_153_236_/_0.18)] hover:bg-[#2f8fe2] disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {isChecking ? "Checking..." : "Check availability"}
+            {isSubmitting ? "Creating..." : "Create tenant"}
           </button>
 
           {message ? (
@@ -191,4 +294,5 @@ export default function SetupPage() {
     </main>
   );
 }
-//add button create that will call api/route to create tenant
+//add button create that will call api/tenant to create tenant it will use redux slice to get userid the button will replace existing checkavailability and have two jobs create tenant if subdomain available else do the error feedback
+//the form should also add  name field settings for now {} is an empty object 
