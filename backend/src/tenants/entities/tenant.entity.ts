@@ -31,7 +31,7 @@ export class Tenant {
   settings: Record<string, unknown>;
 
   @Column({ name: 'user_id', type: 'uuid', nullable: true, unique: true })
-  userId: string | null;
+  userId: string;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt: Date;
@@ -44,5 +44,5 @@ export class Tenant {
 
   @OneToOne(() => User, (user) => user.tenant, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user: User | null;
+  user: User;
 }

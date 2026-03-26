@@ -12,6 +12,15 @@ import { User } from './entities/user.entity';
 
 type SafeUser = Omit<User, 'passwordHash'>;
 
+type UserInfo = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  tenantId: string | null;
+  tenantSubdomain: string | null;
+};
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -103,6 +112,28 @@ export class UsersService {
     if (!result.affected) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
+  }
+
+  async updateUserInfo(id: string): Promise<UserInfo> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: {
+        tenant: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+
+    return {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      tenantId: user.tenant?.id ?? null,
+      tenantSubdomain: user.tenant?.subdomain ?? null,
+    };
   }
 
   private async findOneEntity(id: string): Promise<User> {

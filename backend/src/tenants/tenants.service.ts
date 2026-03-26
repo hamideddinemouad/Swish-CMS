@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateTenantDto } from './dto/create-tenant.dto';
@@ -17,6 +17,10 @@ const RESERVED_SUBDOMAINS = new Set([
   'mail',
 ]);
 
+function normalizeSubdomain(value: string) {
+  return value.trim().toLowerCase();
+}
+
 @Injectable()
 export class TenantsService {
   constructor(
@@ -24,8 +28,36 @@ export class TenantsService {
     private readonly tenantsRepository: Repository<Tenant>,
   ) {}
 
-  create(createTenantDto: CreateTenantDto) {
-    return 'This action adds a new tenant';
+  async create(createTenantDto: CreateTenantDto) {
+    console.log("createTenantran")
+    const subdomain = normalizeSubdomain(createTenantDto.subdomain);
+    const name = createTenantDto.name.trim();
+
+    if (!name) {
+      throw new BadRequestException('Tenant name is required.');
+    }
+
+    const availability = await this.checkAvailability(subdomain);
+    if (!availability.available) {
+      throw new ConflictException('Subdomain is already taken.');
+    }
+
+    const userHasTenant = await this.tenantsRepository.exists({
+      where: { userId: createTenantDto.userId },
+    });
+
+    if (userHasTenant) {
+      throw new ConflictException('This user already has a tenant.');
+    }
+
+    const tenant = this.tenantsRepository.create({
+      subdomain,
+      name,
+      settings: createTenantDto.settings ?? {},
+      userId: createTenantDto.userId,
+    });
+
+    return this.tenantsRepository.save(tenant);
   }
 
   findAll() {
@@ -37,12 +69,17 @@ export class TenantsService {
   }
 
   async checkAvailability(subdomain: string): Promise<{ available: boolean }> {
-    if (!SUBDOMAIN_REGEX.test(subdomain) || RESERVED_SUBDOMAINS.has(subdomain)) {
+    const normalizedSubdomain = normalizeSubdomain(subdomain);
+
+    if (
+      !SUBDOMAIN_REGEX.test(normalizedSubdomain) ||
+      RESERVED_SUBDOMAINS.has(normalizedSubdomain)
+    ) {
       return { available: false };
     }
 
     const tenantExists = await this.tenantsRepository.exists({
-      where: { subdomain },
+      where: { subdomain: normalizedSubdomain },
     });
 
     return { available: !tenantExists };

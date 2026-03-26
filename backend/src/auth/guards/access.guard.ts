@@ -9,6 +9,8 @@ import type { Request } from 'express';
 import { env } from '../../config/env';
 import { AccessPayload, RequestWithAccessPayload } from '../decorators/access.payload.decorator';
 
+const ACCESS_TOKEN_COOKIE_NAME = 'accessToken';
+
 @Injectable()
 export class AccessGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
@@ -24,16 +26,10 @@ export class AccessGuard implements CanActivate {
   }
 
   private extractAccessToken(request: Request): string {
-    const authorizationHeader = request.headers.authorization;
+    const token = request.cookies?.[ACCESS_TOKEN_COOKIE_NAME];
 
-    if (!authorizationHeader) {
-      throw new UnauthorizedException('Authorization header is missing');
-    }
-
-    const [scheme, token] = authorizationHeader.split(' ');
-
-    if (scheme !== 'Bearer' || !token) {
-      throw new UnauthorizedException('Invalid authorization header');
+    if (!token) {
+      throw new UnauthorizedException('Access token is missing');
     }
 
     return token;
@@ -48,7 +44,7 @@ export class AccessGuard implements CanActivate {
       if (payload.type !== 'access') {
         throw new UnauthorizedException('Invalid access token');
       }
-
+      console.log("access guard payload", payload)
       return payload;
     } catch {
       throw new UnauthorizedException('Invalid access token');

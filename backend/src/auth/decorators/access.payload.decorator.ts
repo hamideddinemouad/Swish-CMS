@@ -4,13 +4,13 @@ import type { Request } from 'express';
 export type AccessPayload = {
   sub: string;
   email: string;
-  tenantId: string | null;
-  tenantSubdomain: string | null;
+  tenantId: string ;
+  tenantSubdomain: string;
   type: 'access';
 };
 
 export type RequestWithAccessPayload = Request & {
-  accessPayload?: AccessPayload;
+  accessPayload: AccessPayload;
 };
 
 export const SetAccessPayload = createParamDecorator(

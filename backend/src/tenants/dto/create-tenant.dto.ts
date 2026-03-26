@@ -1,4 +1,4 @@
-import { IsObject, IsString, Matches, MinLength } from 'class-validator';
+import { IsObject, IsString, IsUUID, Matches, MinLength } from 'class-validator';
 
 export class CreateTenantDto {
   @IsString()
@@ -9,6 +9,9 @@ export class CreateTenantDto {
   @IsString()
   @MinLength(1)
   name: string;
+
+  @IsUUID()
+  userId: string;
 
   @IsObject()
   settings: Record<string, unknown>;

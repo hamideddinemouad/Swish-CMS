@@ -17,5 +17,6 @@ import { RefreshGuard } from './guards/refresh.guard';
   ],
   controllers: [AuthController],
   providers: [AuthService, AccessGuard, RefreshGuard],
+  exports: [AccessGuard, JwtModule],
 })
 export class AuthModule {}

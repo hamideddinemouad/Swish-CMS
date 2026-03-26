@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 import { TenantsService } from './tenants.service';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
-import { AccessGuard } from 'src/auth/guards/access.guard';
+import { AccessGuard } from '../auth/guards/access.guard';
 
 
 @Controller('tenants')
