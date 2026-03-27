@@ -1,0 +1,33 @@
+import type { CSSProperties } from "react";
+import { preferences as defaultPreferences } from "../preference";
+import type { HomeData } from "../data";
+import type { HomePreferences } from "../preference";
+
+export type NavProps = HomeData["nav"] & {
+  preferences?: HomePreferences;
+};
+
+export default function Nav({ logo, links, cta, preferences }: NavProps) {
+  const tokens = preferences ?? defaultPreferences;
+  const style = {
+    backgroundColor: "rgba(15, 23, 42, 0.9)",
+  } satisfies CSSProperties;
+
+  return (
+    <nav className={`sticky top-0 z-20 border-b ${tokens.navigation.wrapper}`} style={style}>
+      <div className={tokens.navigation.inner}>
+        <span className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">{logo}</span>
+        <div className="flex flex-1 items-center justify-center gap-4 text-sm font-medium">
+          {links.map((link) => (
+            <a key={link.slug} href={link.slug} className={tokens.navigation.link}>
+              {link.label}
+            </a>
+          ))}
+        </div>
+        <a href={cta.slug} className={tokens.buttons.primary}>
+          {cta.label}
+        </a>
+      </div>
+    </nav>
+  );
+}
