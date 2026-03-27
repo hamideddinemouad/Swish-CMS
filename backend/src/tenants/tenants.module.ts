@@ -4,9 +4,10 @@ import { TenantsController } from './tenants.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Tenant } from './entities/tenant.entity';
 import { AuthModule } from '../auth/auth.module';
+import { SetupModule } from '../setup/setup.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Tenant]), AuthModule],
+  imports: [TypeOrmModule.forFeature([Tenant]), AuthModule, SetupModule],
   controllers: [TenantsController],
   providers: [TenantsService],
 })

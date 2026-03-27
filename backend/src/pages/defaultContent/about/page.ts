@@ -1,11 +1,6 @@
-export type AboutPage = {
-  page: string;
-  components: Array<{
-    type: string;
-    enabled: boolean;
-    variant?: string;
-  }>;
-};
+import type { DefaultPageDefinition } from '../types';
+
+export type AboutPage = DefaultPageDefinition;
 
 export const page = {
   page: "about",

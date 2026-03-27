@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 import { Tenant } from './entities/tenant.entity';
+import { SetupService } from '../setup/setup.service';
 
 const SUBDOMAIN_REGEX = /^[a-z0-9-]+$/;
 const RESERVED_SUBDOMAINS = new Set([
@@ -26,10 +27,10 @@ export class TenantsService {
   constructor(
     @InjectRepository(Tenant)
     private readonly tenantsRepository: Repository<Tenant>,
+    private readonly setupService: SetupService,
   ) {}
 
   async create(createTenantDto: CreateTenantDto) {
-    console.log("createTenantran")
     const subdomain = normalizeSubdomain(createTenantDto.subdomain);
     const name = createTenantDto.name.trim();
 
@@ -50,14 +51,17 @@ export class TenantsService {
       throw new ConflictException('This user already has a tenant.');
     }
 
-    const tenant = this.tenantsRepository.create({
+    const tenant = await this.tenantsRepository.create({
       subdomain,
       name,
       settings: createTenantDto.settings ?? {},
       userId: createTenantDto.userId,
     });
 
-    return this.tenantsRepository.save(tenant);
+    const savedTenant = await this.tenantsRepository.save(tenant);
+    await this.setupService.setup(savedTenant.id);
+
+    return savedTenant;
   }
 
   findAll() {

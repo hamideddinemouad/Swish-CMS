@@ -1,11 +1,6 @@
-export type ContactPage = {
-  page: string;
-  components: Array<{
-    type: string;
-    enabled: boolean;
-    variant?: string;
-  }>;
-};
+import type { DefaultPageDefinition } from '../types';
+
+export type ContactPage = DefaultPageDefinition;
 
 export const page = {
   page: "contact",

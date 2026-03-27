@@ -30,7 +30,7 @@ export class Page {
   title: string;
 
   @Column({ type: 'jsonb', default: () => "'{}'::jsonb"  })
-  components: Record<string, unknown>;
+  components: Record<string, unknown>[];
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt: Date;

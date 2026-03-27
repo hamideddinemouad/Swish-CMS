@@ -1,11 +1,6 @@
-export type ArticlesPage = {
-  page: string;
-  components: Array<{
-    type: string;
-    enabled: boolean;
-    variant?: string;
-  }>;
-};
+import type { DefaultPageDefinition } from '../types';
+
+export type ArticlesPage = DefaultPageDefinition;
 
 export const page = {
   page: "articles",

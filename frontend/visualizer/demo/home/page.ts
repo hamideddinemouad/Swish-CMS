@@ -3,7 +3,6 @@ export type HomePage = {
   components: Array<{
     type: string;
     enabled: boolean;
-    variant?: string;
   }>;
 };
 

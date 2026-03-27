@@ -1,11 +1,6 @@
-export type CategoriesPage = {
-  page: string;
-  components: Array<{
-    type: string;
-    enabled: boolean;
-    variant?: string;
-  }>;
-};
+import type { DefaultPageDefinition } from '../types';
+
+export type CategoriesPage = DefaultPageDefinition;
 
 export const page = {
   page: "categories",

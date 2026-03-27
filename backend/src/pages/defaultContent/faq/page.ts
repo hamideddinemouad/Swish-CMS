@@ -1,11 +1,6 @@
-export type FAQPage = {
-  page: string;
-  components: Array<{
-    type: string;
-    enabled: boolean;
-    variant?: string;
-  }>;
-};
+import type { DefaultPageDefinition } from '../types';
+
+export type FAQPage = DefaultPageDefinition;
 
 export const page = {
   page: "faq",

@@ -1,11 +1,6 @@
-export type HomePage = {
-  page: string;
-  components: Array<{
-    type: string;
-    enabled: boolean;
-    variant?: string;
-  }>;
-};
+import type { DefaultPageDefinition } from '../types';
+
+export type HomePage = DefaultPageDefinition;
 
 export const page = {
   page: "home",

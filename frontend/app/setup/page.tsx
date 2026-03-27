@@ -176,6 +176,7 @@ export default function SetupPage() {
             tenantSubdomain: meResponse.data.tenantSubdomain,
           })
         );
+        //
         router.replace("/dashboard");
       }
     } catch (error) {

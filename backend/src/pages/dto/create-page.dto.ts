@@ -5,7 +5,7 @@ export class CreatePageDto {
   tenantId: string;
 
   @IsString()
-  @MinLength(1)
+  @MinLength(4)
   @Matches(/^[a-z0-9-]+$/)
   slug: string;
 
@@ -14,5 +14,5 @@ export class CreatePageDto {
   title: string;
 
   @IsObject()
-  components: Record<string, unknown>;
+  components: {type : string, enabled : boolean}[];
 }
