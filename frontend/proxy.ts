@@ -14,11 +14,11 @@ export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const subdomain = extractSubdomain(request);
 
-  // if (subdomain) {
-  //   // requestHeaders.set('x-tenant', subdomain);
-  //   console.log(subdomain);
-  //   return NextResponse.redirect(new URL("http://localhost:4000/"));
-  // }
+  if (subdomain) {
+    // requestHeaders.set('x-tenant', subdomain);
+    console.log(subdomain);
+    return NextResponse.rewrite(new URL("http://localhost:4000/tenant/faq"));
+  }
 
   if (!isProtectedPath(pathname) ) {
     return NextResponse.next({

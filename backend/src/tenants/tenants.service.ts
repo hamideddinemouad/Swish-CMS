@@ -51,7 +51,7 @@ export class TenantsService {
       throw new ConflictException('This user already has a tenant.');
     }
 
-    const tenant = await this.tenantsRepository.create({
+    const tenant = this.tenantsRepository.create({
       subdomain,
       name,
       settings: createTenantDto.settings ?? {},
