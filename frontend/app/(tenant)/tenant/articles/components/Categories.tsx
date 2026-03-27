@@ -1,4 +1,4 @@
-import type { ArticlesData } from "../data";
+import type { ArticlesData } from "@/visualizer/demo/articles/data";
 
 export type CategoriesProps = ArticlesData["categories"];
 

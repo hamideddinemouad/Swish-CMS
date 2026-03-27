@@ -1,6 +1,6 @@
-import { preferences as defaultPreferences } from "../preference";
-import type { ContactData } from "../data";
-import type { ContactPreferences } from "../preference";
+import { preferences as defaultPreferences } from "@/visualizer/demo/contact/preference";
+import type { ContactData } from "@/visualizer/demo/contact/data";
+import type { ContactPreferences } from "@/visualizer/demo/contact/preference";
 
 export type NavProps = ContactData["nav"] & {
   preferences?: ContactPreferences;

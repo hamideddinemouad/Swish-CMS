@@ -1,4 +1,4 @@
-import type { HomeData } from "../data";
+import type { HomeData } from "@/visualizer/demo/home/data";
 
 export type OfferingsProps = HomeData["offerings"];
 

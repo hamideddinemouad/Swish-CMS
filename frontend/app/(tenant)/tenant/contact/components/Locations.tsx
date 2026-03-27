@@ -1,4 +1,4 @@
-import type { ContactData } from "../data";
+import type { ContactData } from "@/visualizer/demo/contact/data";
 
 export type LocationsProps = ContactData["locations"];
 

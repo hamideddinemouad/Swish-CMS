@@ -1,6 +1,6 @@
-import type { ContactData } from "../data";
-import { preferences as defaultPreferences } from "../preference";
-import type { ContactPreferences } from "../preference";
+import type { ContactData } from "@/visualizer/demo/contact/data";
+import { preferences as defaultPreferences } from "@/visualizer/demo/contact/preference";
+import type { ContactPreferences } from "@/visualizer/demo/contact/preference";
 
 export type FormProps = ContactData["form"] & {
   preferences?: ContactPreferences;

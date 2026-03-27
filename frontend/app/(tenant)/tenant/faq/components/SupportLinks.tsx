@@ -1,4 +1,4 @@
-import type { FAQData } from "../data";
+import type { FAQData } from "@/visualizer/demo/FAQ/data";
 
 export type SupportLinksProps = FAQData["supportLinks"];
 

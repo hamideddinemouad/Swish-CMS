@@ -1,6 +1,6 @@
-import { preferences as defaultPreferences } from "../preference";
-import type { FAQData } from "../data";
-import type { FAQPreferences } from "../preference";
+import { preferences as defaultPreferences } from "@/visualizer/demo/FAQ/preference";
+import type { FAQData } from "@/visualizer/demo/FAQ/data";
+import type { FAQPreferences } from "@/visualizer/demo/FAQ/preference";
 
 export type HeroProps = FAQData["hero"] & {
   preferences?: FAQPreferences;

@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
-import { preferences as defaultPreferences } from "../preference";
-import type { HomeData } from "../data";
-import type { HomePreferences } from "../preference";
+import { preferences as defaultPreferences } from "@/visualizer/demo/home/preference";
+import type { HomeData } from "@/visualizer/demo/home/data";
+import type { HomePreferences } from "@/visualizer/demo/home/preference";
 
 export type NavProps = HomeData["nav"] & {
   preferences?: HomePreferences;

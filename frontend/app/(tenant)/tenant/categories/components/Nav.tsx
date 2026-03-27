@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
-import { preferences as defaultPreferences } from "../preference";
-import type { CategoriesData } from "../data";
-import type { CategoriesPreferences } from "../preference";
+import { preferences as defaultPreferences } from "@/visualizer/demo/categories/preference";
+import type { CategoriesData } from "@/visualizer/demo/categories/data";
+import type { CategoriesPreferences } from "@/visualizer/demo/categories/preference";
 
 export type NavProps = CategoriesData["nav"] & {
   preferences?: CategoriesPreferences;

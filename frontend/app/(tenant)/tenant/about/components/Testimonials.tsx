@@ -1,6 +1,6 @@
-import { preferences as defaultPreferences } from "../preference";
-import type { AboutData } from "../data";
-import type { AboutPreferences } from "../preference";
+import { preferences as defaultPreferences } from "@/visualizer/demo/about/preference";
+import type { AboutData } from "@/visualizer/demo/about/data";
+import type { AboutPreferences } from "@/visualizer/demo/about/preference";
 
 export type TestimonialsProps = AboutData["testimonials"] & {
   preferences?: AboutPreferences;

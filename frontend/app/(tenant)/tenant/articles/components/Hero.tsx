@@ -1,6 +1,6 @@
-import { preferences as defaultPreferences } from "../preference";
-import type { ArticlesData } from "../data";
-import type { ArticlesPreferences } from "../preference";
+import { preferences as defaultPreferences } from "@/visualizer/demo/articles/preference";
+import type { ArticlesData } from "@/visualizer/demo/articles/data";
+import type { ArticlesPreferences } from "@/visualizer/demo/articles/preference";
 
 export type HeroProps = ArticlesData["hero"] & {
   preferences?: ArticlesPreferences;
