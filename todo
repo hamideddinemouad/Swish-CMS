@@ -1,9 +1,1 @@
-figure out domain extraction and redirection
-page visualiser
-page modifier
-
-i was trying to create subdomain then i found out that tenant entity is still the old design
-coming back to subdomain
-
-im thinking about formulating the default json and how should they be implemented
- plural /api/tenants
+Next.js routing is file-based where () groups are only for organization and don’t affect URLs, while [] defines dynamic segments that match any path and pass values to your page, with static routes always taking priority over dynamic ones; since Next doesn’t natively route by subdomain, your multi-tenant setup requires middleware to extract the tenant from the subdomain (e.g., acme), attach it (like via x-tenant), and rewrite requests internally (e.g., /about → /_tenant/about) so tenant pages are separated from main site pages without changing the browser URL; then Next simply resolves the correct page file, and that page calls your Nest API (e.g., /page?tenant=acme&page=about) to fetch JSON that your visualizer renders, while returning notFound() if the page doesn’t exist.

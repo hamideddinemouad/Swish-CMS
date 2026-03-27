@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { PagesModule } from './pages/pages.module';
 import { AuthModule } from './auth/auth.module';
 import { ComponentsModule } from './components/components.module';
+import { SetupModule } from './setup/setup.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ComponentsModule } from './components/components.module';
     UsersModule,
     PagesModule,
     ComponentsModule,
+    SetupModule,
     AuthModule,
   ],
   controllers: [AppController],
