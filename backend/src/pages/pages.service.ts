@@ -28,6 +28,12 @@ export class PagesService {
     return this.pagesRepository.find();
   }
 
+  findByTenant(tenantId: string): Promise<Page[]> {
+    return this.pagesRepository.find({
+      where: { tenantId },
+    });
+  }
+
   async findOne(id: string): Promise<Page> {
     const page = await this.pagesRepository.findOne({ where: { id } });
 
@@ -81,6 +87,67 @@ export class PagesService {
     return this.pagesRepository.save(page);
   }
 
+  async disableComponent(
+    tenantId: string,
+    pageName: string,
+    componentType: string,
+  ): Promise<Page> {
+    const page = await this.pagesRepository.findOne({
+      where: {
+        tenantId,
+        slug: pageName,
+      },
+    });
+
+    if (!page) {
+      throw new NotFoundException(
+        `Page ${pageName} not found for tenant ${tenantId}`,
+      );
+    }
+
+    const components = Array.isArray(page.components) ? [...page.components] : [];
+
+    const componentIndex = components.findIndex((component) => {
+      if (!isComponentDefinition(component)) {
+        return false;
+      }
+
+      return component.type === componentType;
+    });
+
+    if (componentIndex === -1) {
+      throw new NotFoundException(
+        `Component ${componentType} not found on page ${pageName}`,
+      );
+    }
+
+    const component = components[componentIndex] as Record<string, unknown>;
+    components[componentIndex] = {
+      ...component,
+      enabled: false,
+    };
+
+    page.components = components;
+
+    return this.pagesRepository.save(page);
+  }
+
+  async removeByTenantAndPageName(
+    tenantId: string,
+    pageName: string,
+  ): Promise<void> {
+    const result = await this.pagesRepository.delete({
+      tenantId,
+      slug: pageName,
+    });
+
+    if (!result.affected) {
+      throw new NotFoundException(
+        `Page ${pageName} not found for tenant ${tenantId}`,
+      );
+    }
+  }
+
   async remove(id: string): Promise<void> {
     const result = await this.pagesRepository.delete(id);
 
@@ -88,4 +155,15 @@ export class PagesService {
       throw new NotFoundException(`Page with id ${id} not found`);
     }
   }
+}
+
+function isComponentDefinition(
+  value: unknown,
+): value is Record<string, unknown> & { type: string } {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'type' in value &&
+    typeof value.type === 'string'
+  );
 }

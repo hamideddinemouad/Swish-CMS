@@ -1,20 +1,30 @@
-dashboard will have complete site management
-when the tenant is connected he can browse his pages inside the primary site
-via dashboard user 
-this ui has 
+PATCH /api/pages/:pageName/component/content
+body: { data: fullDataObject }
+usage: axios.patch(`/api/pages/${pageName}/component/content`, { data: fullDataObject }, { withCredentials: true })
+effect: replaces whole component.data
 
-backend :
-endpoints : 
-rls here is mandatory
+PATCH /api/pages/:pageName/component/preference
+body: { preference: fullPreferenceObject }
+usage: axios.patch(`/api/pages/${pageName}/component/preference`, { preference: fullPreferenceObject }, { withCredentials: true })
+effect: replaces whole component.preference
 
-components :
-modify components data
-go to db bring the pages row according to page name and tenant (tenant has unique table names) bring components data related to the identified page modify with the new value(s) save
-modify components preferences
-go to db bring the pages row according to page name and tenant (tenant has unique table names) bring components preferences related to the identified page modify with the new value(s) save
-pages :
-(delete) component = disable in pages json
-delete a page delete page and its related components row 
+GET /api/pages/by-tenant
+body: none
+usage: axios.get(`/api/pages/by-tenant`, { withCredentials: true })
+effect: returns all pages for the authenticated tenant
 
-requirement : 
-tenant_id
+PATCH /api/pages/:pageName/components/:componentType/disable
+body: none
+usage: axios.patch(`/api/pages/${pageName}/components/${componentType}/disable`, {}, { withCredentials: true })
+effect: sets enabled=false in pages.components for the matching type
+
+DELETE /api/pages/by-name/:pageName
+body: none
+usage: axios.delete(`/api/pages/by-name/${pageName}`, { withCredentials: true })
+effect: deletes page; related component row is removed by cascade
+
+using this repo patterns and 
+having these end points now i want you to build  in dashboard a ui
+that shows like a nav the tenant pages under it on the left side a form like
+editor that can edit any thing that is in props and dynamic when user is on that field the content he is editing is scrolled to show what he is edition think of the right side as another website the editor left whats being edited right once user moves away from the field imediatly save changes
+

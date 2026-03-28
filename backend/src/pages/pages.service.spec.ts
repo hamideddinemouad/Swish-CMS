@@ -56,11 +56,111 @@ describe('PagesService', () => {
     );
   });
 
+  it('returns all pages for a tenant', async () => {
+    pagesRepository.find.mockResolvedValue([
+      {
+        id: 'page-123',
+        tenantId: 'tenant-123',
+        slug: 'home',
+        title: 'Home',
+      },
+      {
+        id: 'page-456',
+        tenantId: 'tenant-123',
+        slug: 'categories',
+        title: 'Categories',
+      },
+    ]);
+
+    await expect(service.findByTenant('tenant-123')).resolves.toEqual([
+      {
+        id: 'page-123',
+        tenantId: 'tenant-123',
+        slug: 'home',
+        title: 'Home',
+      },
+      {
+        id: 'page-456',
+        tenantId: 'tenant-123',
+        slug: 'categories',
+        title: 'Categories',
+      },
+    ]);
+
+    expect(pagesRepository.find).toHaveBeenCalledWith({
+      where: { tenantId: 'tenant-123' },
+    });
+  });
+
   it('throws when the page does not exist for the tenant subdomain', async () => {
     pagesRepository.query.mockResolvedValue([]);
 
     await expect(service.findBySubdomainAndPageName('acme', 'missing')).rejects.toThrow(
       'Page missing for tenant acme not found',
     );
+  });
+
+  it('disables a component in the page components json', async () => {
+    pagesRepository.findOne.mockResolvedValue({
+      id: 'page-123',
+      tenantId: 'tenant-123',
+      slug: 'categories',
+      components: [
+        { type: 'hero', enabled: true },
+        { type: 'newsletter', enabled: true, variant: 'default' },
+      ],
+    });
+    pagesRepository.save.mockImplementation(async (page) => page);
+
+    const result = await service.disableComponent(
+      'tenant-123',
+      'categories',
+      'newsletter',
+    );
+
+    expect(pagesRepository.findOne).toHaveBeenCalledWith({
+      where: {
+        tenantId: 'tenant-123',
+        slug: 'categories',
+      },
+    });
+    expect(result.components).toEqual([
+      { type: 'hero', enabled: true },
+      { type: 'newsletter', enabled: false, variant: 'default' },
+    ]);
+  });
+
+  it('throws when the component type is not present on the page', async () => {
+    pagesRepository.findOne.mockResolvedValue({
+      id: 'page-123',
+      tenantId: 'tenant-123',
+      slug: 'categories',
+      components: [{ type: 'hero', enabled: true }],
+    });
+
+    await expect(
+      service.disableComponent('tenant-123', 'categories', 'newsletter'),
+    ).rejects.toThrow('Component newsletter not found on page categories');
+  });
+
+  it('deletes a page by tenant and page name', async () => {
+    pagesRepository.delete.mockResolvedValue({ affected: 1 });
+
+    await expect(
+      service.removeByTenantAndPageName('tenant-123', 'categories'),
+    ).resolves.toBeUndefined();
+
+    expect(pagesRepository.delete).toHaveBeenCalledWith({
+      tenantId: 'tenant-123',
+      slug: 'categories',
+    });
+  });
+
+  it('throws when deleting a missing page by tenant and page name', async () => {
+    pagesRepository.delete.mockResolvedValue({ affected: 0 });
+
+    await expect(
+      service.removeByTenantAndPageName('tenant-123', 'missing'),
+    ).rejects.toThrow('Page missing not found for tenant tenant-123');
   });
 });

@@ -1,15 +1,15 @@
 import {
   Column,
   Entity,
-  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { Page } from '../../pages/entities/page.entity';
 
 @Entity({ name: 'components' })
-@Index('idx_components_page_id', ['pageId'])
+@Unique('UQ_components_page_id', ['pageId'])
 export class Component {
   @PrimaryGeneratedColumn('uuid')
   id: string;
