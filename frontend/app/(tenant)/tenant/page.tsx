@@ -38,10 +38,13 @@ export default async function Home() {
   const response = await axios.get<PageResponse>(
     `${env.API}/pages/${subdomain}/${pageName}`
   );
+  const contentComponents = response.data.components.filter(
+    (component) => component.type !== "nav" && component.type !== "footer",
+  );
 
   return (
     <main>
-      {response.data.components.map((component) => {
+      {contentComponents.map((component) => {
         if (!component.enabled) {
           return null;
         }

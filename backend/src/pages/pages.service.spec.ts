@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Component } from '../components/entities/component.entity';
 import { Page } from './entities/page.entity';
 import { PagesService } from './pages.service';
 
@@ -13,9 +12,7 @@ describe('PagesService', () => {
     findOne: jest.fn(),
     delete: jest.fn(),
     merge: jest.fn(),
-  };
-  const componentsRepository = {
-    find: jest.fn(),
+    query: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -25,10 +22,6 @@ describe('PagesService', () => {
         {
           provide: getRepositoryToken(Page),
           useValue: pagesRepository,
-        },
-        {
-          provide: getRepositoryToken(Component),
-          useValue: componentsRepository,
         },
       ],
     }).compile();
@@ -41,56 +34,30 @@ describe('PagesService', () => {
   });
 
   it('returns the page for a tenant subdomain and page name', async () => {
-    const page = {
-      id: 'page-123',
-      slug: 'about',
-      title: 'About',
-    };
-    pagesRepository.findOne.mockResolvedValue(page);
-    componentsRepository.find.mockResolvedValue([
+    pagesRepository.query.mockResolvedValue([
       {
-        id: 'component-1',
-        title: 'Hero',
+        slug: 'about',
+        components: [{ type: 'hero' }],
         data: { heading: 'Hello' },
         preference: { width: 'full' },
       },
     ]);
 
     await expect(service.findBySubdomainAndPageName('acme', 'about')).resolves.toEqual({
-      ...page,
-      componentDetails: [
-        {
-          id: 'component-1',
-          title: 'Hero',
-          data: { heading: 'Hello' },
-          preference: { width: 'full' },
-        },
-      ],
+      slug: 'about',
+      components: [{ type: 'hero' }],
+      data: { heading: 'Hello' },
+      preference: { width: 'full' },
     });
 
-    expect(pagesRepository.findOne).toHaveBeenCalledWith({
-      where: {
-        slug: 'about',
-        tenant: {
-          subdomain: 'acme',
-        },
-      },
-    });
-    expect(componentsRepository.find).toHaveBeenCalledWith({
-      where: {
-        pageId: 'page-123',
-      },
-      select: {
-        id: true,
-        title: true,
-        data: true,
-        preference: true,
-      },
-    });
+    expect(pagesRepository.query).toHaveBeenCalledWith(
+      expect.stringContaining('FROM pages p'),
+      ['acme', 'about'],
+    );
   });
 
   it('throws when the page does not exist for the tenant subdomain', async () => {
-    pagesRepository.findOne.mockResolvedValue(null);
+    pagesRepository.query.mockResolvedValue([]);
 
     await expect(service.findBySubdomainAndPageName('acme', 'missing')).rejects.toThrow(
       'Page missing for tenant acme not found',

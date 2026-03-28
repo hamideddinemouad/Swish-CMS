@@ -82,7 +82,7 @@ export const data = {
       "We partner with leaders who are solving for resilience, clarity, and public good.",
     ctaPrimary: "View work",
     ctaSecondary: "Schedule a call",
-    image: "/images/home-hero.jpg",
+    image: "/upload_placeholder.svg",
   },
   featuredStories: {
     title: "Recent dispatches",
@@ -94,7 +94,7 @@ export const data = {
         slug: "/articles/healing-trust",
         category: "Insights",
         readingTime: "6 min",
-        image: "/images/home/story-trust.jpg",
+        image: "/upload_placeholder.svg",
       },
       {
         title: "Designing offices for restless teams",
@@ -103,7 +103,7 @@ export const data = {
         slug: "/articles/offices",
         category: "Practice",
         readingTime: "5 min",
-        image: "/images/home/story-office.jpg",
+        image: "/upload_placeholder.svg",
       },
     ],
   },

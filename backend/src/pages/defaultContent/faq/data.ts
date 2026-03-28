@@ -55,7 +55,7 @@ export const data = {
     title: "Everything you need to know before we collaborate",
     subtitle:
       "Browse common questions about our process, partnerships, and delivery rhythms before reaching out.",
-    image: "/images/faq-hero.jpg",
+    image: "/upload_placeholder.svg",
   },
   faq: {
     title: "Frequently asked",

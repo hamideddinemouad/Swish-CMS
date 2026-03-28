@@ -1,18 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Component } from '../components/entities/component.entity';
 import { CreatePageDto } from './dto/create-page.dto';
 import { UpdatePageDto } from './dto/update-page.dto';
 import { Page } from './entities/page.entity';
 
-export type PageComponentDetails = Pick<
-  Component,
-  'id' | 'title' | 'data' | 'preference'
->;
-
-export type PageWithComponentDetails = Page & {
-  componentDetails: PageComponentDetails[];
+export type PageWithComponentPayload = {
+  slug: string;
+  components: Page['components'];
+  data: Record<string, unknown>;
+  preference: Record<string, unknown>;
 };
 
 @Injectable()
@@ -20,8 +17,6 @@ export class PagesService {
   constructor(
     @InjectRepository(Page)
     private readonly pagesRepository: Repository<Page>,
-    @InjectRepository(Component)
-    private readonly componentsRepository: Repository<Component>,
   ) {}
 
   create(createPageDto: CreatePageDto): Promise<Page> {
@@ -46,40 +41,35 @@ export class PagesService {
   async findBySubdomainAndPageName(
     subdomain: string,
     pageName: string,
-  ): Promise<PageWithComponentDetails> {
-    const normalizedSubdomain = subdomain.trim().toLowerCase();
-    const normalizedPageName = pageName.trim().toLowerCase();
+  ): Promise<PageWithComponentPayload> {
+    const rows = await this.pagesRepository.query(
+      `
+        SELECT
+          p.slug AS slug,
+          p.components AS components,
+          c.data AS data,
+          c.preference AS preference
+        FROM pages p
+        INNER JOIN tenants t ON t.id = p.tenant_id
+        INNER JOIN components c ON c.page_id = p.id
+        WHERE t.subdomain = $1
+          AND p.slug = $2
+        LIMIT 1
+      `,
+      [subdomain, pageName],
+    );
 
-    const page = await this.pagesRepository.findOne({
-      where: {
-        slug: normalizedPageName,
-        tenant: {
-          subdomain: normalizedSubdomain,
-        },
-      },
-    });
-
-    if (!page) {
-      throw new NotFoundException(
-        `Page ${normalizedPageName} for tenant ${normalizedSubdomain} not found`,
-      );
+    if (!rows.length) {
+      throw new NotFoundException(`Page ${pageName} for tenant ${subdomain} not found`);
     }
 
-    const componentDetails = await this.componentsRepository.find({
-      where: {
-        pageId: page.id,
-      },
-      select: {
-        id: true,
-        title: true,
-        data: true,
-        preference: true,
-      },
-    });
+    const page = rows[0] as PageWithComponentPayload;
 
     return {
-      ...page,
-      componentDetails,
+      slug: page.slug,
+      components: page.components,
+      data: page.data,
+      preference: page.preference,
     };
   }
 

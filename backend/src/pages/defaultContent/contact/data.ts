@@ -82,7 +82,7 @@ export const data = {
       "Share your goals, questions, or curiosity—our team responds with thoughtful stories, not scripts.",
     ctaText: "Schedule a call",
     ctaLink: "/contact#form",
-    image: "/images/contact-hero.jpg",
+    image: "/upload_placeholder.svg",
   },
   contactInfo: {
     title: "Direct lines",
