@@ -17,6 +17,8 @@ export async function proxy(request: NextRequest) {
 
   if (subdomain) {
     if (pathname === '/') {
+      requestHeaders.set('x-subdomain', subdomain);
+      requestHeaders.set('x-page', "/");
       return NextResponse.rewrite(new URL('/tenant', request.url), {
         request: {
           headers: requestHeaders,
@@ -26,8 +28,7 @@ export async function proxy(request: NextRequest) {
 
     const pageName = extractPageName(pathname);
 
-    requestHeaders.set('x-subdomain', subdomain);
-    requestHeaders.set('x-page', pageName as string);
+    console.log("subdomain proxy", subdomain);
 
     return NextResponse.rewrite(new URL(buildTenantPath(pathname), request.url), {
       request: {
