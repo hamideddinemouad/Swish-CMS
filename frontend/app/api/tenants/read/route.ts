@@ -18,6 +18,7 @@ type PageResponse = {
     type: string;
     enabled: boolean;
     variant?: string;
+    //add id 
   }>;
   data: Record<string, unknown>;
   preference: Record<string, unknown>;

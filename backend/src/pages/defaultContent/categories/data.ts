@@ -1,3 +1,5 @@
+import { DEFAULT_IMAGE_PLACEHOLDER_URL } from "../config";
+
 export type CategoriesData = {
   nav: {
     logo: string;
@@ -72,7 +74,7 @@ export const data = {
       "Our categories help editorial teams, researchers, and strategists find the workstreams that matter most.",
     ctaText: "View category guide",
     ctaLink: "/categories#guide",
-    image: "/upload_placeholder.svg",
+    image: DEFAULT_IMAGE_PLACEHOLDER_URL,
   },
   categoryGrid: {
     title: "Curated tracks",
@@ -83,28 +85,28 @@ export const data = {
         slug: "/categories/systems-practice",
         excerpt: "Essays on how systems thinking shapes resilient products.",
         accent: "from-emerald-500 to-teal-500",
-        image: "/upload_placeholder.svg",
+        image: DEFAULT_IMAGE_PLACEHOLDER_URL,
       },
       {
         name: "Policy & Trust",
         slug: "/categories/policy-trust",
         excerpt: "Guidelines for translating complex policy into humane interfaces.",
         accent: "from-slate-700 to-slate-500",
-        image: "/upload_placeholder.svg",
+        image: DEFAULT_IMAGE_PLACEHOLDER_URL,
       },
       {
         name: "Field Methodologies",
         slug: "/categories/methods",
         excerpt: "Field notes, toolkits, and prompts for research teams in motion.",
         accent: "from-amber-500 to-orange-500",
-        image: "/upload_placeholder.svg",
+        image: DEFAULT_IMAGE_PLACEHOLDER_URL,
       },
       {
         name: "Creative Practice",
         slug: "/categories/creative-practice",
         excerpt: "Studio rituals and creative prompts for thoughtful teams.",
         accent: "from-indigo-500 to-purple-500",
-        image: "/upload_placeholder.svg",
+        image: DEFAULT_IMAGE_PLACEHOLDER_URL,
       },
     ],
   },

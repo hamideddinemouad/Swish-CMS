@@ -1,3 +1,5 @@
+import { DEFAULT_IMAGE_PLACEHOLDER_URL } from "../config";
+
 export type FAQData = {
   nav: {
     logo: string;
@@ -55,7 +57,7 @@ export const data = {
     title: "Everything you need to know before we collaborate",
     subtitle:
       "Browse common questions about our process, partnerships, and delivery rhythms before reaching out.",
-    image: "/upload_placeholder.svg",
+    image: DEFAULT_IMAGE_PLACEHOLDER_URL,
   },
   faq: {
     title: "Frequently asked",

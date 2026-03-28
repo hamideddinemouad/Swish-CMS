@@ -1,3 +1,5 @@
+import { DEFAULT_IMAGE_PLACEHOLDER_URL } from "../config";
+
 export type HomeData = {
   nav: {
     logo: string;
@@ -82,7 +84,7 @@ export const data = {
       "We partner with leaders who are solving for resilience, clarity, and public good.",
     ctaPrimary: "View work",
     ctaSecondary: "Schedule a call",
-    image: "/upload_placeholder.svg",
+    image: DEFAULT_IMAGE_PLACEHOLDER_URL,
   },
   featuredStories: {
     title: "Recent dispatches",
@@ -94,7 +96,7 @@ export const data = {
         slug: "/articles/healing-trust",
         category: "Insights",
         readingTime: "6 min",
-        image: "/upload_placeholder.svg",
+        image: DEFAULT_IMAGE_PLACEHOLDER_URL,
       },
       {
         title: "Designing offices for restless teams",
@@ -103,7 +105,7 @@ export const data = {
         slug: "/articles/offices",
         category: "Practice",
         readingTime: "5 min",
-        image: "/upload_placeholder.svg",
+        image: DEFAULT_IMAGE_PLACEHOLDER_URL,
       },
     ],
   },

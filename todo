@@ -1,3 +1,20 @@
-Next.js routing is file-based where () groups are only for organization and don’t affect URLs, while [] defines dynamic segments that match any path and pass values to your page, with static routes always taking priority over dynamic ones; since Next doesn’t natively route by subdomain, your multi-tenant setup requires middleware to extract the tenant from the subdomain (e.g., acme), attach it (like via x-tenant), and rewrite requests internally (e.g., /about → /_tenant/about) so tenant pages are separated from main site pages without changing the browser URL; then Next simply resolves the correct page file, and that page calls your Nest API (e.g., /page?tenant=acme&page=about) to fetch JSON that your visualizer renders, while returning notFound() if the page doesn’t exist.
+dashboard will have complete site management
+when the tenant is connected he can browse his pages inside the primary site
+via dashboard user 
+this ui has 
 
-you need now an extractor to extract the page the user wants to route it to its respective page
+backend :
+endpoints : 
+rls here is mandatory
+
+components :
+modify components data
+go to db bring the pages row according to page name and tenant (tenant has unique table names) bring components data related to the identified page modify with the new value(s) save
+modify components preferences
+go to db bring the pages row according to page name and tenant (tenant has unique table names) bring components preferences related to the identified page modify with the new value(s) save
+pages :
+(delete) component = disable in pages json
+delete a page delete page and its related components row 
+
+requirement : 
+tenant_id

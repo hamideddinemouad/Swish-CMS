@@ -1,3 +1,5 @@
+import { DEFAULT_IMAGE_PLACEHOLDER_URL } from "../config";
+
 export type ArticlesData = {
   nav: {
     logo: string;
@@ -96,7 +98,7 @@ export const data = {
       "Field Notes publishes deeply sourced articles, interviews, and dispatches from the front lines of design, science, and policy.",
     ctaPrimary: "Read latest",
     ctaSecondary: "Browse categories",
-    image: "/upload_placeholder.svg",
+    image: DEFAULT_IMAGE_PLACEHOLDER_URL,
   },
   featuredArticles: {
     title: "Featured essays",
@@ -109,7 +111,7 @@ export const data = {
           "Voices from institutions that chose slow, intentional growth to build durable services.",
         tag: "Strategy",
         readingTime: "7 min read",
-        image: "/upload_placeholder.svg",
+        image: DEFAULT_IMAGE_PLACEHOLDER_URL,
       },
       {
         title: "Designing borders for planetary data",
@@ -118,7 +120,7 @@ export const data = {
           "A roundtable with scientists and designers establishing shared protocols.",
         tag: "Research",
         readingTime: "9 min read",
-        image: "/upload_placeholder.svg",
+        image: DEFAULT_IMAGE_PLACEHOLDER_URL,
       },
       {
         title: "The listening practice that democracies need",
@@ -127,7 +129,7 @@ export const data = {
           "Documenting how civic tech platforms facilitate nuanced conversation.",
         tag: "Civic",
         readingTime: "5 min read",
-        image: "/upload_placeholder.svg",
+        image: DEFAULT_IMAGE_PLACEHOLDER_URL,
       },
     ],
   },
@@ -189,19 +191,19 @@ export const data = {
         name: "Amir Saleh",
         role: "Senior Editor",
         focus: "Technology & democracy",
-        avatar: "/upload_placeholder.svg",
+        avatar: DEFAULT_IMAGE_PLACEHOLDER_URL,
       },
       {
         name: "Priya Das",
         role: "Visual Storytelling Lead",
         focus: "Data visualizations & immersive reports",
-        avatar: "/upload_placeholder.svg",
+        avatar: DEFAULT_IMAGE_PLACEHOLDER_URL,
       },
       {
         name: "Hana Reed",
         role: "Field Reporter",
         focus: "Healthcare and climate impact",
-        avatar: "/upload_placeholder.svg",
+        avatar: DEFAULT_IMAGE_PLACEHOLDER_URL,
       },
     ],
   },

@@ -1,3 +1,5 @@
+import { DEFAULT_IMAGE_PLACEHOLDER_URL } from "../config";
+
 export type AboutData = {
   nav: {
     logo: string;
@@ -91,7 +93,7 @@ export const data = {
       "We combine strategy, design, and engineering so every touchpoint feels intentional and human.",
     ctaText: "Meet the team",
     ctaLink: "/about#team",
-    image: "/upload_placeholder.svg",
+    image: DEFAULT_IMAGE_PLACEHOLDER_URL,
   },
   mission: {
     heading: "Mission",
@@ -156,7 +158,7 @@ export const data = {
         name: "Isla Hart",
         role: "Creative Director",
         bio: "Guides every narrative with a storyteller's sense of craft and urgency.",
-        avatar: "/upload_placeholder.svg",
+        avatar: DEFAULT_IMAGE_PLACEHOLDER_URL,
         socials: [
           { label: "LinkedIn", slug: "https://www.linkedin.com/in/islahart/" },
           { label: "Mastodon", slug: "https://fosstodon.org/@islahart" },
@@ -166,7 +168,7 @@ export const data = {
         name: "Noah Rivera",
         role: "Technical Lead",
         bio: "Creates resilient systems that scale alongside the products we ship.",
-        avatar: "/upload_placeholder.svg",
+        avatar: DEFAULT_IMAGE_PLACEHOLDER_URL,
         socials: [
           { label: "GitHub", slug: "https://github.com/noahr" },
           { label: "LinkedIn", slug: "https://www.linkedin.com/in/noahrivera/" },
@@ -176,7 +178,7 @@ export const data = {
         name: "Mina Kapoor",
         role: "Strategy Partner",
         bio: "Keeps stakeholders focused on measurable outcomes and sustainable change.",
-        avatar: "/upload_placeholder.svg",
+        avatar: DEFAULT_IMAGE_PLACEHOLDER_URL,
         socials: [
           { label: "LinkedIn", slug: "https://www.linkedin.com/in/minakapoor/" },
         ],

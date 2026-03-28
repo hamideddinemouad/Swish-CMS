@@ -1,3 +1,5 @@
+import { DEFAULT_IMAGE_PLACEHOLDER_URL } from "../config";
+
 export type ContactData = {
   nav: {
     logo: string;
@@ -82,7 +84,7 @@ export const data = {
       "Share your goals, questions, or curiosity—our team responds with thoughtful stories, not scripts.",
     ctaText: "Schedule a call",
     ctaLink: "/contact#form",
-    image: "/upload_placeholder.svg",
+    image: DEFAULT_IMAGE_PLACEHOLDER_URL,
   },
   contactInfo: {
     title: "Direct lines",
