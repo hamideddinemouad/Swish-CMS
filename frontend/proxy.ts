@@ -6,7 +6,8 @@ import {
   getAccessTokenCookie,
   getRefreshTokenCookie,
 } from '@/lib/proxy/cookies';
-import { extractSubdomain} from '@/lib/proxy/subdomain';
+import { buildTenantPath, extractPageName } from '@/lib/proxy/page';
+import { extractSubdomain } from '@/lib/proxy/subdomain';
 import { isProtectedPath } from '@/lib/proxy/path';
 
 export async function proxy(request: NextRequest) {
@@ -15,12 +16,27 @@ export async function proxy(request: NextRequest) {
   const subdomain = extractSubdomain(request);
 
   if (subdomain) {
-    // requestHeaders.set('x-tenant', subdomain);
-    console.log(subdomain);
-    return NextResponse.rewrite(new URL("http://localhost:4000/tenant/faq"));
+    if (pathname === '/') {
+      return NextResponse.rewrite(new URL('/tenant', request.url), {
+        request: {
+          headers: requestHeaders,
+        },
+      });
+    }
+
+    const pageName = extractPageName(pathname);
+
+    requestHeaders.set('x-subdomain', subdomain);
+    requestHeaders.set('x-page', pageName as string);
+
+    return NextResponse.rewrite(new URL(buildTenantPath(pathname), request.url), {
+      request: {
+        headers: requestHeaders,
+      },
+    });
   }
 
-  if (!isProtectedPath(pathname) ) {
+  if (!isProtectedPath(pathname)) {
     return NextResponse.next({
       request: {
         headers: requestHeaders,

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LoginForm } from "@/app/login/components/LoginForm";
+import { LoginForm } from "@/app/(public)/login/components/LoginForm";
 import { useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

@@ -7,6 +7,7 @@ describe('TenantsController', () => {
   let controller: TenantsController;
   const tenantsService = {
     create: jest.fn(),
+    checkAvailability: jest.fn(),
   };
 
   beforeEach(async () => {

@@ -25,12 +25,6 @@ export default function NotFound() {
             >
               Back home
             </Link>
-            <Link
-              href="/login"
-              className="inline-flex items-center justify-center rounded-2xl border border-[color:rgb(56_153_236_/_0.18)] bg-white px-5 py-3 text-sm font-semibold text-[var(--color-wix-blue)] hover:border-[var(--color-wix-blue)]"
-            >
-              Go to login
-            </Link>
           </div>
         </div>
 

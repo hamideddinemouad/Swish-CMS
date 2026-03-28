@@ -17,6 +17,14 @@ export class PagesController {
     return this.pagesService.findAll();
   }
 
+  @Get(':subdomain/:pageName')
+  getBySubdomainAndPageName(
+    @Param('subdomain') subdomain: string,
+    @Param('pageName') pageName: string,
+  ) {
+    return this.pagesService.findBySubdomainAndPageName(subdomain, pageName);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.pagesService.findOne(id);
