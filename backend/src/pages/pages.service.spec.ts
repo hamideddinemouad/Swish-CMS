@@ -92,6 +92,35 @@ describe('PagesService', () => {
     });
   });
 
+  it('returns all pages for a subdomain', async () => {
+    pagesRepository.query.mockResolvedValue([
+      {
+        slug: 'home',
+        title: 'Home',
+      },
+      {
+        slug: 'about',
+        title: 'About',
+      },
+    ]);
+
+    await expect(service.findBySubdomain('acme')).resolves.toEqual([
+      {
+        slug: 'home',
+        title: 'Home',
+      },
+      {
+        slug: 'about',
+        title: 'About',
+      },
+    ]);
+
+    expect(pagesRepository.query).toHaveBeenCalledWith(
+      expect.stringContaining('WHERE t.subdomain = $1'),
+      ['acme'],
+    );
+  });
+
   it('throws when the page does not exist for the tenant subdomain', async () => {
     pagesRepository.query.mockResolvedValue([]);
 

@@ -3,11 +3,21 @@ import { preferences as defaultPreferences } from "@/visualizer/demo/home/prefer
 import type { HomeData } from "@/visualizer/demo/home/data";
 import type { HomePreferences } from "@/visualizer/demo/home/preference";
 
-export type NavProps = HomeData["nav"] & {
+type AvailablePage = {
+  slug: string;
+  title: string;
+};
+
+export type NavProps = Pick<HomeData["nav"], "logo" | "cta"> & {
+  pages: AvailablePage[];
   preferences?: HomePreferences;
 };
 
-export default function Nav({ logo, links, cta, preferences }: NavProps) {
+function buildPageHref(slug: string) {
+  return slug === "home" ? "/" : `/${slug}`;
+}
+
+export default function Nav({ logo, pages, cta, preferences }: NavProps) {
   const tokens = preferences ?? defaultPreferences;
   const style = {
     backgroundColor: "rgba(15, 23, 42, 0.9)",
@@ -18,9 +28,9 @@ export default function Nav({ logo, links, cta, preferences }: NavProps) {
       <div className={tokens.navigation.inner}>
         <span className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">{logo}</span>
         <div className="flex flex-1 items-center justify-center gap-4 text-sm font-medium">
-          {links.map((link) => (
-            <a key={link.slug} href={link.slug} className={tokens.navigation.link}>
-              {link.label}
+          {pages.map((page) => (
+            <a key={page.slug} href={buildPageHref(page.slug)} className={tokens.navigation.link}>
+              {page.title}
             </a>
           ))}
         </div>

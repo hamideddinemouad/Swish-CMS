@@ -17,6 +17,11 @@ type PageResponse = {
   preference: HomePreferences;
 };
 
+type AvailablePageResponse = Array<{
+  slug: string;
+  title: string;
+}>;
+
 export default async function TenantLayout({
   children,
 }: {
@@ -30,17 +35,27 @@ export default async function TenantLayout({
   }
 
   try {
-    const response = await axios.get<PageResponse>(
-      `${env.API}/pages/${subdomain}/home`
-    );
+    const [pageResponse, navResponse] = await Promise.all([
+      axios.get<PageResponse>(`${env.API}/pages/${subdomain}/home`),
+      axios.get<AvailablePageResponse>(`${env.API}/pages/by-subdomain`, {
+        params: {
+          subdomain,
+        },
+      }),
+    ]);
 
     return (
       <div className="min-h-screen flex flex-col">
-        <Nav {...response.data.data.nav} preferences={response.data.preference} />
+        <Nav
+          logo={pageResponse.data.data.nav.logo}
+          cta={pageResponse.data.data.nav.cta}
+          pages={navResponse.data}
+          preferences={pageResponse.data.preference}
+        />
         <div className="flex-1">{children}</div>
         <Footer
-          {...response.data.data.footer}
-          preferences={response.data.preference}
+          {...pageResponse.data.data.footer}
+          preferences={pageResponse.data.preference}
         />
       </div>
     );

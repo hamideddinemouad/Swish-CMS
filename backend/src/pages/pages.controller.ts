@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -6,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ComponentsService } from '../components/components.service';
@@ -39,6 +41,17 @@ export class PagesController {
   @UseGuards(AccessGuard)
   findByTenant(@SetAccessPayload() accessPayload: AccessPayload) {
     return this.pagesService.findByTenant(accessPayload.tenantId);
+  }
+
+  @Get('by-subdomain')
+  findBySubdomain(@Query('subdomain') subdomain?: string) {
+    const normalizedSubdomain = subdomain?.trim().toLowerCase();
+
+    if (!normalizedSubdomain) {
+      throw new BadRequestException('subdomain query parameter is required');
+    }
+
+    return this.pagesService.findBySubdomain(normalizedSubdomain);
   }
 
   @Get(':subdomain/:pageName')

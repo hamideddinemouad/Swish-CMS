@@ -12,6 +12,8 @@ export type PageWithComponentPayload = {
   preference: Record<string, unknown>;
 };
 
+export type AvailablePagePayload = Pick<Page, 'slug' | 'title'>;
+
 @Injectable()
 export class PagesService {
   constructor(
@@ -32,6 +34,23 @@ export class PagesService {
     return this.pagesRepository.find({
       where: { tenantId },
     });
+  }
+
+  async findBySubdomain(subdomain: string): Promise<AvailablePagePayload[]> {
+    const rows = await this.pagesRepository.query(
+      `
+        SELECT
+          p.slug,
+          p.title
+        FROM pages p
+        INNER JOIN tenants t ON t.id = p.tenant_id
+        WHERE t.subdomain = $1
+        ORDER BY p.created_at ASC
+      `,
+      [subdomain],
+    );
+
+    return rows as AvailablePagePayload[];
   }
 
   async findOne(id: string): Promise<Page> {

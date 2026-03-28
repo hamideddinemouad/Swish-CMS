@@ -17,13 +17,11 @@ type PageResponse = {
 };
 
 const components = {
-  nav: dynamic(() => import("./components/Nav")),
   hero: dynamic(() => import("./components/Hero")),
   categoryGrid: dynamic(() => import("./components/CategoryGrid")),
   featuredCollections: dynamic(() => import("./components/FeaturedCollections")),
   resourceLinks: dynamic(() => import("./components/ResourceLinks")),
   newsletter: dynamic(() => import("./components/Newsletter")),
-  footer: dynamic(() => import("./components/Footer")),
 };
 
 type BlockKey = keyof CategoriesData;
@@ -67,10 +65,6 @@ function renderBlock(
   preferences: CategoriesPreferences,
 ) {
   switch (blockKey) {
-    case "nav": {
-      const NavBlock = components.nav;
-      return <NavBlock key={blockKey} {...data.nav} preferences={preferences} />;
-    }
     case "hero": {
       const HeroBlock = components.hero;
       return <HeroBlock key={blockKey} {...data.hero} preferences={preferences} />;
@@ -102,10 +96,6 @@ function renderBlock(
     case "newsletter": {
       const NewsletterBlock = components.newsletter;
       return <NewsletterBlock key={blockKey} {...data.newsletter} />;
-    }
-    case "footer": {
-      const FooterBlock = components.footer;
-      return <FooterBlock key={blockKey} {...data.footer} preferences={preferences} />;
     }
     default:
       return null;

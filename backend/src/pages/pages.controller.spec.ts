@@ -11,6 +11,7 @@ describe('PagesController', () => {
     create: jest.fn(),
     findAll: jest.fn(),
     findByTenant: jest.fn(),
+    findBySubdomain: jest.fn(),
     findBySubdomainAndPageName: jest.fn(),
     findOne: jest.fn(),
     update: jest.fn(),
@@ -123,6 +124,33 @@ describe('PagesController', () => {
         tenantId: 'tenant-123',
         slug: 'categories',
         title: 'Categories',
+      },
+    ]);
+  });
+
+  it('returns all pages for a tenant subdomain', async () => {
+    pagesService.findBySubdomain.mockResolvedValue([
+      {
+        slug: 'home',
+        title: 'Home',
+      },
+      {
+        slug: 'about',
+        title: 'About',
+      },
+    ]);
+
+    const result = await controller.findBySubdomain(' AcMe ');
+
+    expect(pagesService.findBySubdomain).toHaveBeenCalledWith('acme');
+    expect(result).toEqual([
+      {
+        slug: 'home',
+        title: 'Home',
+      },
+      {
+        slug: 'about',
+        title: 'About',
       },
     ]);
   });

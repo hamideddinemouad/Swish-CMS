@@ -1,30 +1,56 @@
-PATCH /api/pages/:pageName/component/content
-body: { data: fullDataObject }
-usage: axios.patch(`/api/pages/${pageName}/component/content`, { data: fullDataObject }, { withCredentials: true })
-effect: replaces whole component.data
+Build a dashboard page in the frontend of this repo, following the existing project patterns.
 
-PATCH /api/pages/:pageName/component/preference
-body: { preference: fullPreferenceObject }
-usage: axios.patch(`/api/pages/${pageName}/component/preference`, { preference: fullPreferenceObject }, { withCredentials: true })
-effect: replaces whole component.preference
+Goal:
+Create a visual page editor for the authenticated tenant.
 
-GET /api/pages/by-tenant
-body: none
-usage: axios.get(`/api/pages/by-tenant`, { withCredentials: true })
-effect: returns all pages for the authenticated tenant
+Available backend endpoints:
+- `PATCH /api/pages/:pageName/component/content`
+  body: `{ data: fullDataObject }`
+  effect: replaces whole `component.data`
+- `PATCH /api/pages/:pageName/component/preference`
+  body: `{ preference: fullPreferenceObject }`
+  effect: replaces whole `component.preference`
+- `GET /api/pages/by-tenant`
+  effect: returns all pages for the authenticated tenant
+- `PATCH /api/pages/:pageName/components/:componentType/disable`
+  effect: sets `enabled=false` in `pages.components`
+- `DELETE /api/pages/by-name/:pageName`
+  effect: deletes page and cascades component row delete
+-be free to explore and use already created backendpoints rather than doing gimmics
 
-PATCH /api/pages/:pageName/components/:componentType/disable
-body: none
-usage: axios.patch(`/api/pages/${pageName}/components/${componentType}/disable`, {}, { withCredentials: true })
-effect: sets enabled=false in pages.components for the matching type
+UI requirements:
+- Build the UI server side component in /editor
+- Left side: a sidebar/nav listing all tenant pages.
+- Left/main editor panel: a dynamic form editor for the selected page.
+- Right side: a live visual preview of the page, like a website preview.
+- The editor must allow editing any field found in page content props and preference props.
+- When the user focuses a field in the editor, the preview should scroll to the related section being edited.
+- When the user leaves a field (`onBlur`), save changes immediately using the correct endpoint.
+- Content edits must call the content endpoint.
+- Preference/style edits must call the preference endpoint.
+- Component disable actions must call the disable endpoint.
+- Page delete actions must call the delete endpoint.
 
-DELETE /api/pages/by-name/:pageName
-body: none
-usage: axios.delete(`/api/pages/by-name/${pageName}`, { withCredentials: true })
-effect: deletes page; related component row is removed by cascade
+Architecture expectations:
+- page.tsx and components folder keep files not exceeding 100 lines
+- Reuse tenant visual components for the preview 
+-get inspiration from editor/demo just smthing simple like 
+- Prefer a clean structure  human like in the repo now over quick duplication.
 
-using this repo patterns and 
-having these end points now i want you to build  in dashboard a ui
-that shows like a nav the tenant pages under it on the left side a form like
-editor that can edit any thing that is in props and dynamic when user is on that field the content he is editing is scrolled to show what he is edition think of the right side as another website the editor left whats being edited right once user moves away from the field imediatly save changes
+Behavior details:
+- On load, fetch tenant pages from `GET /api/pages/by-tenant`.
+- Selecting a page loads it into the editor and preview.
+- The form should be generated dynamically from the selected page data structure rather than hardcoded per page.
+- anything existng in preferences and data objects is editable so explore that to know how to create the form that edits
+- Save on blur, not on every keystroke.
 
+Acceptance criteria:
+- User can switch between tenant pages from the sidebar.
+- User can edit content and see the preview update immediately.
+- User can edit preferences and see the preview update immediately.
+- User can disable a component and the preview reflects it.
+- User can delete a page from the dashboard.
+- Saving happens automatically on blur.
+- The implementation fits the repo’s existing patterns and code style.
+
+Before coding, inspect the current frontend structure and choose the best place for the dashboard editor and preview composition.

@@ -17,13 +17,11 @@ type PageResponse = {
 };
 
 const components = {
-  nav: dynamic(() => import("./components/Nav")),
   hero: dynamic(() => import("./components/Hero")),
   contactInfo: dynamic(() => import("./components/ContactInfo")),
   locations: dynamic(() => import("./components/Locations")),
   form: dynamic(() => import("./components/Form")),
   faq: dynamic(() => import("./components/Faq")),
-  footer: dynamic(() => import("./components/Footer")),
 };
 
 type BlockKey = keyof ContactData;
@@ -67,10 +65,6 @@ function renderBlock(
   preferences: ContactPreferences,
 ) {
   switch (blockKey) {
-    case "nav": {
-      const NavBlock = components.nav;
-      return <NavBlock key={blockKey} {...data.nav} preferences={preferences} />;
-    }
     case "hero": {
       const HeroBlock = components.hero;
       return <HeroBlock key={blockKey} {...data.hero} preferences={preferences} />;
@@ -90,10 +84,6 @@ function renderBlock(
     case "faq": {
       const FaqBlock = components.faq;
       return <FaqBlock key={blockKey} {...data.faq} />;
-    }
-    case "footer": {
-      const FooterBlock = components.footer;
-      return <FooterBlock key={blockKey} {...data.footer} preferences={preferences} />;
     }
     default:
       return null;
