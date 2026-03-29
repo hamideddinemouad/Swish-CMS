@@ -5,7 +5,7 @@ import Footer from "@/visualizer/components/home/footer";
 import Header from "@/visualizer/components/home/header";
 import Hero from "@/visualizer/components/home/hero";
 import Nav from "@/visualizer/components/home/nav";
-import { visualizerDemo } from "@/editor/demo-data";
+import { visualizerDemo } from "@/editorvibecoded/demo-data";
 
 type NavState = typeof visualizerDemo.nav;
 type HeaderState = typeof visualizerDemo.header;

@@ -1,11 +1,11 @@
-import axios from "axios";
-import { headers } from "next/headers";
+
 import dynamic from "next/dynamic";
 import { env } from "@/lib/env";
 import type { HomeData } from "@/visualizer/demo/home/data";
 import type { HomePreferences } from "@/visualizer/demo/home/preference";
+import { useEffect, useState } from "react";
 
-type PageResponse = {
+type pageConfig = {
   slug: string;
   components: Array<{
     type: string;
@@ -17,28 +17,27 @@ type PageResponse = {
 };
 
 const components = {
-  hero: dynamic(() => import("./components/Hero")),
-  featuredStories: dynamic(() => import("./components/FeaturedStories")),
-  offerings: dynamic(() => import("./components/Offerings")),
-  testimonials: dynamic(() => import("./components/Testimonials")),
-  newsletter: dynamic(() => import("./components/Newsletter")),
+  hero: dynamic(() => import("@/app/(tenant)/tenant/components/Hero")),
+  featuredStories: dynamic(() => import("@/app/(tenant)/tenant/components/FeaturedStories")),
+  offerings: dynamic(() => import("@/app/(tenant)/tenant/components/Offerings")),
+  testimonials: dynamic(() => import("@/app/(tenant)/tenant/components/Testimonials")),
+  newsletter: dynamic(() => import("@/app/(tenant)/tenant/components/Newsletter")),
 };
 
 type BlockKey = keyof HomeData;
-type sub  = {subdomain?: string};
-export default async function Home({subdomain} : sub) {
-
-  const requestHeaders = await headers();
-  // const subdomain = requestHeaders.get("x-subdomain");
-  subdomain ?? requestHeaders.get("x-subdomain");
-  if (!subdomain) {
-    return <div>Missing tenant context</div>;
-  }
-  const pageName = "home";
-  const response = await axios.get<PageResponse>(
-    `${env.API}/pages/${subdomain}/${pageName}`
-  );
-  const contentComponents = response.data.components.filter(
+// type sub  = {subdomain?: string};
+export default async function Renderer(config : pageConfig) {
+//   const requestHeaders = await headers();
+//   // const subdomain = requestHeaders.get("x-subdomain");
+//   subdomain ?? requestHeaders.get("x-subdomain");
+//   if (!subdomain) {
+//     return <div>Missing tenant context</div>;
+//   }
+//   const pageName = "home";
+//   const response = await axios.get<PageResponse>(
+//     `${env.API}/pages/${subdomain}/${pageName}`
+//   );
+  const contentComponents = config.components.filter(
     (component) => component.type !== "nav" && component.type !== "footer",
   );
 
@@ -51,8 +50,8 @@ export default async function Home({subdomain} : sub) {
 
         return renderBlock(
           component.type as BlockKey,
-          response.data.data,
-          response.data.preference,
+          config.data,
+          config.preference,
         );
       })}
     </main>

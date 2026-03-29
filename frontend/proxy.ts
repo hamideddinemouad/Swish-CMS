@@ -15,6 +15,14 @@ export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const subdomain = extractSubdomain(request);
 
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+  }
+
   if (subdomain) {
     if (pathname === '/') {
       requestHeaders.set('x-subdomain', subdomain);
