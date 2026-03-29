@@ -84,6 +84,7 @@ export class PagesController {
       pageName,
       updatePageComponentContentDto,
     );
+    
   }
   
   @Patch(':pageName/component/preference')

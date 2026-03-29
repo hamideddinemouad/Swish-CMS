@@ -27,7 +27,7 @@ export class AccessGuard implements CanActivate {
 
   private extractAccessToken(request: Request): string {
     const token = request.cookies?.[ACCESS_TOKEN_COOKIE_NAME];
-
+    console.log("bounced by access");
     if (!token) {
       throw new UnauthorizedException('Access token is missing');
     }
@@ -42,11 +42,13 @@ export class AccessGuard implements CanActivate {
       });
 
       if (payload.type !== 'access') {
+        console.log("bounced by access");
         throw new UnauthorizedException('Invalid access token');
       }
       console.log("access guard payload", payload)
       return payload;
     } catch {
+      console.log("bounced by access");
       throw new UnauthorizedException('Invalid access token');
     }
   }
