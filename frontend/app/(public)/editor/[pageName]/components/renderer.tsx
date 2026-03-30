@@ -1,9 +1,11 @@
-
+"use client"
 import dynamic from "next/dynamic";
 import { env } from "@/lib/env";
 import type { HomeData } from "@/visualizer/demo/home/data";
 import type { HomePreferences } from "@/visualizer/demo/home/preference";
-import { useEffect, useState } from "react";
+
+// import { useEffect, useState } from "react";
+import axios from "axios";
 
 type pageConfig = {
   slug: string;
@@ -26,17 +28,21 @@ const components = {
 
 type BlockKey = keyof HomeData;
 // type sub  = {subdomain?: string};
-export default async function Renderer(config : pageConfig) {
+export default function Renderer({config} : {config : pageConfig}) {
 //   const requestHeaders = await headers();
 //   // const subdomain = requestHeaders.get("x-subdomain");
 //   subdomain ?? requestHeaders.get("x-subdomain");
 //   if (!subdomain) {
 //     return <div>Missing tenant context</div>;
 //   }
-//   const pageName = "home";
-//   const response = await axios.get<PageResponse>(
-//     `${env.API}/pages/${subdomain}/${pageName}`
-//   );
+// type: string;
+//     enabled: boolean;
+//     variant?: string;
+const subdomain = "fefe"
+  const pageName = "home";
+  // const response = await axios.get<pageConfig>(
+  //   `${env.API}/pages/${subdomain}/${pageName}`
+  // );
   const contentComponents = config.components.filter(
     (component) => component.type !== "nav" && component.type !== "footer",
   );

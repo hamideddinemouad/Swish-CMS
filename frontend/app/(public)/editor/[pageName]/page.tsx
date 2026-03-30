@@ -1,9 +1,77 @@
 
-import PageVisualizer from "./components/pageVisualizer";
+import axios from "axios";
 
-export default function EditorPage() {
+import PageVisualizer from "./components/pageVisualizer";
+import Renderer from "./components/renderer";
+import { NextRequest } from "next/server";
+import { env } from "@/lib/env";
+import { cookies, headers } from "next/headers";
+import Nav from "./components/rendrerNav";
+import { HomeData } from "@/visualizer/demo/home/data";
+import { HomePreferences } from "@/visualizer/demo/home/preference";
+import { page } from "@/visualizer/demo/FAQ/page";
+import { PageConfig } from "next";
+
+// import { useSearchParams } from "next/navigation";
+
+type PageResponse = {
+  slug: string;
+  components: Array<{
+    type: string;
+    enabled: boolean;
+    variant?: string;
+  }>;
+  data: HomeData;
+  preference: HomePreferences;
+};
+
+type AvailablePageResponse = Array<{
+  slug: string;
+  title: string;
+}>;
+type me = {
+  sub: string;
+  email: string;
+  tenantId: string;
+  tenantSubdomain: string;
+  type: 'access';
+};
+// type Page = Record<string, unknown>[];
+
+
+export default async function EditorPage({ params }: any) {
+  // const searchParams = useSearchParams();
+  const pageN = (await params).pageName
+  // console.log(page);
+  // const { pageName } = await params;
+  // console.log(pageName);
+  // const query = params.pageName;
+  // console.log("param : ", query)
+
+  // const [page, setPage] = useState
+  // pagename 
+  //subdomain
+  const cookie = await cookies();
+  console.log(cookie.get("accessToken")?.value);
+  const me = await axios.get<me>(`${env.API}/auth/me`, { headers: { Cookie: `accessToken=${cookie.get("accessToken")?.value}` } });
+  const subdomain = me.data.tenantSubdomain;
+  console.log(me);
+  const [pageResponse, navResponse] = await Promise.all([
+    axios.get<PageResponse>(`${env.API}/pages/${subdomain}/home`),
+    axios.get<AvailablePageResponse>(`${env.API}/pages/by-subdomain`, {
+      params: {
+        subdomain,
+      },
+    }),
+  ]);
+  const res = await axios.get<PageWithComponentPayload>(`${env.API}/${pageN}/${subdomain}`);
+  // axios.get(`${env.API}pages${}`)
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-6 py-10 lg:px-8">
+      <Nav logo={pageResponse.data.data.nav.logo}
+        cta={pageResponse.data.data.nav.cta}
+        pages={navResponse.data}
+        preferences={pageResponse.data.preference} />
       <section className="flex min-h-[calc(100vh-5rem)] flex-col gap-6 rounded-[32px] border border-[color:rgb(146_146_146_/_0.18)] bg-white/90 p-6 shadow-[0_20px_50px_rgb(54_54_54_/_0.08)] lg:p-8">
         <div className="flex flex-col gap-2">
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-wix-blue)]">
@@ -24,7 +92,8 @@ export default function EditorPage() {
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-wix-blue)]">
                   Canvas
-                </p>   <PageVisualizer />
+                </p>
+                  <Renderer config={res.data}/>
                 <p className="mt-2 text-base text-[var(--color-ink-700)]">
                   Editor surface placeholder
                 </p>
