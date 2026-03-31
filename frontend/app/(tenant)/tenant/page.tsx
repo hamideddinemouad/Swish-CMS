@@ -1,10 +1,9 @@
 import axios from "axios";
 import { headers } from "next/headers";
-import dynamic from "next/dynamic";
 import { env } from "@/lib/env";
 import type { HomeData } from "@/visualizer/demo/home/data";
 import type { HomePreferences } from "@/visualizer/demo/home/preference";
-import Renderer from "@/app/(public)/editor/[pageName]/components/renderer";
+import RenderBlockHome from "./components/RenderBlockHome";
 
 type PageResponse = {
   slug: string;
@@ -17,35 +16,40 @@ type PageResponse = {
   preference: HomePreferences;
 };
 
-const components = {
-  hero: dynamic(() => import("./components/Hero")),
-  featuredStories: dynamic(() => import("./components/FeaturedStories")),
-  offerings: dynamic(() => import("./components/Offerings")),
-  testimonials: dynamic(() => import("./components/Testimonials")),
-  newsletter: dynamic(() => import("./components/Newsletter")),
-};
-
 type BlockKey = keyof HomeData;
-type sub  = {subdomain?: string};
-export default async function Home() {
 
+export default async function Home() {
   const requestHeaders = await headers();
   const subdomain = requestHeaders.get("x-subdomain");
+  const pageName = "home";
+
   if (!subdomain) {
     return <div>Missing tenant context</div>;
   }
-  const pageName = "home";
+
   const response = await axios.get<PageResponse>(
     `${env.API}/pages/${subdomain}/${pageName}`
   );
-  // const contentComponents = response.data.components.filter(
-  //   (component) => component.type !== "nav" && component.type !== "footer",
-  // );
+  const contentComponents = response.data.components.filter(
+    (component) => component.type !== "nav" && component.type !== "footer",
+  );
 
   return (
+    <main>
+      {contentComponents.map((component, index) => {
+        if (!component.enabled) {
+          return null;
+        }
 
-
-        <Renderer config={response.data}/>
-
+        return (
+          <RenderBlockHome
+            key={`${component.type}-${component.variant ?? "default"}-${index}`}
+            blockKey={component.type as BlockKey}
+            data={response.data.data}
+            preferences={response.data.preference}
+          />
+        );
+      })}
+    </main>
   );
 }

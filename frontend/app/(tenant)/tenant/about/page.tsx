@@ -1,9 +1,9 @@
 import axios from "axios";
-import dynamic from "next/dynamic";
 import { headers } from "next/headers";
 import { env } from "@/lib/env";
 import type { AboutData } from "@/visualizer/demo/about/data";
 import type { AboutPreferences } from "@/visualizer/demo/about/preference";
+import RenderBlockAbout from "./components/RenderBlockAbout";
 
 type PageResponse = {
   slug: string;
@@ -15,18 +15,6 @@ type PageResponse = {
   data: AboutData;
   preference: AboutPreferences;
 };
-
-const components = {
-  hero: dynamic(() => import("./components/Hero")),
-  mission: dynamic(() => import("./components/Mission")),
-  values: dynamic(() => import("./components/Values")),
-  timeline: dynamic(() => import("./components/Timeline")),
-  team: dynamic(() => import("./components/Team")),
-  stats: dynamic(() => import("./components/Stats")),
-  testimonials: dynamic(() => import("./components/Testimonials")),
-};
-
-type BlockKey = keyof AboutData;
 
 export default async function About() {
   const requestHeaders = await headers();
@@ -46,62 +34,20 @@ export default async function About() {
 
   return (
     <main>
-      {contentComponents.map((component) => {
+      {contentComponents.map((component, index) => {
         if (!component.enabled) {
           return null;
         }
 
-        return renderBlock(
-          component.type as BlockKey,
-          response.data.data,
-          response.data.preference,
+        return (
+          <RenderBlockAbout
+            key={`${component.type}-${component.variant ?? "default"}-${index}`}
+            blockKey={component.type as keyof AboutData}
+            data={response.data.data}
+            preferences={response.data.preference}
+          />
         );
       })}
     </main>
   );
-}
-
-function renderBlock(
-  blockKey: BlockKey,
-  data: AboutData,
-  preferences: AboutPreferences,
-) {
-  switch (blockKey) {
-    case "hero": {
-      const HeroBlock = components.hero;
-      return <HeroBlock key={blockKey} {...data.hero} preferences={preferences} />;
-    }
-    case "mission": {
-      const MissionBlock = components.mission;
-      return <MissionBlock key={blockKey} {...data.mission} preferences={preferences} />;
-    }
-    case "values": {
-      const ValuesBlock = components.values;
-      return <ValuesBlock key={blockKey} {...data.values} preferences={preferences} />;
-    }
-    case "timeline": {
-      const TimelineBlock = components.timeline;
-      return <TimelineBlock key={blockKey} {...data.timeline} preferences={preferences} />;
-    }
-    case "team": {
-      const TeamBlock = components.team;
-      return <TeamBlock key={blockKey} {...data.team} preferences={preferences} />;
-    }
-    case "stats": {
-      const StatsBlock = components.stats;
-      return <StatsBlock key={blockKey} {...data.stats} preferences={preferences} />;
-    }
-    case "testimonials": {
-      const TestimonialsBlock = components.testimonials;
-      return (
-        <TestimonialsBlock
-          key={blockKey}
-          {...data.testimonials}
-          preferences={preferences}
-        />
-      );
-    }
-    default:
-      return null;
-  }
 }

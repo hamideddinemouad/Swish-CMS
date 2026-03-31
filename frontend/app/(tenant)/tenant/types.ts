@@ -92,3 +92,26 @@ export type DefaultPageSeed = {
   data: DefaultPageData;
   preference: DefaultPagePreferences;
 };
+
+export type AnyPageResponse = {
+  slug: string;
+  components: Array<{
+    type: string;
+    enabled: boolean;
+    variant?: string;
+  }>;
+  data: Record<string, unknown>;
+  preference: Record<string, unknown>;
+};
+
+// export type PageWithComponentPayload = {
+//   slug: string;
+//   components: Page['components'];
+//   data: Record<string, unknown>;
+//   preference: Record<string, unknown>;
+// };
+export type NavConfig = {
+  cta : {slug : string, label : string};
+  links : {slug : string, label : string}[];
+
+}

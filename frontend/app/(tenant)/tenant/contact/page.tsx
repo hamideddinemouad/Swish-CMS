@@ -1,10 +1,10 @@
 import axios from "axios";
-import dynamic from "next/dynamic";
 import { headers } from "next/headers";
 import { env } from "@/lib/env";
 import type { ContactData } from "@/visualizer/demo/contact/data";
 import type { ContactPreferences } from "@/visualizer/demo/contact/preference";
-
+// import RenderBlockContact from "./components/RenderBlockContact";
+import RenderBlockContact from "./components/RenderBlockContact";
 type PageResponse = {
   slug: string;
   components: Array<{
@@ -16,13 +16,6 @@ type PageResponse = {
   preference: ContactPreferences;
 };
 
-const components = {
-  hero: dynamic(() => import("./components/Hero")),
-  contactInfo: dynamic(() => import("./components/ContactInfo")),
-  locations: dynamic(() => import("./components/Locations")),
-  form: dynamic(() => import("./components/Form")),
-  faq: dynamic(() => import("./components/Faq")),
-};
 
 type BlockKey = keyof ContactData;
 
@@ -44,48 +37,20 @@ export default async function Contact() {
 
   return (
     <main>
-      {contentComponents.map((component) => {
+      {contentComponents.map((component, index) => {
         if (!component.enabled) {
           return null;
         }
-
-        return renderBlock(
-          component.type as BlockKey,
-          response.data.data,
-          response.data.preference,
+        return (
+          <RenderBlockContact
+            key={`${component.type}-${component.variant ?? "default"}-${index}`}
+            blockKey={component.type as BlockKey}
+            data={response.data.data}
+            preferences={response.data.preference}
+          />
         );
+
       })}
     </main>
   );
-}
-
-function renderBlock(
-  blockKey: BlockKey,
-  data: ContactData,
-  preferences: ContactPreferences,
-) {
-  switch (blockKey) {
-    case "hero": {
-      const HeroBlock = components.hero;
-      return <HeroBlock key={blockKey} {...data.hero} preferences={preferences} />;
-    }
-    case "contactInfo": {
-      const ContactInfoBlock = components.contactInfo;
-      return <ContactInfoBlock key={blockKey} {...data.contactInfo} />;
-    }
-    case "locations": {
-      const LocationsBlock = components.locations;
-      return <LocationsBlock key={blockKey} {...data.locations} />;
-    }
-    case "form": {
-      const FormBlock = components.form;
-      return <FormBlock key={blockKey} {...data.form} preferences={preferences} />;
-    }
-    case "faq": {
-      const FaqBlock = components.faq;
-      return <FaqBlock key={blockKey} {...data.faq} />;
-    }
-    default:
-      return null;
-  }
 }

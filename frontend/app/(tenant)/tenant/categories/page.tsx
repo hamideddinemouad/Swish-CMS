@@ -1,9 +1,9 @@
 import axios from "axios";
-import dynamic from "next/dynamic";
 import { headers } from "next/headers";
 import { env } from "@/lib/env";
 import type { CategoriesData } from "@/visualizer/demo/categories/data";
 import type { CategoriesPreferences } from "@/visualizer/demo/categories/preference";
+import RenderBlockCategories from "./components/RenderBlockCategories";
 
 type PageResponse = {
   slug: string;
@@ -15,16 +15,6 @@ type PageResponse = {
   data: CategoriesData;
   preference: CategoriesPreferences;
 };
-
-const components = {
-  hero: dynamic(() => import("./components/Hero")),
-  categoryGrid: dynamic(() => import("./components/CategoryGrid")),
-  featuredCollections: dynamic(() => import("./components/FeaturedCollections")),
-  resourceLinks: dynamic(() => import("./components/ResourceLinks")),
-  newsletter: dynamic(() => import("./components/Newsletter")),
-};
-
-type BlockKey = keyof CategoriesData;
 
 export default async function Categories() {
   const requestHeaders = await headers();
@@ -44,60 +34,20 @@ export default async function Categories() {
 
   return (
     <main>
-      {contentComponents.map((component) => {
+      {contentComponents.map((component, index) => {
         if (!component.enabled) {
           return null;
         }
 
-        return renderBlock(
-          component.type as BlockKey,
-          response.data.data,
-          response.data.preference,
+        return (
+          <RenderBlockCategories
+            key={`${component.type}-${component.variant ?? "default"}-${index}`}
+            blockKey={component.type as keyof CategoriesData}
+            data={response.data.data}
+            preferences={response.data.preference}
+          />
         );
       })}
     </main>
   );
-}
-
-function renderBlock(
-  blockKey: BlockKey,
-  data: CategoriesData,
-  preferences: CategoriesPreferences,
-) {
-  switch (blockKey) {
-    case "hero": {
-      const HeroBlock = components.hero;
-      return <HeroBlock key={blockKey} {...data.hero} preferences={preferences} />;
-    }
-    case "categoryGrid": {
-      const CategoryGridBlock = components.categoryGrid;
-      return (
-        <CategoryGridBlock
-          key={blockKey}
-          {...data.categoryGrid}
-          preferences={preferences}
-        />
-      );
-    }
-    case "featuredCollections": {
-      const FeaturedCollectionsBlock = components.featuredCollections;
-      return <FeaturedCollectionsBlock key={blockKey} {...data.featuredCollections} />;
-    }
-    case "resourceLinks": {
-      const ResourceLinksBlock = components.resourceLinks;
-      return (
-        <ResourceLinksBlock
-          key={blockKey}
-          {...data.resourceLinks}
-          preferences={preferences}
-        />
-      );
-    }
-    case "newsletter": {
-      const NewsletterBlock = components.newsletter;
-      return <NewsletterBlock key={blockKey} {...data.newsletter} />;
-    }
-    default:
-      return null;
-  }
 }

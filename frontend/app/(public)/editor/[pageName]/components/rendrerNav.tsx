@@ -1,21 +1,30 @@
-"use client"
-import { HomeData } from "@/visualizer/demo/home/data";
-import { HomePreferences } from "@/visualizer/demo/home/preference";
-import { CSSProperties } from "react";
+"use client";
+
+import type { CSSProperties } from "react";
 import { preferences as defaultPreferences } from "@/visualizer/demo/home/preference";
+import type { HomePreferences } from "@/visualizer/demo/home/preference";
+
 type AvailablePage = {
   slug: string;
   title: string;
 };
 
-export type NavProps = Pick<HomeData["nav"], "logo" | "cta"> & {
+type NavAction = {
+  label: string;
+  slug: string;
+};
+
+export type NavProps = {
+  logo: string;
   pages: AvailablePage[];
+  cta?: NavAction;
   preferences?: HomePreferences;
 };
 
 function buildPageHref(slug: string) {
-  return slug === "home" ? "/" : `/${slug}`;
+  return `/editor/${encodeURIComponent(slug)}`;
 }
+
 export default function Nav({ logo, pages, cta, preferences }: NavProps) {
   const tokens = preferences ?? defaultPreferences;
   const style = {
@@ -33,9 +42,11 @@ export default function Nav({ logo, pages, cta, preferences }: NavProps) {
             </a>
           ))}
         </div>
-        <a href={cta.slug} className={tokens.buttons.primary}>
-          {cta.label}
-        </a>
+        {cta ? (
+          <a href={cta.slug} className={tokens.buttons.primary}>
+            {cta.label}
+          </a>
+        ) : null}
       </div>
     </nav>
   );

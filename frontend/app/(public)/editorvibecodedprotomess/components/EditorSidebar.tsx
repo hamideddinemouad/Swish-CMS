@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { PageSummary } from "./types";
 
 type EditorSidebarProps = {
@@ -53,11 +54,11 @@ export function EditorSidebar({
               const componentCount = page.components?.length ?? 0;
 
               return (
-                <button
+                <Link
                   key={pageName}
-                  type="button"
+                  href={`/editor/${encodeURIComponent(pageName)}`}
                   onClick={() => onSelectPage(pageName)}
-                  className={`w-full rounded-[22px] border p-4 text-left transition ${
+                  className={`block w-full rounded-[22px] border p-4 text-left transition ${
                     isSelected
                       ? "border-[var(--color-wix-blue)] bg-[color:rgb(56_153_236_/_0.08)] shadow-[0_10px_30px_rgb(56_153_236_/_0.08)]"
                       : "border-[color:rgb(146_146_146_/_0.16)] bg-white hover:border-[color:rgb(56_153_236_/_0.18)] hover:bg-[color:rgb(56_153_236_/_0.04)]"
@@ -76,7 +77,7 @@ export function EditorSidebar({
                       {componentCount} blocks
                     </span>
                   </div>
-                </button>
+                </Link>
               );
             })
           )}

@@ -1,9 +1,9 @@
 import axios from "axios";
-import dynamic from "next/dynamic";
 import { headers } from "next/headers";
 import { env } from "@/lib/env";
 import type { FAQData } from "@/visualizer/demo/FAQ/data";
 import type { FAQPreferences } from "@/visualizer/demo/FAQ/preference";
+import RenderBlockFaq from "./components/RenderBlockFaq";
 
 type PageResponse = {
   slug: string;
@@ -16,11 +16,6 @@ type PageResponse = {
   preference: FAQPreferences;
 };
 
-const components = {
-  hero: dynamic(() => import("./components/Hero")),
-  faq: dynamic(() => import("./components/FaqList")),
-  supportLinks: dynamic(() => import("./components/SupportLinks")),
-};
 
 type BlockKey = keyof FAQData;
 
@@ -42,40 +37,21 @@ export default async function Faq() {
 
   return (
     <main>
-      {contentComponents.map((component) => {
+      {contentComponents.map((component, index) => {
         if (!component.enabled) {
           return null;
         }
 
-        return renderBlock(
-          component.type as BlockKey,
-          response.data.data,
-          response.data.preference,
+        return (
+          <RenderBlockFaq
+            key={`${component.type}-${component.variant ?? "default"}-${index}`}
+            blockKey={component.type as BlockKey}
+            data={response.data.data}
+            preferences={response.data.preference}
+          />
         );
       })}
     </main>
   );
 }
 
-function renderBlock(
-  blockKey: BlockKey,
-  data: FAQData,
-  preferences: FAQPreferences,
-) {
-  switch (blockKey) {
-    case "hero": {
-      const HeroBlock = components.hero;
-      return <HeroBlock key={blockKey} {...data.hero} preferences={preferences} />;
-    }
-    case "faq": {
-      const FaqBlock = components.faq;
-      return <FaqBlock key={blockKey} {...data.faq} />;
-    }
-    case "supportLinks": {
-      const SupportLinksBlock = components.supportLinks;
-      return <SupportLinksBlock key={blockKey} {...data.supportLinks} />;
-    }
-    default:
-      return null;
-  }
-}
