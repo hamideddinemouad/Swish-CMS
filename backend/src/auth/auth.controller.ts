@@ -24,7 +24,12 @@ export class AuthController {
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
-
+  @UseGuards(AccessGuard)
+  @Get('greeting')
+  async greet(@SetAccessPayload() payload: AccessPayload){
+    return this.authService.greet(payload);
+  }
+  
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);

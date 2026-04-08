@@ -15,12 +15,12 @@ export default function PublicLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
     <StorProvider>
-    <Header />
-    <div className={styles.wrapper}> {children}</div>
-    <Footer />
+      <div className={styles.wrapper}>
+        <Header />
+        <main className={styles.content}>{children}</main>
+        <Footer />
+      </div>
     </StorProvider>
-    </>
   );
 }

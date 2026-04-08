@@ -10,7 +10,8 @@ import { AuthModule } from './auth/auth.module';
 import { ComponentsModule } from './components/components.module';
 import { SetupModule } from './setup/setup.module';
 import { HttpLoggerMiddleware } from './common/middleware/http-logger.middleware';
-
+//composant recuperer la liste de tout les utilisasteurs dans la base de donne
+//consomation 
 @Module({
   imports: [
     TypeOrmModule.forRoot({

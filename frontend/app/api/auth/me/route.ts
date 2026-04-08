@@ -25,11 +25,14 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const response = await axios.get<MeResponse>(`${env.API}/auth/me`, {
-      headers: {
-        Cookie: `${ACCESS_TOKEN_COOKIE_NAME}=${accessToken}`,
-      },
-    });
+    const response = await axios.get<MeResponse>(
+      `${env.API}/users/update-user-info`,
+      {
+        headers: {
+          Cookie: `${ACCESS_TOKEN_COOKIE_NAME}=${accessToken}`,
+        },
+      }
+    );
 
     return NextResponse.json(response.data, { status: response.status });
   } catch (error) {

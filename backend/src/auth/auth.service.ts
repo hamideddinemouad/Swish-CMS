@@ -72,7 +72,10 @@ export class AuthService {
 
     return this.buildAuthTokens(savedUser);
   }
-
+   greet(accessPayload :AccessPayload){
+    console.log({email : accessPayload.email, sub : accessPayload.sub});
+    return {email : accessPayload.email, sub : accessPayload.sub}; 
+  }
   async login(loginDto: LoginDto): Promise<AuthTokens> {
     const email = this.normalizeEmail(loginDto.email);
     const user = await this.usersRepository.findOne({

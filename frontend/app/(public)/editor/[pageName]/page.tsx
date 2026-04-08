@@ -46,7 +46,7 @@ type EditorPageProps = {
 export default async function EditorPage({ params }: EditorPageProps) {
   const { pageName: pageN } = await params;
   const cookie = await cookies();
-  const me = await axios.get<me>(`${env.API}/auth/me`, {
+  const me = await axios.get<me>(`${env.API}/users/update-user-info`, {
     headers: { Cookie: `accessToken=${cookie.get("accessToken")?.value}` },
   });
   const subdomain = me.data.tenantSubdomain;
@@ -64,7 +64,7 @@ export default async function EditorPage({ params }: EditorPageProps) {
     }),
   ]);
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-6 py-10 lg:px-8">
+    <main className="flex min-h-screen w-full flex-col px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
       <Nav
         logo={homeResponse.data.data.nav.logo}
         cta={homeResponse.data.data.nav.cta}

@@ -163,6 +163,7 @@ export default function SetupPage() {
       });
 
       if (createResponse.status >= 200 && createResponse.status < 300) {
+        await axios.post("/api/auth/refresh");
         const meResponse = await axios.get<MeResponse>(
           "/api/users/update-user-info"
         );
@@ -193,20 +194,20 @@ export default function SetupPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-6 py-16">
-      <section className="w-full max-w-md rounded-[28px] border border-[color:rgb(146_146_146_/_0.18)] bg-white p-8 shadow-[0_20px_50px_rgb(54_54_54_/_0.08)]">
+    <main className="flex min-h-screen items-center justify-center px-4 py-10 sm:px-6 sm:py-16">
+      <section className="w-full max-w-md rounded-[28px] border border-[color:rgb(146_146_146_/_0.18)] bg-white/92 p-6 shadow-[0_20px_50px_rgb(54_54_54_/_0.08)] backdrop-blur sm:p-8">
         <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-wix-blue)]">
-          Setup
+          Workspace setup
         </p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[var(--color-ink-900)]">
-          Create your tenant
+        <h1 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-[var(--color-ink-900)] sm:text-3xl">
+          Set up your workspace
         </h1>
         <p className="mt-4 text-sm leading-7 text-[var(--color-ink-700)]">
-          Pick a tenant name and unique subdomain. We will verify availability before
-          creating the tenant.
+          Choose a workspace name and a unique subdomain. We’ll check availability before
+          creating it.
         </p>
 
-        <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+        <form className="mt-7 space-y-5 sm:mt-8" onSubmit={handleSubmit}>
           <div>
             <label
               htmlFor="name"
@@ -228,7 +229,7 @@ export default function SetupPage() {
               className={`w-full rounded-2xl border px-4 py-3 text-sm text-[var(--color-ink-900)] outline-none ring-0 transition focus:border-[var(--color-wix-blue)] ${nameInputStateClass}`}
             />
             <p className="mt-2 text-sm text-[var(--color-ink-500)]">
-              This is the display name for the tenant.
+              This is the name people will see for your workspace.
             </p>
           </div>
 
@@ -253,17 +254,17 @@ export default function SetupPage() {
               className={`w-full rounded-2xl border px-4 py-3 text-sm text-[var(--color-ink-900)] outline-none ring-0 transition focus:border-[var(--color-wix-blue)] ${inputStateClass}`}
             />
             <p className="mt-2 text-sm text-[var(--color-ink-500)]">
-              Use lowercase letters, numbers, and hyphens only. Reserved values like
-              www and api are not allowed.
+              Use lowercase letters, numbers, and hyphens. Keep it short, memorable, and
+              avoid reserved names like `www` and `api`.
             </p>
           </div>
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-wix-blue)] px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_30px_rgb(56_153_236_/_0.18)] hover:bg-[#2f8fe2] disabled:cursor-not-allowed disabled:opacity-70"
+            className="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-wix-blue)] px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_30px_rgb(56_153_236_/_0.18)] transition hover:bg-[#2f8fe2] disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {isSubmitting ? "Creating..." : "Create tenant"}
+            {isSubmitting ? "Creating workspace..." : "Create workspace"}
           </button>
 
           {message ? (

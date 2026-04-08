@@ -16,6 +16,7 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(AccessGuard)
   findAll() {
     return this.usersService.findAll();
   }

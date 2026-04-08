@@ -1,1 +1,17 @@
+.wrapper {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(56, 153, 236, 0.12), transparent 34%),
+    linear-gradient(180deg, #f8fbff 0%, #f4f7fb 48%, #eef3f9 100%);
+  color: var(--color-ink-900);
+}
 
+.content {
+  padding: 1.5rem 0 2rem;
+}
+
+@media (min-width: 640px) {
+  .content {
+    padding: 2rem 0 2.5rem;
+  }
+}
