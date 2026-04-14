@@ -6,8 +6,7 @@
     "dev": "next dev -p 4000",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "cypress:open": "cypress open"
+    "lint": "eslint"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
@@ -24,7 +23,6 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "cypress": "^15.10.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
