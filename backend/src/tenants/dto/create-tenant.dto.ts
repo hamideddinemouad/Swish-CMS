@@ -1,4 +1,13 @@
-import { IsObject, IsString, IsUUID, Matches, MinLength } from 'class-validator';
+import {
+  IsIn,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Matches,
+  MinLength,
+} from 'class-validator';
+import { SETUP_TEMPLATE_IDS, type SetupTemplateId } from '../../setup/template-catalog';
 
 export class CreateTenantDto {
   @IsString()
@@ -15,4 +24,9 @@ export class CreateTenantDto {
 
   @IsObject()
   settings: Record<string, unknown>;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(SETUP_TEMPLATE_IDS)
+  templateId?: SetupTemplateId;
 }

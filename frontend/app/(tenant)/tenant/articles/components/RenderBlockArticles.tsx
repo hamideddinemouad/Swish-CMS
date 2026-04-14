@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import type { ArticlesData } from "@/visualizer/demo/articles/data";
 import type { ArticlesPreferences } from "@/visualizer/demo/articles/preference";
+import PageSectionFrame from "../../components/PageSectionFrame";
 
 const components = {
   hero: dynamic(() => import("./Hero")),
@@ -33,32 +34,54 @@ export default function RenderBlockArticles({
     case "featuredArticles": {
       const FeaturedArticlesBlock = components.featuredArticles;
       return (
-        <FeaturedArticlesBlock
-          key={blockKey}
-          {...data.featuredArticles}
-          preferences={preferences}
-        />
+        <PageSectionFrame>
+          <FeaturedArticlesBlock
+            key={blockKey}
+            {...data.featuredArticles}
+            preferences={preferences}
+          />
+        </PageSectionFrame>
       );
     }
     case "editorialSeries": {
       const EditorialSeriesBlock = components.editorialSeries;
-      return <EditorialSeriesBlock key={blockKey} {...data.editorialSeries} />;
+      return (
+        <PageSectionFrame>
+          <EditorialSeriesBlock key={blockKey} {...data.editorialSeries} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     case "categories": {
       const CategoriesBlock = components.categories;
-      return <CategoriesBlock key={blockKey} {...data.categories} />;
+      return (
+        <PageSectionFrame>
+          <CategoriesBlock key={blockKey} {...data.categories} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     case "trending": {
       const TrendingBlock = components.trending;
-      return <TrendingBlock key={blockKey} {...data.trending} />;
+      return (
+        <PageSectionFrame>
+          <TrendingBlock key={blockKey} {...data.trending} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     case "authors": {
       const AuthorsBlock = components.authors;
-      return <AuthorsBlock key={blockKey} {...data.authors} />;
+      return (
+        <PageSectionFrame>
+          <AuthorsBlock key={blockKey} {...data.authors} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     case "newsletter": {
       const NewsletterBlock = components.newsletter;
-      return <NewsletterBlock key={blockKey} {...data.newsletter} />;
+      return (
+        <PageSectionFrame>
+          <NewsletterBlock key={blockKey} {...data.newsletter} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     default:
       return null;

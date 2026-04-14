@@ -1,5 +1,4 @@
 "use client"
-import Link from "next/link";
 
 export default function NotFound() {
   return (
@@ -17,15 +16,6 @@ export default function NotFound() {
             was never published. Use one of the shortcuts below to get back
             into the CMS.
           </p>
-
-          <div className="mt-8 flex flex-wrap gap-4">
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center rounded-2xl bg-[var(--color-wix-blue)] px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_30px_rgb(56_153_236_/_0.18)] hover:bg-[#2f8fe2]"
-            >
-              Back home
-            </Link>
-          </div>
         </div>
 
         <div className="flex items-center justify-center rounded-[28px] bg-[linear-gradient(135deg,rgb(56_153_236_/_0.1),rgb(255_194_51_/_0.18))] px-6 py-12">

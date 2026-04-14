@@ -2,6 +2,7 @@
 import type { FAQData } from "@/visualizer/demo/FAQ/data";
 import type { FAQPreferences } from "@/visualizer/demo/FAQ/preference";
 import dynamic from "next/dynamic";
+import PageSectionFrame from "../../components/PageSectionFrame";
 const components = {
   hero: dynamic(() => import("./Hero")),
   faq: dynamic(() => import("./FaqList")),
@@ -20,11 +21,19 @@ export default function RenderBlockFaq(
     }
     case "faq": {
       const FaqBlock = components.faq;
-      return <FaqBlock key={blockKey} {...data.faq} />;
+      return (
+        <PageSectionFrame>
+          <FaqBlock key={blockKey} {...data.faq} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     case "supportLinks": {
       const SupportLinksBlock = components.supportLinks;
-      return <SupportLinksBlock key={blockKey} {...data.supportLinks} />;
+      return (
+        <PageSectionFrame>
+          <SupportLinksBlock key={blockKey} {...data.supportLinks} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     default:
       return null;

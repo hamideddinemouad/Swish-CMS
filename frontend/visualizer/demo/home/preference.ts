@@ -1,3 +1,5 @@
+import type { HomeDesignPreferences } from "@/lib/home-design-presets";
+
 export type HomePreferences = {
   theme: {
     colorScheme: {
@@ -65,6 +67,7 @@ export type HomePreferences = {
     subtitle: string;
     ctaGroup: string;
   };
+  homeDesign?: HomeDesignPreferences;
   footer: {
     wrapper: string;
     text: string;

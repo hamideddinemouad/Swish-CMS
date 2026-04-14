@@ -1,6 +1,6 @@
-import axios from "axios";
 import { headers } from "next/headers";
-import { env } from "@/lib/env";
+import { resolvePageCanvasClass } from "@/lib/page-design-presets";
+import { fetchTenantPage } from "@/lib/tenant-pages";
 import type { ArticlesData } from "@/visualizer/demo/articles/data";
 import type { ArticlesPreferences } from "@/visualizer/demo/articles/preference";
 import RenderBlockArticles from "./components/RenderBlockArticles";
@@ -21,19 +21,20 @@ export default async function Articles() {
   const subdomain = requestHeaders.get("x-subdomain");
   const pageName = "articles";
 
-  if (!subdomain) {
-    return <div>Missing tenant context</div>;
-  }
-
-  const response = await axios.get<PageResponse>(
-    `${env.API}/pages/${subdomain}/${pageName}`
+  const page = await fetchTenantPage<PageResponse>(subdomain, pageName);
+  const contentComponents = page.components.filter(
+    (component) =>
+      component.type !== "nav" &&
+      component.type !== "footer" &&
+      component.type !== "newsletter",
   );
-  const contentComponents = response.data.components.filter(
-    (component) => component.type !== "nav" && component.type !== "footer",
+  const canvasClass = resolvePageCanvasClass(
+    page.preference,
+    contentComponents[0]?.type ?? "hero",
   );
 
   return (
-    <main>
+    <main className={canvasClass}>
       {contentComponents.map((component, index) => {
         if (!component.enabled) {
           return null;
@@ -43,8 +44,8 @@ export default async function Articles() {
           <RenderBlockArticles
             key={`${component.type}-${component.variant ?? "default"}-${index}`}
             blockKey={component.type as keyof ArticlesData}
-            data={response.data.data}
-            preferences={response.data.preference}
+            data={page.data}
+            preferences={page.preference}
           />
         );
       })}

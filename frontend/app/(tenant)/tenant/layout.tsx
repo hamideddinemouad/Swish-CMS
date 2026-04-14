@@ -1,6 +1,8 @@
 import axios from "axios";
 import { headers } from "next/headers";
+import { notFound } from "next/navigation";
 import { env } from "@/lib/env";
+import { isAxiosNotFound } from "@/lib/tenant-pages";
 import Footer from "./components/Footer";
 import Nav from "./components/Nav";
 import type { HomeData } from "@/visualizer/demo/home/data";
@@ -31,7 +33,7 @@ export default async function TenantLayout({
   const subdomain = requestHeaders.get("x-subdomain");
 
   if (!subdomain) {
-    return <div className="min-h-screen">{children}</div>;
+    notFound();
   }
 
   try {
@@ -59,7 +61,11 @@ export default async function TenantLayout({
         />
       </div>
     );
-  } catch {
-    return <div className="min-h-screen">{children}</div>;
+  } catch (error) {
+    if (isAxiosNotFound(error)) {
+      notFound();
+    }
+
+    throw error;
   }
 }

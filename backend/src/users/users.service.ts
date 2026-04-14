@@ -19,6 +19,7 @@ type UserInfo = {
   email: string;
   tenantId: string | null;
   tenantSubdomain: string | null;
+  tenantTemplateId: string | null;
 };
 
 @Injectable()
@@ -133,6 +134,10 @@ export class UsersService {
       email: user.email,
       tenantId: user.tenant?.id ?? null,
       tenantSubdomain: user.tenant?.subdomain ?? null,
+      tenantTemplateId:
+        typeof user.tenant?.settings?.templateId === 'string'
+          ? user.tenant.settings.templateId
+          : null,
     };
   }
 

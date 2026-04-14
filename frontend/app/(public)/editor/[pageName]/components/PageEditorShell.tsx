@@ -114,9 +114,9 @@ export default function PageEditorShell({ pageName, initialConfig }: PageEditorS
                     onChange={updateAtPath}
                     onFocus={focusSection}
                     onBlur={saveContent}
-                  />
-                </FieldGroup>
-              );
+                />
+              </FieldGroup>
+            );
             })}
           </div>
         </aside>

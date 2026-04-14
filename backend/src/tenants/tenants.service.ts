@@ -5,6 +5,7 @@ import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 import { Tenant } from './entities/tenant.entity';
 import { SetupService } from '../setup/setup.service';
+import { DEFAULT_SETUP_TEMPLATE_ID } from '../setup/template-catalog';
 
 const SUBDOMAIN_REGEX = /^[a-z0-9-]+$/;
 const RESERVED_SUBDOMAINS = new Set([
@@ -54,12 +55,18 @@ export class TenantsService {
     const tenant = this.tenantsRepository.create({
       subdomain,
       name,
-      settings: createTenantDto.settings ?? {},
+      settings: {
+        ...(createTenantDto.settings ?? {}),
+        templateId: createTenantDto.templateId ?? DEFAULT_SETUP_TEMPLATE_ID,
+      },
       userId: createTenantDto.userId,
     });
 
     const savedTenant = await this.tenantsRepository.save(tenant);
-    await this.setupService.setup(savedTenant.id);
+    await this.setupService.setup(
+      savedTenant.id,
+      createTenantDto.templateId ?? DEFAULT_SETUP_TEMPLATE_ID,
+    );
 
     return savedTenant;
   }

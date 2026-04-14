@@ -1,16 +1,27 @@
 import type { ArticlesData } from "@/visualizer/demo/articles/data";
+import { preferences as defaultPreferences } from "@/visualizer/demo/articles/preference";
+import {
+  resolvePageComponentDesign,
+  resolvePageComponentPreferences,
+} from "@/lib/page-design-presets";
+import type { ArticlesPreferences } from "@/visualizer/demo/articles/preference";
 
-export type NewsletterProps = ArticlesData["newsletter"];
+export type NewsletterProps = ArticlesData["newsletter"] & {
+  preferences?: ArticlesPreferences;
+};
 
-export default function Newsletter({ heading, body, ctaText, ctaLink }: NewsletterProps) {
+export default function Newsletter({ heading, body, ctaText, ctaLink, preferences }: NewsletterProps) {
+  const rawPreferences = preferences ?? defaultPreferences;
+  const tokens = resolvePageComponentPreferences(rawPreferences, "newsletter");
+  const design = resolvePageComponentDesign(rawPreferences, "newsletter");
   return (
-    <section className="space-y-4 rounded-3xl border border-emerald-500 bg-gradient-to-r from-slate-900 to-slate-950 px-6 py-8 shadow-2xl">
-      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-400">Newsletter</p>
-      <h2 className="text-3xl font-semibold text-white">{heading}</h2>
-      <p className="text-sm text-slate-300">{body}</p>
+    <section className={`space-y-4 ${design.color.newsletterShellClass}`}>
+      <p className={`text-xs font-semibold uppercase tracking-[0.3em] ${design.color.accentClass}`}>Newsletter</p>
+      <h2 className={`${tokens.typography.headingSizes.h2} font-semibold ${tokens.theme.text.primary}`} style={{ fontFamily: design.headingFont.fontFamily }}>{heading}</h2>
+      <p className={`${tokens.typography.smallSize} ${tokens.theme.text.secondary}`} style={{ fontFamily: design.bodyFont.fontFamily }}>{body}</p>
       <a
         href={ctaLink}
-        className="inline-flex items-center justify-center rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg hover:bg-emerald-400"
+        className={design.color.newsletterButtonClass}
       >
         {ctaText}
       </a>

@@ -1,7 +1,6 @@
 "use client";
 
 import axios from "axios";
-import Link from "next/link";
 import { setUser, type User } from "@/redux/slices/userSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import {
@@ -120,20 +119,12 @@ export function LoginForm() {
       </div>
 
       <div>
-        <div className="mb-2 flex items-center justify-between gap-4">
-          <label
-            htmlFor="password"
-            className="block text-sm font-semibold text-[var(--color-ink-900)]"
-          >
-            Password
-          </label>
-          <Link
-            href="/register"
-            className="text-sm font-medium text-[var(--color-wix-blue)] hover:text-[#2f8fe2]"
-          >
-            Forgot password?
-          </Link>
-        </div>
+        <label
+          htmlFor="password"
+          className="mb-2 block text-sm font-semibold text-[var(--color-ink-900)]"
+        >
+          Password
+        </label>
         <input
           id="password"
           name="password"
@@ -144,15 +135,6 @@ export function LoginForm() {
           required
         />
       </div>
-
-      <label className="flex items-center gap-3 text-sm text-[var(--color-ink-700)]">
-        <input
-          type="checkbox"
-          name="remember"
-          className="h-4 w-4 rounded border-[color:rgb(146_146_146_/_0.4)] text-[var(--color-wix-blue)] focus:ring-[var(--color-wix-blue)]"
-        />
-        Remember me
-      </label>
 
       <button
         type="submit"

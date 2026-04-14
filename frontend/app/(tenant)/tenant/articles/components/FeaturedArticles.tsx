@@ -1,4 +1,8 @@
 import { preferences as defaultPreferences } from "@/visualizer/demo/articles/preference";
+import {
+  resolvePageComponentDesign,
+  resolvePageComponentPreferences,
+} from "@/lib/page-design-presets";
 import type { ArticlesData } from "@/visualizer/demo/articles/data";
 import type { ArticlesPreferences } from "@/visualizer/demo/articles/preference";
 
@@ -7,30 +11,32 @@ export type FeaturedArticlesProps = ArticlesData["featuredArticles"] & {
 };
 
 export default function FeaturedArticles({ title, subtitle, articles, preferences }: FeaturedArticlesProps) {
-  const tokens = preferences ?? defaultPreferences;
+  const rawPreferences = preferences ?? defaultPreferences;
+  const tokens = resolvePageComponentPreferences(rawPreferences, "featuredArticles");
+  const design = resolvePageComponentDesign(rawPreferences, "featuredArticles");
 
   return (
     <section className="space-y-6 py-6">
       <div className="space-y-1">
-        <p className="text-xs font-semibold uppercase tracking-[0.4em] text-emerald-400">Featured</p>
-        <h2 className="text-3xl font-semibold text-white">{title}</h2>
-        <p className="text-sm text-slate-300">{subtitle}</p>
+        <p className={`text-xs font-semibold uppercase tracking-[0.4em] ${design.color.accentClass}`}>Featured</p>
+        <h2 className={`${tokens.typography.headingSizes.h2} font-semibold ${tokens.theme.text.primary}`} style={{ fontFamily: design.headingFont.fontFamily }}>{title}</h2>
+        <p className={`${tokens.typography.smallSize} ${tokens.theme.text.secondary}`} style={{ fontFamily: design.bodyFont.fontFamily }}>{subtitle}</p>
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {articles.map((article) => (
           <article
             key={article.slug}
-            className={`${tokens.cards.base} space-y-4 border border-slate-800 bg-slate-900/60 shadow-2xl`}
+            className={`${tokens.cards.base} space-y-4`}
           >
             <div className="aspect-[4/3] overflow-hidden rounded-2xl">
               <img src={article.image} alt={article.title} className="h-full w-full object-cover" />
             </div>
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-400">{article.tag}</p>
-            <a href={article.slug} className="text-xl font-semibold text-white hover:text-emerald-300">
+            <p className={`text-xs font-semibold uppercase tracking-[0.3em] ${design.color.accentClass}`}>{article.tag}</p>
+            <p className={`text-xl font-semibold ${tokens.theme.text.primary}`} style={{ fontFamily: design.headingFont.fontFamily }}>
               {article.title}
-            </a>
-            <p className="text-sm text-slate-300">{article.summary}</p>
-            <p className="text-xs uppercase tracking-[0.3em] text-slate-500">{article.readingTime}</p>
+            </p>
+            <p className={`${tokens.typography.smallSize} ${tokens.theme.text.secondary}`} style={{ fontFamily: design.bodyFont.fontFamily }}>{article.summary}</p>
+            <p className={`text-xs uppercase tracking-[0.3em] ${design.color.mutedClass}`}>{article.readingTime}</p>
           </article>
         ))}
       </div>

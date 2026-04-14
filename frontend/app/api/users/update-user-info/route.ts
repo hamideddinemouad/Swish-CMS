@@ -9,6 +9,7 @@ type UpdateUserInfoResponse = {
   email: string;
   tenantId: string | null;
   tenantSubdomain: string | null;
+  tenantTemplateId: string | null;
 };
 
 const ACCESS_TOKEN_COOKIE_NAME = "accessToken";

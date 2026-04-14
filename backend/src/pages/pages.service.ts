@@ -151,6 +151,44 @@ export class PagesService {
     return this.pagesRepository.save(page);
   }
 
+  async removeComponent(
+    tenantId: string,
+    pageName: string,
+    componentType: string,
+  ): Promise<Page> {
+    const page = await this.pagesRepository.findOne({
+      where: {
+        tenantId,
+        slug: pageName,
+      },
+    });
+
+    if (!page) {
+      throw new NotFoundException(
+        `Page ${pageName} not found for tenant ${tenantId}`,
+      );
+    }
+
+    const components = Array.isArray(page.components) ? [...page.components] : [];
+    const nextComponents = components.filter((component) => {
+      if (!isComponentDefinition(component)) {
+        return true;
+      }
+
+      return component.type !== componentType;
+    });
+
+    if (nextComponents.length === components.length) {
+      throw new NotFoundException(
+        `Component ${componentType} not found on page ${pageName}`,
+      );
+    }
+
+    page.components = nextComponents;
+
+    return this.pagesRepository.save(page);
+  }
+
   async removeByTenantAndPageName(
     tenantId: string,
     pageName: string,

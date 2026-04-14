@@ -27,6 +27,15 @@ export class UsersController {
     return this.usersService.updateUserInfo(payload.sub);
   }
 
+  @Patch('update-user-info')
+  @UseGuards(AccessGuard)
+  updateCurrentUser(
+    @SetAccessPayload() payload: AccessPayload,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.usersService.update(payload.sub, updateUserDto);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);

@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import type { AboutData } from "@/visualizer/demo/about/data";
 import type { AboutPreferences } from "@/visualizer/demo/about/preference";
+import PageSectionFrame from "../../components/PageSectionFrame";
 
 const components = {
   hero: dynamic(() => import("./Hero")),
@@ -32,32 +33,54 @@ export default function RenderBlockAbout({
     }
     case "mission": {
       const MissionBlock = components.mission;
-      return <MissionBlock key={blockKey} {...data.mission} preferences={preferences} />;
+      return (
+        <PageSectionFrame>
+          <MissionBlock key={blockKey} {...data.mission} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     case "values": {
       const ValuesBlock = components.values;
-      return <ValuesBlock key={blockKey} {...data.values} preferences={preferences} />;
+      return (
+        <PageSectionFrame>
+          <ValuesBlock key={blockKey} {...data.values} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     case "timeline": {
       const TimelineBlock = components.timeline;
-      return <TimelineBlock key={blockKey} {...data.timeline} preferences={preferences} />;
+      return (
+        <PageSectionFrame>
+          <TimelineBlock key={blockKey} {...data.timeline} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     case "team": {
       const TeamBlock = components.team;
-      return <TeamBlock key={blockKey} {...data.team} preferences={preferences} />;
+      return (
+        <PageSectionFrame>
+          <TeamBlock key={blockKey} {...data.team} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     case "stats": {
       const StatsBlock = components.stats;
-      return <StatsBlock key={blockKey} {...data.stats} preferences={preferences} />;
+      return (
+        <PageSectionFrame>
+          <StatsBlock key={blockKey} {...data.stats} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     case "testimonials": {
       const TestimonialsBlock = components.testimonials;
       return (
-        <TestimonialsBlock
-          key={blockKey}
-          {...data.testimonials}
-          preferences={preferences}
-        />
+        <PageSectionFrame>
+          <TestimonialsBlock
+            key={blockKey}
+            {...data.testimonials}
+            preferences={preferences}
+          />
+        </PageSectionFrame>
       );
     }
     default:

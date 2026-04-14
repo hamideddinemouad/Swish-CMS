@@ -115,6 +115,20 @@ export class PagesController {
     );
   }
 
+  @Delete(':pageName/components/:componentType')
+  @UseGuards(AccessGuard)
+  removeComponent(
+    @Param('pageName') pageName: string,
+    @Param('componentType') componentType: string,
+    @SetAccessPayload() accessPayload: AccessPayload,
+  ) {
+    return this.pagesService.removeComponent(
+      accessPayload.tenantId,
+      pageName,
+      componentType,
+    );
+  }
+
   @Delete('by-name/:pageName')
   @UseGuards(AccessGuard)
   removeByPageName(

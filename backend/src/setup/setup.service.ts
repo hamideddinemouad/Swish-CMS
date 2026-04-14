@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Component } from '../components/entities/component.entity';
 import { Page } from '../pages/entities/page.entity';
-import { DEFAULT_PAGE_SEEDS } from './default-page-seeds';
+import {
+  DEFAULT_SETUP_TEMPLATE_ID,
+  type SetupTemplateId,
+} from './template-catalog';
+import { getTemplateSeeds } from './templates';
 
 type SeededPage = {
   id: string;
@@ -19,14 +23,15 @@ export class SetupService {
     private readonly componentsRepository: Repository<Component>,
   ) {}
 
-  async setup(tenantId: string) {
+  async setup(tenantId: string, templateId: SetupTemplateId = DEFAULT_SETUP_TEMPLATE_ID) {
     try {
-      const pages = await this.seedPages(tenantId);
-      const components = await this.seedComponents(pages);
+      const pages = await this.seedPages(tenantId, templateId);
+      const components = await this.seedComponents(pages, templateId);
 
       return {
         status: 'ok',
         tenantId,
+        templateId,
         pagesCreated: pages.length,
         componentsCreated: components.length,
       };
@@ -41,8 +46,13 @@ export class SetupService {
     }
   }
 
-  private async seedPages(tenantId: string): Promise<SeededPage[]> {
-    const pageEntities = DEFAULT_PAGE_SEEDS.map((definition) =>
+  private async seedPages(
+    tenantId: string,
+    templateId: SetupTemplateId,
+  ): Promise<SeededPage[]> {
+    const templateSeeds = getTemplateSeeds(templateId);
+
+    const pageEntities = templateSeeds.map((definition) =>
       this.pagesRepository.create({
         tenantId,
         slug: definition.slug,
@@ -54,10 +64,11 @@ export class SetupService {
     return this.pagesRepository.save(pageEntities);
   }
 
-  private async seedComponents(pages: SeededPage[]) {
+  private async seedComponents(pages: SeededPage[], templateId: SetupTemplateId) {
     const pagesBySlug = new Map(pages.map((page) => [page.slug, page]));
+    const templateSeeds = getTemplateSeeds(templateId);
 
-    const components = DEFAULT_PAGE_SEEDS.map((definition) => {
+    const components = templateSeeds.map((definition) => {
       const page = pagesBySlug.get(definition.slug);
 
       if (!page?.id) {

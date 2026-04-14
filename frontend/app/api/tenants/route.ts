@@ -1,12 +1,14 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 import { env } from "@/lib/env";
+import type { SetupTemplateId } from "@/lib/setup-templates";
 
 type CreateTenantBody = {
   subdomain?: string;
   name?: string;
   userId?: string;
   settings?: Record<string, unknown>;
+  templateId?: SetupTemplateId;
 };
 
 const ACCESS_TOKEN_COOKIE_NAME = "accessToken";
@@ -21,7 +23,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { subdomain, name, userId, settings }: CreateTenantBody =
+  const { subdomain, name, userId, settings, templateId }: CreateTenantBody =
     await req.json();
 
   if (!subdomain || !name || !userId || !settings) {
@@ -37,6 +39,7 @@ export async function POST(req: NextRequest) {
       name,
       userId,
       settings,
+      templateId,
     }, {
       headers: {
         Cookie: `${ACCESS_TOKEN_COOKIE_NAME}=${accessToken}`,

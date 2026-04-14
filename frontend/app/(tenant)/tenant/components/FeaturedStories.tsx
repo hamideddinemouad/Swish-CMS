@@ -1,4 +1,5 @@
 import { preferences as defaultPreferences } from "@/visualizer/demo/home/preference";
+import { resolveHomeSectionDesign } from "@/lib/home-design-presets";
 import type { HomeData } from "@/visualizer/demo/home/data";
 import type { HomePreferences } from "@/visualizer/demo/home/preference";
 
@@ -7,30 +8,50 @@ export type FeaturedStoriesProps = HomeData["featuredStories"] & {
 };
 
 export default function FeaturedStories({ title, posts, preferences }: FeaturedStoriesProps) {
-  const tokens = preferences ?? defaultPreferences;
+  const design = resolveHomeSectionDesign(preferences ?? defaultPreferences, "featuredStories");
 
   return (
-    <section className="space-y-6 py-8">
-      <div className="space-y-1">
-        <p className="text-xs font-semibold uppercase tracking-[0.4em] text-amber-300">Stories</p>
-        <h2 className="text-3xl font-semibold text-white">{title}</h2>
-      </div>
-      <div className="grid gap-6 md:grid-cols-2">
-        {posts.map((post) => (
-          <article key={post.slug} className={`${tokens.cards.base} border border-slate-800 bg-slate-900/70 shadow-2xl`}>
-            <div className="flex flex-col gap-4 lg:flex-row">
-              <img src={post.image} alt={post.title} className="h-40 w-full rounded-2xl object-cover lg:w-1/2" />
-              <div className="space-y-3">
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">{post.category}</p>
-                <a href={post.slug} className="text-xl font-semibold text-white hover:text-amber-300">
-                  {post.title}
-                </a>
-                <p className="text-sm text-slate-300">{post.summary}</p>
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">{post.readingTime}</p>
+    <section className="py-8">
+      <div className={`${design.color.sectionShellClass} space-y-6`}>
+        <div className="space-y-1">
+          <p className={`text-xs font-semibold uppercase tracking-[0.4em] ${design.color.sectionEyebrowClass}`}>
+            Stories
+          </p>
+          <h2
+            className={`${design.displaySize.sectionTitleClass} font-semibold ${design.color.sectionHeadingClass}`}
+            style={{ fontFamily: design.headingFont.fontFamily }}
+          >
+            {title}
+          </h2>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          {posts.map((post) => (
+            <article key={post.slug} className={design.color.cardBaseClass}>
+              <div className="flex flex-col gap-4 lg:flex-row">
+                <div className="flex w-full items-center justify-center overflow-hidden rounded-2xl bg-black/5 lg:w-1/2">
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="h-auto max-h-56 w-full object-contain"
+                  />
+                </div>
+                <div className="space-y-3">
+                  <p className={`text-xs uppercase tracking-[0.3em] ${design.color.mutedTextClass}`}>{post.category}</p>
+                  <p
+                    className={`text-xl font-semibold ${design.color.sectionHeadingClass}`}
+                    style={{ fontFamily: design.headingFont.fontFamily }}
+                  >
+                    {post.title}
+                  </p>
+                  <p className={`${design.bodySize.bodyClass} ${design.color.bodyTextClass}`} style={{ fontFamily: design.bodyFont.fontFamily }}>
+                    {post.summary}
+                  </p>
+                  <p className={`text-xs uppercase tracking-[0.3em] ${design.color.mutedTextClass}`}>{post.readingTime}</p>
+                </div>
               </div>
-            </div>
-          </article>
-        ))}
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );

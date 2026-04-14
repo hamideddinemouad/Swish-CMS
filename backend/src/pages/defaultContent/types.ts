@@ -78,6 +78,67 @@ export type DefaultPagePreferences = {
     subtitle: string;
     ctaGroup: string;
   };
+  pageDesign?: {
+    colorPreset?: string;
+    headingFontPreset?: string;
+    bodyFontPreset?: string;
+    displaySizePreset?: string;
+    bodySizePreset?: string;
+  };
+  componentDesign?: Record<
+    string,
+    {
+      colorPreset?: string;
+      headingFontPreset?: string;
+      bodyFontPreset?: string;
+      displaySizePreset?: string;
+      bodySizePreset?: string;
+    }
+  >;
+  homeDesign?: {
+    hero?: {
+      colorPreset?: string;
+      headingFontPreset?: string;
+      bodyFontPreset?: string;
+      displaySizePreset?: string;
+      bodySizePreset?: string;
+    };
+    featuredStories?: {
+      colorPreset?: string;
+      headingFontPreset?: string;
+      bodyFontPreset?: string;
+      displaySizePreset?: string;
+      bodySizePreset?: string;
+    };
+    offerings?: {
+      colorPreset?: string;
+      headingFontPreset?: string;
+      bodyFontPreset?: string;
+      displaySizePreset?: string;
+      bodySizePreset?: string;
+    };
+    testimonials?: {
+      colorPreset?: string;
+      headingFontPreset?: string;
+      bodyFontPreset?: string;
+      displaySizePreset?: string;
+      bodySizePreset?: string;
+    };
+    newsletter?: {
+      colorPreset?: string;
+      headingFontPreset?: string;
+      bodyFontPreset?: string;
+      displaySizePreset?: string;
+      bodySizePreset?: string;
+    };
+    footer?: {
+      colorPreset?: string;
+      headingFontPreset?: string;
+      bodyFontPreset?: string;
+      displaySizePreset?: string;
+      bodySizePreset?: string;
+    };
+  };
   footer: {
     wrapper: string;
     text: string;
@@ -91,4 +152,21 @@ export type DefaultPageSeed = {
   page: DefaultPageDefinition;
   data: DefaultPageData;
   preference: DefaultPagePreferences;
+};
+
+export const DEFAULT_PAGE_KEYS = [
+  'home',
+  'about',
+  'articles',
+  'categories',
+  'contact',
+  'faq',
+] as const;
+
+export type DefaultPageKey = (typeof DEFAULT_PAGE_KEYS)[number];
+
+export type DefaultPageTemplate = {
+  id: string;
+  label: string;
+  seeds: readonly DefaultPageSeed[];
 };

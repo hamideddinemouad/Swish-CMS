@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import type { HomeData } from "@/visualizer/demo/home/data";
 import type { HomePreferences } from "@/visualizer/demo/home/preference";
+import PageSectionFrame from "./PageSectionFrame";
 
 const components = {
   hero: dynamic(() => import("./Hero")),
@@ -31,30 +32,42 @@ export default function RenderBlockHome({
     case "featuredStories": {
       const FeaturedStoriesBlock = components.featuredStories;
       return (
-        <FeaturedStoriesBlock
-          key={blockKey}
-          {...data.featuredStories}
-          preferences={preferences}
-        />
+        <PageSectionFrame>
+          <FeaturedStoriesBlock
+            key={blockKey}
+            {...data.featuredStories}
+            preferences={preferences}
+          />
+        </PageSectionFrame>
       );
     }
     case "offerings": {
       const OfferingsBlock = components.offerings;
-      return <OfferingsBlock key={blockKey} {...data.offerings} />;
+      return (
+        <PageSectionFrame>
+          <OfferingsBlock key={blockKey} {...data.offerings} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     case "testimonials": {
       const TestimonialsBlock = components.testimonials;
       return (
-        <TestimonialsBlock
-          key={blockKey}
-          {...data.testimonials}
-          preferences={preferences}
-        />
+        <PageSectionFrame>
+          <TestimonialsBlock
+            key={blockKey}
+            {...data.testimonials}
+            preferences={preferences}
+          />
+        </PageSectionFrame>
       );
     }
     case "newsletter": {
       const NewsletterBlock = components.newsletter;
-      return <NewsletterBlock key={blockKey} {...data.newsletter} />;
+      return (
+        <PageSectionFrame>
+          <NewsletterBlock key={blockKey} {...data.newsletter} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     default:
       return null;

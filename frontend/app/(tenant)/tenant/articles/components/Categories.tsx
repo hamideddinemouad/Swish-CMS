@@ -1,23 +1,34 @@
 import type { ArticlesData } from "@/visualizer/demo/articles/data";
+import { preferences as defaultPreferences } from "@/visualizer/demo/articles/preference";
+import {
+  resolvePageComponentDesign,
+  resolvePageComponentPreferences,
+} from "@/lib/page-design-presets";
+import type { ArticlesPreferences } from "@/visualizer/demo/articles/preference";
 
-export type CategoriesProps = ArticlesData["categories"];
+export type CategoriesProps = ArticlesData["categories"] & {
+  preferences?: ArticlesPreferences;
+};
 
-export default function Categories({ title, items }: CategoriesProps) {
+export default function Categories({ title, items, preferences }: CategoriesProps) {
+  const rawPreferences = preferences ?? defaultPreferences;
+  const tokens = resolvePageComponentPreferences(rawPreferences, "categories");
+  const design = resolvePageComponentDesign(rawPreferences, "categories");
   return (
     <section className="space-y-6 py-6">
       <div className="space-y-1">
-        <p className="text-xs font-semibold uppercase tracking-[0.4em] text-emerald-300">Topics</p>
-        <h2 className="text-3xl font-semibold text-white">{title}</h2>
+        <p className={`text-xs font-semibold uppercase tracking-[0.4em] ${design.color.accentClass}`}>Topics</p>
+        <h2 className={`${tokens.typography.headingSizes.h2} font-semibold ${tokens.theme.text.primary}`} style={{ fontFamily: design.headingFont.fontFamily }}>{title}</h2>
       </div>
       <div className="grid gap-4 md:grid-cols-4">
         {items.map((item) => (
-          <a
+          <div
             key={item.slug}
-            href={item.slug}
-            className="rounded-2xl border border-slate-800 bg-slate-900/60 px-5 py-6 text-sm font-semibold uppercase tracking-[0.3em] text-white transition hover:border-emerald-400"
+            className={`${tokens.cards.compact} px-5 py-6 text-sm font-semibold uppercase tracking-[0.3em] ${tokens.theme.text.primary} transition ${design.color.linkAccentClass}`}
+            style={{ fontFamily: design.headingFont.fontFamily }}
           >
             {item.name}
-          </a>
+          </div>
         ))}
       </div>
     </section>

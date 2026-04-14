@@ -1,4 +1,8 @@
 import { preferences as defaultPreferences } from "@/visualizer/demo/articles/preference";
+import {
+  resolvePageComponentDesign,
+  resolvePageComponentPreferences,
+} from "@/lib/page-design-presets";
 import type { ArticlesData } from "@/visualizer/demo/articles/data";
 import type { ArticlesPreferences } from "@/visualizer/demo/articles/preference";
 
@@ -15,32 +19,31 @@ export default function Hero({
   image,
   preferences,
 }: HeroProps) {
-  const heroTheme = (preferences ?? defaultPreferences).hero;
+  const rawPreferences = preferences ?? defaultPreferences;
+  const tokens = resolvePageComponentPreferences(rawPreferences, "hero");
+  const heroTheme = tokens.hero;
+  const design = resolvePageComponentDesign(rawPreferences, "hero");
 
   return (
     <section className={`${heroTheme.wrapper} relative overflow-hidden`}>
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
         <div className="space-y-6 text-left">
-          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-emerald-400">{eyebrow}</p>
-          <h1 className={`text-4xl md:text-6xl ${heroTheme.title}`}>{title}</h1>
-          <p className={`${heroTheme.subtitle}`}>{subtitle}</p>
+          <p className={`text-xs font-semibold uppercase tracking-[0.4em] ${design.color.accentClass}`}>{eyebrow}</p>
+          <h1 className={heroTheme.title} style={{ fontFamily: design.headingFont.fontFamily }}>{title}</h1>
+          <p className={heroTheme.subtitle} style={{ fontFamily: design.bodyFont.fontFamily }}>{subtitle}</p>
           <div className={heroTheme.ctaGroup}>
-            <a
-              href={ctaPrimary}
-              className="inline-flex items-center justify-center rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg hover:bg-emerald-400"
-            >
+            <span className={tokens.buttons.primary}>
               Read latest
-            </a>
-            <a
-              href={ctaSecondary}
-              className="inline-flex items-center justify-center rounded-full border border-emerald-500 px-6 py-3 text-sm font-semibold text-white hover:border-emerald-400"
-            >
+            </span>
+            <span className={tokens.buttons.secondary}>
               Browse categories
-            </a>
+            </span>
           </div>
         </div>
         <div className="relative basis-1/2">
-          <img src={image} alt={title} className="rounded-[2rem] object-cover shadow-[0_40px_90px_rgba(2,6,23,0.6)]" />
+          <div className={design.color.imageFrameClass}>
+            <img src={image} alt={title} className={`rounded-[1.7rem] object-cover ${design.color.imageShadowClass}`} />
+          </div>
         </div>
       </div>
     </section>

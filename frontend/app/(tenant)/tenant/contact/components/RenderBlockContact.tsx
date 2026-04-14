@@ -1,5 +1,6 @@
 "use client"
 import dynamic from "next/dynamic";
+import PageSectionFrame from "../../components/PageSectionFrame";
 import type { ContactData } from "@/visualizer/demo/contact/data";
 import type { ContactPreferences } from "@/visualizer/demo/contact/preference";
 
@@ -36,19 +37,35 @@ export default function RenderBlockContact({
     }
     case "contactInfo": {
       const ContactInfoBlock = components.contactInfo;
-      return <ContactInfoBlock key={blockKey} {...data.contactInfo} />;
+      return (
+        <PageSectionFrame>
+          <ContactInfoBlock key={blockKey} {...data.contactInfo} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     case "locations": {
       const LocationsBlock = components.locations;
-      return <LocationsBlock key={blockKey} {...data.locations} />;
+      return (
+        <PageSectionFrame>
+          <LocationsBlock key={blockKey} {...data.locations} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     case "form": {
       const FormBlock = components.form;
-      return <FormBlock key={blockKey} {...data.form} preferences={preferences} />;
+      return (
+        <PageSectionFrame>
+          <FormBlock key={blockKey} {...data.form} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     case "faq": {
       const FaqBlock = components.faq;
-      return <FaqBlock key={blockKey} {...data.faq} />;
+      return (
+        <PageSectionFrame>
+          <FaqBlock key={blockKey} {...data.faq} preferences={preferences} />
+        </PageSectionFrame>
+      );
     }
     default:
       return null;

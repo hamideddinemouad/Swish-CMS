@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { preferences as defaultPreferences } from "@/visualizer/demo/home/preference";
 import type { HomeData } from "@/visualizer/demo/home/data";
 import type { HomePreferences } from "@/visualizer/demo/home/preference";
@@ -19,17 +18,20 @@ function buildPageHref(slug: string) {
 
 export default function Nav({ logo, pages, cta, preferences }: NavProps) {
   const tokens = preferences ?? defaultPreferences;
-  const style = {
-    backgroundColor: "rgba(15, 23, 42, 0.9)",
-  } satisfies CSSProperties;
 
   return (
-    <nav className={`sticky top-0 z-20 border-b ${tokens.navigation.wrapper}`} style={style}>
+    <nav className={`sticky top-0 z-20 ${tokens.navigation.wrapper}`}>
       <div className={tokens.navigation.inner}>
-        <span className="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">{logo}</span>
+        <span className={`text-sm font-semibold uppercase tracking-[0.3em] ${tokens.theme.colorScheme.accent}`}>
+          {logo}
+        </span>
         <div className="flex flex-1 items-center justify-center gap-4 text-sm font-medium">
           {pages.map((page) => (
-            <a key={page.slug} href={buildPageHref(page.slug)} className={tokens.navigation.link}>
+            <a
+              key={page.slug}
+              href={buildPageHref(page.slug)}
+              className={tokens.navigation.link}
+            >
               {page.title}
             </a>
           ))}

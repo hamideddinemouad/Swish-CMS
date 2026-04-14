@@ -36,13 +36,18 @@ function InfoIcon() {
   );
 }
 
-function CompassIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 2.75a9.25 9.25 0 1 1 0 18.5 9.25 9.25 0 0 1 0-18.5Z" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="m14.8 9.2-1.4 4.2-4.2 1.4 1.4-4.2 4.2-1.4Z" />
-    </svg>
-  );
+function buildTenantHomeUrl(subdomain: string) {
+  if (typeof window === "undefined") {
+    return "#";
+  }
+
+  const { protocol, hostname, port } = window.location;
+  const hostnameParts = hostname.split(".");
+  const baseHostname =
+    hostnameParts.length > 1 ? hostnameParts.slice(1).join(".") : hostname;
+  const targetHostname = `${subdomain}.${baseHostname}`;
+
+  return `${protocol}//${targetHostname}${port ? `:${port}` : ""}/`;
 }
 
 export function Header() {
@@ -75,11 +80,13 @@ export function Header() {
         { href: "/login", label: "Login", icon: UserIcon },
         { href: "/register", label: "Register", icon: PlusUserIcon },
         { href: "/about", label: "About", icon: InfoIcon },
-        { href: "/explore", label: "Explore", icon: CompassIcon },
       ];
 
   const authAction = user
     ? { label: "Logout", onClick: handleLogout }
+    : null;
+  const tenantHomeHref = user?.tenantSubdomain
+    ? buildTenantHomeUrl(user.tenantSubdomain)
     : null;
 
   const isActiveLink = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
@@ -120,6 +127,19 @@ export function Header() {
                 </Link>
               );
             })}
+            {tenantHomeHref ? (
+              <a
+                href={tenantHomeHref}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-[color:rgb(56_153_236_/_0.32)] bg-[linear-gradient(135deg,#4fa8ff_0%,#3899ec_45%,#7cc6ff_100%)] px-4 py-2 text-sm font-semibold text-white shadow-[0_0_0_1px_rgb(56_153_236_/_0.14),0_18px_40px_rgb(56_153_236_/_0.3),0_0_32px_rgb(124_198_255_/_0.32)] transition hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_rgb(56_153_236_/_0.18),0_24px_48px_rgb(56_153_236_/_0.34),0_0_40px_rgb(124_198_255_/_0.42)]"
+              >
+                <span className="inline-flex h-2.5 w-2.5 rounded-full bg-[#ff4d5e] shadow-[0_0_12px_rgb(255_77_94_/_0.95)]" />
+                <span>View</span>
+                <span className="text-[#ffdde1]">LIVE</span>
+                <span>site</span>
+              </a>
+            ) : null}
             {authAction ? (
               <button
                 type="button"

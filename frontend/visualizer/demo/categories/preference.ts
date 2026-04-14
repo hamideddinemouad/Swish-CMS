@@ -1,3 +1,5 @@
+import type { PageDesignPreferences } from "@/lib/page-design-presets";
+
 export type CategoriesPreferences = {
   theme: {
     colorScheme: {
@@ -65,6 +67,8 @@ export type CategoriesPreferences = {
     subtitle: string;
     ctaGroup: string;
   };
+  pageDesign?: PageDesignPreferences;
+  componentDesign?: Record<string, PageDesignPreferences>;
   footer: {
     wrapper: string;
     text: string;
