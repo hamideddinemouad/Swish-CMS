@@ -1,277 +1,321 @@
 # Swish CMS
-## Product Specification (v1.0)
+## Product Specification
 
 **Document Type:** Product + Technical Specification  
-**Architecture:** Multi-Tenant SaaS (Shared Database / Shared Schema)  
-**Timeline:** 20 Days (MVP + Hardening)  
-**Status:** Ready for Development  
-**Last Updated:** February 17, 2026 (Africa/Casablanca)
+**Architecture:** Multi-tenant SaaS site builder  
+**Current Scope:** Implemented product behavior in this repository  
+**Status:** In active development  
+**Last Updated:** April 14, 2026 (Africa/Casablanca)
 
 ## 1. Executive Summary
-Swish is a multi-tenant SaaS site builder that provisions isolated, content-driven websites under unique subdomains (for example: `client1.swish.com`).
 
-Unlike a single-site CMS, Swish enables one user account to create and manage multiple independent sites (tenants). Each tenant includes:
+Swish CMS is a multi-tenant website builder that lets a user create a branded workspace under a unique subdomain, provision a starter site from a template, and edit that site through a structured visual editor.
 
-- A public website served by subdomain routing.
-- A tenant-specific admin experience with strict isolation.
-- Visual drag-and-drop editor 
+In the current implementation, Swish focuses on:
 
-Swish combines:
+- Account registration and login
+- One workspace per user
+- Template-driven site provisioning
+- Multi-page tenant websites resolved by subdomain
+- Structured page editing for content, design, and layout
+- Shared backend and shared database tenancy with tenant-aware data access
 
-- Dynamic content modeling (JSON-based content structures).
-- JSON component-driven page composition.
-- Strong tenant isolation at both application and database levels.
+## 2. Product Positioning
 
-## 2. Product Scope
-### 2.1 Goals 
-- Deliver a multi-tenant site builder with per-tenant isolation by subdomain.
-- Support dynamic content types without adding new SQL migrations per model.
-- Enable a structured JSON page builder validated on the server.
-- Provide two dashboard contexts:
-- Account Dashboard (no tenant context).
-- Tenant Dashboard (strict tenant context).
-- Enforce tenant isolation with layered controls, including Postgres RLS.
+Swish is intended for fast workspace/site creation with a guided setup experience rather than open-ended content modeling.
 
-### 2.2 Non-Goals (v1)
-- Custom tenant-authored React components.
-- Multi-region deployment.
-- Advanced editorial workflows beyond draft/published.
-- Comments, localization, full-text search, and full asset management.
+The current product emphasizes:
+
+- Fast onboarding
+- Opinionated starter templates
+- Editable page sections
+- Simple dashboard visibility
+- Public-facing tenant pages
 
 ## 3. Core Product Concepts
-- **User:** Global identity that can belong to multiple tenants.
-- **Tenant (Site):** Isolated website instance mapped to a unique subdomain.
-- **Membership:** Association between user and tenant with role-based permissions.
-- **Content Definition:** Tenant-defined content model.
-- **Content Entry:** A content record conforming to a tenant content definition.
-- **Page:** A route-level document rendered from structured component JSON.
 
-## 4. Architecture Overview
-Swish uses a shared application and shared database approach with tenant-aware runtime controls.
+- **User:** A registered account with profile details and login credentials.
+- **Tenant / Workspace:** A single site workspace tied to a user and identified by subdomain.
+- **Subdomain:** The unique workspace address used to resolve the public site.
+- **Template:** A starter site preset used during setup to seed default pages and page data.
+- **Page:** A tenant-owned route such as `home`, `about`, or `contact`.
+- **Page Components:** Structured section definitions stored on the page and rendered by the frontend.
+- **Page Data:** JSON content payload for a page.
+- **Page Preference:** JSON design/theme configuration for a page.
 
-- **Backend:** NestJS modular service.
-- **Frontend:** Next.js 14 App Router with Tailwind CSS.
-- **Database:** PostgreSQL 15.
-- **Auth:** JWT-based authentication with user and tenant contexts.
-- **Infra:** Docker + Docker Compose for development and deployment consistency.
+## 4. Current Product Scope
 
-## 5. Tenant Resolution & Subdomain Rules
-Tenant resolution is derived from the request host:
+### 4.1 Implemented Goals
 
-- `client1.swish.com` -> subdomain `client1` -> tenant context resolution.
+- Allow a user to register, log in, and maintain a session with access and refresh tokens.
+- Allow a signed-in user without a workspace to create one through setup.
+- Validate subdomain format and availability before workspace creation.
+- Allow the user to choose a starter template during setup.
+- Seed a default multi-page website for the tenant automatically.
+- Render public tenant pages based on subdomain.
+- Provide editor experiences for content, design, and structure updates.
+- Provide a simple dashboard and profile experience for the signed-in user.
 
-Subdomain constraints:
+## 5. Functional Overview
 
-- Must match DNS-safe pattern: `^[a-z0-9-]+$`.
-- Must not be a reserved name (examples: `www`, `app`, `api`, `admin`, `static`, `assets`, `cdn`, `mail`).
+### 5.1 Authentication
 
-## 6. Tenant Onboarding & Default Site Provisioning
-When a tenant is created, Swish provisions a usable starter site automatically:
+Swish supports:
 
-- Assign creator as `OWNER`.
-- Create default navigation.
-- Seed a default `posts` content type.
-- Create a published starter entry (for example `hello-world`).
-- Create a `home` page composed from supported components.
+- User registration
+- User login
+- Access token issuance
+- Refresh token issuance and renewal
+- Authenticated "me" lookups
+- Logout
 
-Outcome: tenant admin and public site are usable immediately after creation.
+The frontend stores authentication in cookies and uses backend-backed API routes to maintain the session.
 
-## 7. Content Engine (Dynamic Models)
-Swish supports tenant-defined content types with JSON-based structures and strict validation.
+### 5.2 Workspace Setup
 
-Required behavior:
+After sign-in, a user without a workspace is redirected to setup.
 
-- Entry payloads must validate against the content definition.
-- Invalid payloads are rejected.
-- List operations support pagination with defaults and hard limits.
-- Every entry has a slug.
-- Slugs are auto-generated when possible and conflict-resolved (`hello-world`, `hello-world-2`, ...).
+The setup flow currently supports:
 
-### JSON Example: Content Definition (Model)
-```json
-{
-  "slug": "posts",
-  "name": "Post",
-  "schema": {
-    "type": "object",
-    "required": ["title", "body"],
-    "properties": {
-      "title": { "type": "string", "maxLength": 120 },
-      "body": { "type": "string" },
-      "excerpt": { "type": "string", "maxLength": 300 },
-      "coverImageUrl": { "type": "string" }
-    },
-    "additionalProperties": false
-  }
-}
-```
+- Selecting a template
+- Entering a subdomain
+- Validating subdomain format
+- Checking reserved names
+- Checking subdomain availability
+- Creating a tenant/workspace
+- Automatically provisioning starter pages and starter content
 
-### JSON Example: Content Entry
-```json
-{
-  "slug": "hello-world",
-  "isPublished": true,
-  "data": {
-    "title": "Hello World",
-    "body": "<p>Welcome to Swish.</p>",
-    "excerpt": "Welcome post",
-    "coverImageUrl": "/images/hello.jpg"
-  }
-}
-```
+### 5.3 Dashboard
 
-## 8. Page Builder (Component JSON)
-Pages are defined as component arrays, not raw HTML templates.
+The current dashboard is an account-level workspace overview.
 
-Supported v1 component types:
+It currently shows:
 
-- `Hero`
-- `RichText`
-- `PostGrid`
-- `FeatureList`
+- Number of pages
+- Number of visible sections
+- Current template label
+- Workspace/subdomain label
+- Basic editor readiness state
 
-### JSON Example: Page Components
-```json
-[
-  {
-    "type": "Hero",
-    "props": {
-      "title": "Hello",
-      "subtitle": "Welcome to your new site",
-      "imageUrl": "/hero.png"
-    }
-  },
-  {
-    "type": "PostGrid",
-    "props": {
-      "contentTypeSlug": "posts",
-      "limit": 6,
-      "sort": "newest"
-    }
-  }
-]
-```
+### 5.4 Profile
 
-## 9. Component Validation & Safety
-Server-side validation is mandatory when pages are created or updated.
+The profile page currently supports:
 
-Validation requirements:
+- Viewing user information
+- Updating first name and last name
+- Viewing email
+- Viewing workspace and template context
 
-- Only known component `type` values are accepted.
-- `props` must match the server-side schema for each component.
-- Unknown keys are rejected (strict mode).
-- `RichText.html` must be sanitized.
-- Size limits are enforced for strings and arrays to prevent abuse.
+### 5.5 Public Tenant Website
 
-Implementation direction:
+Tenant pages are resolved by subdomain and rendered dynamically.
 
-- Maintain a backend component registry mapping component `type` to schema.
-- Reject invalid payloads deterministically with structured validation errors.
+Current public page set:
 
-## 10. Authentication & Authorization Model
-Swish uses two JWT contexts:
+- `home`
+- `about`
+- `articles`
+- `categories`
+- `contact`
+- `faq`
 
-- **User JWT:** Account-level identity.
-- **Tenant JWT:** Tenant-scoped identity with role and tenant binding.
+The frontend reads the incoming subdomain from request headers and fetches the tenant page payload from the backend.
 
-### JSON Example: User JWT Payload
-```json
-{
-  "type": "user",
-  "userId": "uuid",
-  "email": "user@example.com"
-}
-```
+### 5.6 Editor
 
-### JSON Example: Tenant JWT Payload
-```json
-{
-  "type": "tenant",
-  "userId": "uuid",
-  "tenantId": "uuid",
-  "role": "OWNER"
-}
-```
+The current editor is a structured page editor.
 
-Role model:
+It supports editing:
 
-- `OWNER`: Full tenant administration.
-- `EDITOR`: Content and page operations, but no owner-only role management.
+- Content
+- Design preferences
+- Structure and section visibility
 
-## 11. Tenant Guard & Access Enforcement
-Every private tenant-scoped request must satisfy all checks:
+The editor operates on known page payloads and known section/component keys.
 
-- Tenant resolved from host subdomain.
-- Tenant in token matches resolved tenant.
-- Tenant in route (when present) matches resolved tenant.
-- Membership exists for requesting user.
-- Role allows requested action.
+## 6. Tenant Model
 
-Any mismatch must fail closed.
+The current tenant model is intentionally simple:
 
-## 12. Database Isolation with RLS
-Tenant isolation is enforced in Postgres with Row Level Security as a hard boundary.
+- One user may own one tenant/workspace
+- A tenant belongs to one user
+- A tenant has a unique subdomain
+- Tenant settings are stored as JSON
 
-Operational rule:
+The tenant model is streamlined around a direct user-to-workspace relationship.
 
-- Each tenant-scoped request sets per-request tenant context before queries execute.
-- If tenant context is not set, tenant-scoped reads/writes return no rows.
-- Application role must not bypass RLS.
+## 7. Template System
 
-## 13. Dashboard Experience
-Swish includes two dashboard contexts with distinct behavior:
+Workspace creation is template-driven.
 
-- **Account Dashboard (`app.swish.com`)**
-- Profile/security management.
-- List and create tenants.
-- No tenant resolution required.
+Current templates:
 
-- **Tenant Dashboard (`{tenant}.swish.com/admin`)**
-- Tenant settings, content models, entries, pages, members.
-- Strict subdomain tenant resolution + tenant token enforcement.
+- `studio`
+- `magazine`
+- `consulting`
+- `minimal`
 
-Transition flow:
+Each template maps to seeded page definitions that create the initial site structure. The default template is `studio`.
 
-1. User selects a tenant from account dashboard.
-2. Frontend redirects to tenant admin URL.
-3. Frontend exchanges user context for tenant-scoped token.
-4. Tenant dashboard operations run under tenant-bound context.
+## 8. Page Model
 
-## 14. CORS & Cross-Subdomain Strategy
-CORS must support dynamic subdomain-based origins.
+Each page currently includes:
 
-- Production pattern: `https://*.swish.com`.
-- Development pattern: `http://*.localhost:3000`.
-- If cookies are used, credentialed CORS must be enabled end-to-end.
+- `slug`
+- `title`
+- `components`
 
-## 15. Error & Validation Standards
-The system must return consistent error classes:
+The page record defines the route and the list of sections/components that should render on that route.
 
-- Invalid input and validation issues.
-- Authentication failures.
-- Authorization or tenant-mismatch failures.
-- Not-found within tenant scope.
-- Conflict on uniqueness constraints.
+Current seeded page keys:
 
-Error responses should be structured for frontend consumption and observability.
+- `home`
+- `about`
+- `articles`
+- `categories`
+- `contact`
+- `faq`
 
-## 16. Non-Functional Requirements
-- **Security:** strict tenant isolation, payload sanitization, least privilege.
-- **Reliability:** deterministic validation and predictable failure modes.
-- **Performance:** paginated content reads, bounded request sizes.
-- **Maintainability:** modular backend domains and schema-driven validation.
-- **Auditability:** optional lightweight tenant event feed for traceability.
+## 9. Component/Data Model
 
-## 17. MVP Acceptance Criteria
-MVP is complete when all conditions below are true:
+Each page has one associated component payload record containing:
 
-- Users can create and manage multiple tenants from one account.
-- Each tenant is reachable via subdomain and isolated from others.
-- Tenant-scoped operations enforce tenant identity + role checks.
-- RLS prevents cross-tenant data access at database level.
-- Tenant creation seeds a working starter site.
-- Public site exposes published content only.
-- Page component payloads are strictly validated server-side.
-- Rich text content is sanitized before storage/rendering.
-- Pagination defaults and hard caps are enforced consistently.
+- `title`
+- `data`
+- `preference`
 
+Where:
+
+- `data` holds the page content payload
+- `preference` holds design/theme choices
+
+This gives the system a structured editing model built around page-specific content and design payloads.
+
+## 10. Current Editing Model
+
+The editor currently assumes:
+
+- Known page slugs
+- Known component keys per page
+- Known data structures for each page type
+- Known design preference presets and style tokens
+
+Available backend editing operations include:
+
+- Update page content
+- Update page preferences
+- Disable a page component
+- Remove a component
+- Delete a page by name
+
+This is a controlled editing surface optimized for predictable page composition and editing.
+
+## 11. Subdomain Rules
+
+Workspace subdomains:
+
+- Must be lowercase
+- May contain letters, numbers, and hyphens
+- Must be unique
+- Must not use reserved names
+
+Reserved names currently include:
+
+- `www`
+- `app`
+- `api`
+- `admin`
+- `static`
+- `assets`
+- `cdn`
+- `mail`
+
+## 12. Architecture Overview
+
+Swish uses a shared application and shared database architecture.
+
+- **Frontend:** Next.js App Router, React, TypeScript, Tailwind CSS
+- **Backend:** NestJS, TypeScript, TypeORM
+- **Database:** PostgreSQL
+- **Auth:** JWT access and refresh tokens
+- **Optional local infra:** Docker Compose
+
+The frontend and backend can run separately in deployment, with the frontend configured to point to the backend base URL.
+
+## 13. Data Isolation
+
+Tenant separation is enforced through tenant-aware application queries and PostgreSQL Row Level Security.
+
+The backend includes RLS migrations, forced RLS policies, and an application role configured with `NOBYPASSRLS` so tenant-scoped data remains isolated across workspace boundaries.
+
+Operational expectations:
+
+- Public page reads are scoped by subdomain
+- Authenticated editor actions are scoped by tenant
+- Tenant-specific pages and component payloads are looked up with tenant context
+
+## 14. API Surface (Current Product Areas)
+
+The current backend/frontend API surface is centered around:
+
+- Auth
+- Users
+- Tenants
+- Setup
+- Pages
+- Components
+
+Representative implemented flows include:
+
+- Register/login/refresh/logout
+- Tenant availability checks
+- Tenant creation with setup provisioning
+- Read pages by tenant or subdomain
+- Update page content and preferences
+- Read and update current user information
+
+## 15. UX Flow
+
+### Signed-out flow
+
+1. User opens the site.
+2. User registers or logs in.
+3. Auth cookies are created.
+
+### First-time signed-in flow
+
+1. User reaches setup if no workspace exists.
+2. User selects a starter template.
+3. User chooses a subdomain.
+4. System validates availability.
+5. Tenant/workspace is created.
+6. Starter site pages are seeded.
+7. User is redirected to the dashboard.
+
+### Ongoing signed-in flow
+
+1. User visits dashboard.
+2. User opens the editor for a page.
+3. User updates page content, design, or structure.
+4. Public tenant pages reflect the configured content model for that workspace.
+
+## 16. Product Characteristics
+
+- The product uses known templates and known page structures.
+- The editing experience is structured across content, design, and structure.
+- The system models one workspace per user.
+- Tenant data is isolated with application-level scoping and PostgreSQL RLS.
+
+## 17. Future Expansion Directions
+
+Possible future product directions include:
+
+- Multi-workspace ownership
+- Membership and collaboration roles
+- Dynamic content collections
+- Richer section/component libraries
+- Publishing workflow states
+- Media management
+- Search and categorization enhancements
+
+These are future opportunities, not current guaranteed product capabilities.
