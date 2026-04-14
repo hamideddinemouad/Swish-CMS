@@ -6,7 +6,6 @@ import { env } from './config/env';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('api');
   app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
