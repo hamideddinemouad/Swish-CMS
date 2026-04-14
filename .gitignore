@@ -5,3 +5,4 @@ script.sql
 YOU_WERE_WORKING_ON.txt
 .DS_Store
 *.tsbuildinfo
+deploy.md
