@@ -58,3 +58,9 @@ h5,
 h6 {
   font-family: var(--font-heading), "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+
+.headline-balanced {
+  letter-spacing: -0.045em;
+  word-spacing: 0.06em;
+  text-wrap: balance;
+}

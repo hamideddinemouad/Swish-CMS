@@ -51,7 +51,7 @@ export default function Home() {
                   <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-wix-blue)]">
                     Clearer website setup
                   </p>
-                  <h1 className="max-w-4xl text-4xl font-semibold tracking-[-0.08em] text-[var(--color-deep-navy)] sm:text-6xl lg:text-[4.9rem] lg:leading-[0.96]">
+                  <h1 className="headline-balanced max-w-4xl text-4xl font-semibold text-[var(--color-deep-navy)] sm:text-6xl lg:text-[4.9rem] lg:leading-[0.98]">
                     Publish a showcase site without the usual builder sprawl.
                   </h1>
                   <p className="max-w-2xl text-base leading-8 text-[var(--color-ink-700)] sm:text-lg">
