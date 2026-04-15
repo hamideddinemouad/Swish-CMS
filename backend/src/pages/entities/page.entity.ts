@@ -23,10 +23,10 @@ export class Page {
   @Column({ name: 'tenant_id', type: 'uuid' })
   tenantId: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   slug: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   title: string;
 
   @Column({ type: 'jsonb', default: () => "'{}'::jsonb"  })

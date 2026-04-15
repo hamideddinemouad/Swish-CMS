@@ -21,10 +21,10 @@ export class Tenant {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar', unique: true })
   subdomain: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   name: string;
 
   @Column({ type: 'jsonb', default: () => "'{}'::jsonb" })

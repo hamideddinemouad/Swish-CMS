@@ -16,10 +16,24 @@ import { HttpLoggerMiddleware } from './common/middleware/http-logger.middleware
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      port: env.POSTGRES_PORT,
-      username: env.POSTGRES_USER,
-      password: env.POSTGRES_PASSWORD,
-      database: env.POSTGRES_DB,
+      ...(env.DATABASE_URL
+        ? {
+            url: env.DATABASE_URL,
+          }
+        : {
+            host: env.POSTGRES_HOST,
+            port: env.POSTGRES_PORT,
+            username: env.POSTGRES_USER,
+            password: env.POSTGRES_PASSWORD,
+            database: env.POSTGRES_DB,
+          }),
+      ...(env.POSTGRES_SSL
+        ? {
+            ssl: {
+              rejectUnauthorized: false,
+            },
+          }
+        : {}),
       autoLoadEntities: true,
       synchronize: false,
     }),

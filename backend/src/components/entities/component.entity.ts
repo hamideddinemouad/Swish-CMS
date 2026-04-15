@@ -17,7 +17,7 @@ export class Component {
   @Column({ name: 'page_id', type: 'uuid' })
   pageId: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   title: string;
 
   @Column({ type: 'jsonb', default: () => "'{}'::jsonb" })

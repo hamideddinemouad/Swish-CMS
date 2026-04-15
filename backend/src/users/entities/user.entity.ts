@@ -13,19 +13,19 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'first_name' })
+  @Column({ name: 'first_name', type: 'varchar' })
   firstName: string;
 
-  @Column({ name: 'last_name' })
+  @Column({ name: 'last_name', type: 'varchar' })
   lastName: string;
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar', unique: true })
   email: string;
 
-  @Column({ name: 'password_hash' })
+  @Column({ name: 'password_hash', type: 'varchar' })
   passwordHash: string;
 
-  @Column({ name: 'secret_phrase_hash'})
+  @Column({ name: 'secret_phrase_hash', type: 'varchar' })
   secretPhraseHash: string 
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
