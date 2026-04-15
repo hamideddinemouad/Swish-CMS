@@ -99,6 +99,9 @@ export default function SetupPage() {
   const [isError, setIsError] = useState(false);
 
   const normalizedSubdomain = normalizeSubdomain(subdomain);
+  const previewDomain = normalizedSubdomain
+    ? `${normalizedSubdomain}.swish.ltd`
+    : "yourname.swish.ltd";
   const userId = currentUser?.id ?? null;
   const hasValidFormat = isValidSubdomain(normalizedSubdomain);
   const isReserved = isReservedSubdomain(normalizedSubdomain);
@@ -326,6 +329,14 @@ export default function SetupPage() {
                 required
                 className={cx(publicInputBaseClass, inputStateClass)}
               />
+              <div className="mt-3 rounded-[18px] border border-slate-200/80 bg-slate-50 px-4 py-3">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-500)]">
+                  Your domain preview
+                </p>
+                <p className="mt-1 text-sm font-semibold text-[var(--color-ink-900)] sm:text-base">
+                  {previewDomain}
+                </p>
+              </div>
               <p className="mt-2 text-sm text-[var(--color-ink-500)]">
                 Use lowercase letters, numbers, and hyphens. Avoid reserved names like
                 `www`, `app`, and `api`.
