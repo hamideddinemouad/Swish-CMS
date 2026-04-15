@@ -94,14 +94,14 @@ export default function Nav({ logo, pages, cta, preferences }: NavProps) {
   const ctaOpenInNewTab = shouldOpenInNewTab(ctaHref);
 
   return (
-    <nav className={`sticky top-0 z-30 ${tokens.navigation.wrapper}`}>
+    <nav className="sticky top-0 z-30 w-full border-b border-slate-200/90 bg-white/95 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.24)] backdrop-blur-xl">
       <div className={`${tokens.navigation.inner} gap-4`}>
         <div className="flex min-w-0 items-center gap-3">
           <Link href="/" className="min-w-0" onClick={() => setIsMenuOpen(false)}>
-            <span className={`block truncate text-sm font-semibold uppercase tracking-[0.22em] ${tokens.theme.colorScheme.accent}`}>
+            <span className="block truncate text-sm font-semibold uppercase tracking-[0.22em] text-slate-950">
               {logo}
             </span>
-            <span className="mt-1 block truncate text-xs font-medium text-slate-400 md:hidden">
+            <span className="mt-1 block truncate text-xs font-medium text-slate-500 md:hidden">
               {activePageLabel}
             </span>
           </Link>
@@ -116,7 +116,11 @@ export default function Nav({ logo, pages, cta, preferences }: NavProps) {
                 key={page.slug}
                 href={page.href}
                 aria-current={active ? "page" : undefined}
-                className={active ? tokens.navigation.linkActive : tokens.navigation.link}
+                className={
+                  active
+                    ? "inline-flex items-center rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white shadow-[0_14px_30px_-18px_rgba(15,23,42,0.36)]"
+                    : "inline-flex items-center rounded-full px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
+                }
               >
                 {page.title}
               </Link>
@@ -147,24 +151,24 @@ export default function Nav({ logo, pages, cta, preferences }: NavProps) {
           aria-controls="tenant-mobile-nav"
           aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
           onClick={() => setIsMenuOpen((current) => !current)}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/12 bg-white/6 text-white transition hover:bg-white/10 md:hidden"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-900 transition hover:bg-slate-100 md:hidden"
         >
           {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
         </button>
       </div>
 
       {isMenuOpen ? (
-        <div id="tenant-mobile-nav" className="border-t border-white/10 md:hidden">
+        <div id="tenant-mobile-nav" className="border-t border-slate-200 md:hidden">
           <div className={`${tokens.layout.container} pb-4`}>
-            <div className="rounded-[28px] border border-white/12 bg-white/6 p-3 shadow-[0_24px_60px_-34px_rgba(2,6,23,0.7)] backdrop-blur">
+            <div className="rounded-[28px] border border-slate-200 bg-white p-3 shadow-[0_24px_60px_-34px_rgba(15,23,42,0.18)]">
               <div className="mb-3 flex items-center justify-between gap-3 px-2">
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
                     Pages
                   </p>
-                  <p className="mt-1 text-sm font-medium text-white">{activePageLabel}</p>
+                  <p className="mt-1 text-sm font-medium text-slate-950">{activePageLabel}</p>
                 </div>
-                <span className="rounded-full border border-white/12 bg-white/8 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-300">
+                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-600">
                   {normalizedPages.length} pages
                 </span>
               </div>
@@ -181,14 +185,14 @@ export default function Nav({ logo, pages, cta, preferences }: NavProps) {
                       aria-current={active ? "page" : undefined}
                       className={`flex items-center justify-between rounded-[22px] px-4 py-3 text-sm font-medium transition ${
                         active
-                          ? "bg-white text-slate-950 shadow-[0_16px_32px_-20px_rgba(255,255,255,0.42)]"
-                          : "bg-white/6 text-slate-100 hover:bg-white/10"
+                          ? "bg-slate-950 text-white shadow-[0_16px_32px_-20px_rgba(15,23,42,0.28)]"
+                          : "bg-slate-50 text-slate-700 hover:bg-slate-100 hover:text-slate-950"
                       }`}
                     >
                       <span>{page.title}</span>
                       <span
                         className={`h-2.5 w-2.5 rounded-full ${
-                          active ? "bg-emerald-500" : "bg-slate-500"
+                          active ? "bg-white" : "bg-slate-400"
                         }`}
                       />
                     </Link>
@@ -196,7 +200,7 @@ export default function Nav({ logo, pages, cta, preferences }: NavProps) {
                 })}
               </div>
 
-              <div className="mt-3 border-t border-white/10 pt-3">
+              <div className="mt-3 border-t border-slate-200 pt-3">
                 {ctaIsExternal ? (
                   <a
                     href={ctaHref}
