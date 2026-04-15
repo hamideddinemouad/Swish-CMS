@@ -45,9 +45,9 @@ export default function MobileEditorHeader({
         <button
           type="button"
           onClick={onOpenPreview}
-          className={`${publicButtonStyles.dark} min-h-[44px] shrink-0 rounded-[18px] px-4 py-2.5 text-sm touch-manipulation`}
+          className={`${publicButtonStyles.primary} min-h-[44px] shrink-0 rounded-[18px] px-4 py-2.5 text-sm ring-4 ring-[rgb(56_153_236_/_0.12)] touch-manipulation`}
         >
-          Preview
+          Live Preview
         </button>
       </div>
     </div>

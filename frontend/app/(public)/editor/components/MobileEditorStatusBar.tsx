@@ -29,14 +29,61 @@ export default function MobileEditorStatusBar({
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={onOpenPreview}
-          className={`${publicButtonStyles.dark} min-h-[44px] shrink-0 rounded-[18px] px-4 py-2.5 text-sm touch-manipulation`}
-        >
-          Preview
-        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          <div className="flex items-center gap-2 pr-1">
+            <span className="hidden max-w-[5.5rem] text-right text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-wix-blue)] min-[360px]:block">
+              Open preview
+            </span>
+            <span
+              aria-hidden="true"
+              className="preview-cue inline-flex h-9 w-9 items-center justify-center rounded-full border border-[rgb(56_153_236_/_0.18)] bg-[linear-gradient(135deg,rgba(255,255,255,0.98),rgba(236,246,255,0.98))] text-[var(--color-wix-blue)] shadow-[0_14px_28px_-22px_rgba(56,153,236,0.45)]"
+            >
+              <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none">
+                <path
+                  d="M3.75 10h10.5M10.5 5.75 14.75 10l-4.25 4.25"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={onOpenPreview}
+            className={`${publicButtonStyles.primary} min-h-[44px] shrink-0 rounded-[18px] px-4 py-2.5 text-sm ring-4 ring-[rgb(56_153_236_/_0.12)] touch-manipulation`}
+          >
+            Live Preview
+          </button>
+        </div>
       </div>
+
+      <style jsx>{`
+        .preview-cue {
+          animation: preview-cue-breathe 1.85s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+        }
+
+        @keyframes preview-cue-breathe {
+          0%,
+          100% {
+            opacity: 0.78;
+            transform: translateX(0) scale(1);
+          }
+
+          50% {
+            opacity: 1;
+            transform: translateX(0.28rem) scale(1.08);
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .preview-cue {
+            animation: none;
+          }
+        }
+      `}</style>
     </div>
   );
 }
