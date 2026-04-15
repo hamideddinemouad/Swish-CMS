@@ -1,7 +1,7 @@
 "use client";
 
-import { DashboardPageSkeleton } from "@/components/loading/PageSkeletons";
+import { ProfilePageSkeleton } from "@/components/loading/PageSkeletons";
 
 export default function Loading() {
-  return <DashboardPageSkeleton />;
+  return <ProfilePageSkeleton />;
 }

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setUser } from "@/redux/slices/userSlice";
-import Loading from "../dashboard/loading";
+import { ProfilePageSkeleton } from "@/components/loading/PageSkeletons";
 
 type ProfileResponse = {
   id: string;
@@ -35,6 +35,7 @@ export default function ProfilePage() {
   const [tenantSubdomain, setTenantSubdomain] = useState<string | null>(null);
   const [tenantTemplateId, setTenantTemplateId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isProfileLoading, setIsProfileLoading] = useState(true);
   const [status, setStatus] = useState("");
 
   useEffect(() => {
@@ -70,6 +71,10 @@ export default function ProfilePage() {
       } catch {
         if (!cancelled) {
           setStatus("Could not load profile details.");
+        }
+      } finally {
+        if (!cancelled) {
+          setIsProfileLoading(false);
         }
       }
     }
@@ -113,8 +118,8 @@ export default function ProfilePage() {
     }
   }
 
-  if (!mounted || !user) {
-    return <Loading />;
+  if (!mounted || !user || isProfileLoading) {
+    return <ProfilePageSkeleton />;
   }
 
   return (
