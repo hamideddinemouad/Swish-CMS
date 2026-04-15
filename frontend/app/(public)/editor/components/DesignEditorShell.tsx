@@ -2,9 +2,9 @@
 
 import axios from "axios";
 import { useMemo, useRef, useState } from "react";
-import EditorScaffold from "./EditorScaffold";
+import EditorScaffold, { type MobileEditorSection } from "./EditorScaffold";
 import FieldGroup from "./FieldGroup";
-import { scrollPreviewToSection, setDeepValue } from "./editor-utils";
+import { scrollPreviewToSection, setDeepValue, titleize } from "./editor-utils";
 import {
   getDefaultHomeSectionDesign,
   getSelectedHomeSectionDesign,
@@ -71,6 +71,68 @@ export default function DesignEditorShell({
       ),
     [config.components],
   );
+  const mobileSections: MobileEditorSection[] = isHomePage
+    ? enabledHomeSections.length > 0
+      ? enabledHomeSections.map((section) => ({
+          id: section.id,
+          title: section.label,
+          description: "Tune the palette, typography, and scale for this Home section.",
+          content: (
+            <HomeDesignPanel
+              section={section.id}
+              selected={getSelectedHomeSectionDesign(
+                config.preference as {
+                  hero?: Record<string, unknown>;
+                  homeDesign?: HomeDesignPreferences;
+                },
+                section.id,
+              )}
+              controls={getSectionControls(section.id)}
+              onFocus={focusSection}
+              onChange={(key, value) => updateHomeDesignPreference(section.id, key, value)}
+            />
+          ),
+        }))
+      : [
+          {
+            id: "empty-home-design",
+            title: "Nothing to style",
+            description: "No editable Home sections are enabled for this page.",
+            content: (
+              <p className="text-sm leading-7 text-[var(--color-ink-700)]">
+                Enable a section first to edit its mobile design controls.
+              </p>
+            ),
+          },
+        ]
+    : enabledGenericSections.length > 0
+      ? enabledGenericSections.map((component) => ({
+          id: component.type,
+          title: `${titleize(component.type)} Design`,
+          description: "Adjust the saved design tokens for this component.",
+          content: (
+            <PageDesignPanel
+              selected={getSelectedPageComponentDesign(
+                config.preference as Parameters<typeof getSelectedPageComponentDesign>[0],
+                component.type,
+              )}
+              onFocus={() => focusPreferencePath(component.type)}
+              onChange={(key, value) => updatePageDesignPreference(component.type, key, value)}
+            />
+          ),
+        }))
+      : [
+          {
+            id: "empty-page-design",
+            title: "Nothing to style",
+            description: "No editable sections are available for design changes on this page.",
+            content: (
+              <p className="text-sm leading-7 text-[var(--color-ink-700)]">
+                Protected sections stay fixed until editable blocks are enabled.
+              </p>
+            ),
+          },
+        ];
 
   function focusSection(section: HomeDesignSectionKey) {
     scrollPreviewToSection(previewRef, section);
@@ -208,6 +270,7 @@ export default function DesignEditorShell({
           </div>
         )
       }
+      mobileSections={mobileSections}
     />
   );
 }

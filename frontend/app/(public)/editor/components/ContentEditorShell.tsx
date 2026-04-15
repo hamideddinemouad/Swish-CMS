@@ -3,9 +3,9 @@
 import axios from "axios";
 import { useMemo, useRef, useState } from "react";
 import EditableField from "./EditableField";
-import EditorScaffold from "./EditorScaffold";
+import EditorScaffold, { type MobileEditorSection } from "./EditorScaffold";
 import FieldGroup from "./FieldGroup";
-import { scrollPreviewToSection, setDeepValue } from "./editor-utils";
+import { scrollPreviewToSection, setDeepValue, titleize } from "./editor-utils";
 import type { PageConfig } from "../lib/types";
 
 export default function ContentEditorShell({
@@ -33,6 +33,50 @@ export default function ContentEditorShell({
       ),
     [config.components],
   );
+  const sectionEntries = editableSections.flatMap((component) => {
+    const value = config.data[component.type];
+
+    if (value == null) {
+      return [];
+    }
+
+    return [
+      {
+        id: component.type,
+        title: titleize(component.type),
+        description: "Edit the saved copy for this section. Changes autosave on blur.",
+        value,
+      },
+    ];
+  });
+  const mobileSections: MobileEditorSection[] =
+    sectionEntries.length > 0
+      ? sectionEntries.map((section) => ({
+          id: section.id,
+          title: section.title,
+          description: section.description,
+          content: (
+            <EditableField
+              path={section.id}
+              value={section.value}
+              onChange={updateAtPath}
+              onFocus={focusSection}
+              onBlur={saveContent}
+            />
+          ),
+        }))
+      : [
+          {
+            id: "empty",
+            title: "Nothing to edit",
+            description: "This page has no editable content sections right now.",
+            content: (
+              <p className="text-sm leading-7 text-[var(--color-ink-700)]">
+                All editable sections are currently locked or unavailable.
+              </p>
+            ),
+          },
+        ];
 
   function updateAtPath(path: string, next: unknown) {
     setConfig((current) => {
@@ -84,25 +128,18 @@ export default function ContentEditorShell({
       statusTone={statusTone}
       previewRef={previewRef}
       config={config}
-      sidebar={editableSections.map((component) => {
-        const value = config.data[component.type];
-
-        if (value == null) {
-          return null;
-        }
-
-        return (
-          <FieldGroup key={component.type} title={component.type}>
+      sidebar={sectionEntries.map((section) => (
+          <FieldGroup key={section.id} title={section.id}>
             <EditableField
-              path={component.type}
-              value={value}
+              path={section.id}
+              value={section.value}
               onChange={updateAtPath}
               onFocus={focusSection}
               onBlur={saveContent}
             />
           </FieldGroup>
-        );
-      })}
+      ))}
+      mobileSections={mobileSections}
     />
   );
 }

@@ -2,9 +2,9 @@
 
 import axios from "axios";
 import { useMemo, useRef, useState } from "react";
-import EditorScaffold from "./EditorScaffold";
+import EditorScaffold, { type MobileEditorSection } from "./EditorScaffold";
 import FieldGroup from "./FieldGroup";
-import { scrollPreviewToSection } from "./editor-utils";
+import { scrollPreviewToSection, titleize } from "./editor-utils";
 import type { PageComponent, PageConfig } from "../lib/types";
 import { cx, publicButtonStyles } from "../../shared/public-ui";
 
@@ -31,6 +31,33 @@ export default function StructureEditorShell({
       ),
     [config.components],
   );
+  const mobileSections: MobileEditorSection[] =
+    removableComponents.length > 0
+      ? removableComponents.map((component) => ({
+          id: component.type,
+          title: titleize(component.type),
+          description: "Review the block in preview, then remove it from this page if needed.",
+          content: (
+            <ComponentRow
+              component={component}
+              disabled={isSaving}
+              onFocus={focusSection}
+              onDelete={deleteComponent}
+            />
+          ),
+        }))
+      : [
+          {
+            id: "empty-structure",
+            title: "Nothing to remove",
+            description: "This page no longer has removable components.",
+            content: (
+              <p className="text-sm leading-7 text-[var(--color-ink-700)]">
+                Navigation, footer, and protected sections remain in place.
+              </p>
+            ),
+          },
+        ];
 
   async function deleteComponent(componentType: string) {
     if (isSaving) {
@@ -95,6 +122,7 @@ export default function StructureEditorShell({
           </div>
         </FieldGroup>
       }
+      mobileSections={mobileSections}
     />
   );
 }
