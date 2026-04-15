@@ -37,17 +37,7 @@ function InfoIcon() {
 }
 
 function buildTenantHomeUrl(subdomain: string) {
-  if (typeof window === "undefined") {
-    return "#";
-  }
-
-  const { protocol, hostname, port } = window.location;
-  const hostnameParts = hostname.split(".");
-  const baseHostname =
-    hostnameParts.length > 1 ? hostnameParts.slice(1).join(".") : hostname;
-  const targetHostname = `${subdomain}.${baseHostname}`;
-
-  return `${protocol}//${targetHostname}${port ? `:${port}` : ""}/`;
+  return `https://${subdomain}.swish.ltd/`;
 }
 
 export function Header() {
