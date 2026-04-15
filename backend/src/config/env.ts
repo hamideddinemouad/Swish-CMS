@@ -3,13 +3,13 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 type Env = {
-  PORT: number;
+  PORT?: number;
   DATABASE_URL?: string;
-  POSTGRES_HOST: string;
-  POSTGRES_PORT: number;
-  POSTGRES_USER: string;
-  POSTGRES_PASSWORD: string;
-  POSTGRES_DB: string;
+  POSTGRES_HOST?: string;
+  POSTGRES_PORT?: number;
+  POSTGRES_USER?: string;
+  POSTGRES_PASSWORD?: string;
+  POSTGRES_DB?: string;
   POSTGRES_SSL: boolean;
   AUTH_ACCESS_SECRET_KEY: string;
   AUTH_REFRESH_SECRET_KEY: string;
@@ -42,6 +42,18 @@ function readOptionalString(name: keyof Env): string | undefined {
   }
 
   return value;
+}
+
+function readOptionalStringFromNames(names: string[]): string | undefined {
+  for (const name of names) {
+    const value = process.env[name];
+
+    if (typeof value === 'string' && value.length > 0) {
+      return value;
+    }
+  }
+
+  return undefined;
 }
 
 function readRequiredTokenDuration(
@@ -80,6 +92,32 @@ function readPositiveInt(name: keyof Env, defaultValue: number): number {
   return value;
 }
 
+function readOptionalPositiveIntFromNames(names: string[]): number | undefined {
+  for (const name of names) {
+    const rawValue = process.env[name];
+
+    if (rawValue === undefined || rawValue.length === 0) {
+      continue;
+    }
+
+    const value = Number(rawValue);
+
+    if (!Number.isInteger(value)) {
+      errors.push(`${name}: expected integer, received ${Number.isNaN(value) ? 'nan' : 'float'}`);
+      return undefined;
+    }
+
+    if (value <= 0) {
+      errors.push(`${name}: Number must be greater than 0`);
+      return undefined;
+    }
+
+    return value;
+  }
+
+  return undefined;
+}
+
 function readBoolean(name: keyof Env, defaultValue: boolean): boolean {
   const rawValue = process.env[name];
 
@@ -90,15 +128,55 @@ function readBoolean(name: keyof Env, defaultValue: boolean): boolean {
   return rawValue === 'true';
 }
 
+const databaseUrl = readOptionalString('DATABASE_URL')
+  ?? readOptionalStringFromNames(['POSTGRES_URL', 'POSTGRES_PRISMA_URL', 'DATABASE_URL_UNPOOLED']);
+
+const postgresHost = readOptionalString('POSTGRES_HOST')
+  ?? readOptionalStringFromNames(['PGHOST', 'PGHOST_UNPOOLED']);
+
+const postgresPort = readOptionalPositiveIntFromNames(['POSTGRES_PORT', 'PGPORT'])
+  ?? (databaseUrl ? undefined : 5432);
+
+const postgresUser = readOptionalString('POSTGRES_USER')
+  ?? readOptionalStringFromNames(['PGUSER']);
+
+const postgresPassword = readOptionalString('POSTGRES_PASSWORD')
+  ?? readOptionalStringFromNames(['PGPASSWORD']);
+
+const postgresDb = readOptionalString('POSTGRES_DB')
+  ?? readOptionalStringFromNames(['POSTGRES_DATABASE', 'PGDATABASE']);
+
+if (!databaseUrl) {
+  if (!postgresHost) {
+    errors.push('POSTGRES_HOST: expected string, received undefined');
+  }
+
+  if (postgresPort === undefined) {
+    errors.push('POSTGRES_PORT: expected number, received undefined');
+  }
+
+  if (!postgresUser) {
+    errors.push('POSTGRES_USER: expected string, received undefined');
+  }
+
+  if (!postgresPassword) {
+    errors.push('POSTGRES_PASSWORD: expected string, received undefined');
+  }
+
+  if (!postgresDb) {
+    errors.push('POSTGRES_DB: expected string, received undefined');
+  }
+}
+
 export const env: Env = {
-  PORT: readPositiveInt('PORT', 0),
-  DATABASE_URL: readOptionalString('DATABASE_URL'),
-  POSTGRES_HOST: process.env.POSTGRES_HOST || 'localhost',
-  POSTGRES_PORT: readPositiveInt('POSTGRES_PORT', 0),
-  POSTGRES_USER: readRequiredString('POSTGRES_USER'),
-  POSTGRES_PASSWORD: readRequiredString('POSTGRES_PASSWORD'),
-  POSTGRES_DB: readRequiredString('POSTGRES_DB'),
-  POSTGRES_SSL: readBoolean('POSTGRES_SSL', false),
+  PORT: readOptionalPositiveIntFromNames(['PORT']),
+  DATABASE_URL: databaseUrl,
+  POSTGRES_HOST: postgresHost,
+  POSTGRES_PORT: postgresPort,
+  POSTGRES_USER: postgresUser,
+  POSTGRES_PASSWORD: postgresPassword,
+  POSTGRES_DB: postgresDb,
+  POSTGRES_SSL: readBoolean('POSTGRES_SSL', Boolean(databaseUrl)),
   AUTH_ACCESS_SECRET_KEY: readRequiredString('AUTH_ACCESS_SECRET_KEY'),
   AUTH_REFRESH_SECRET_KEY: readRequiredString('AUTH_REFRESH_SECRET_KEY'),
   AUTH_ACCESS_TOKEN_EXPIRES_IN: readRequiredTokenDuration(
