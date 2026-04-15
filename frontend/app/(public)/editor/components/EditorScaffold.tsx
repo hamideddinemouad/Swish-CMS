@@ -1,9 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import Renderer from "../[pageName]/components/renderer";
 import type { PageConfig } from "../lib/types";
+import {
+  StatusBanner,
+  cx,
+  publicBadgeStyles,
+  publicSurfaceStyles,
+} from "../../shared/public-ui";
 
 type EditorScaffoldProps = {
   pageName: string;
@@ -13,6 +19,7 @@ type EditorScaffoldProps = {
   sidebarTitle: string;
   status: string;
   isSaving: boolean;
+  statusTone: "neutral" | "success" | "error";
   previewRef?: React.RefObject<HTMLDivElement | null>;
   config: PageConfig;
   sidebar: ReactNode;
@@ -26,24 +33,50 @@ export default function EditorScaffold({
   sidebarTitle,
   status,
   isSaving,
+  statusTone,
   previewRef,
   config,
   sidebar,
 }: EditorScaffoldProps) {
   const [mobilePanel, setMobilePanel] = useState<"edit" | "preview">("edit");
+  const [showFloatingSuccess, setShowFloatingSuccess] = useState(false);
+
+  useEffect(() => {
+    if (statusTone !== "success") {
+      setShowFloatingSuccess(false);
+      return;
+    }
+
+    setShowFloatingSuccess(true);
+    const timeout = window.setTimeout(() => {
+      setShowFloatingSuccess(false);
+    }, 2200);
+
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [status, statusTone]);
+
+  const showInlineStatus = isSaving || statusTone === "error";
 
   return (
-    <section className="flex min-h-[calc(100vh-9rem)] flex-col gap-6 rounded-none border-0 bg-transparent p-0 shadow-none lg:min-h-[calc(100vh-10rem)]">
-      <div className="flex flex-col gap-2 px-1 sm:px-0">
-        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-wix-blue)]">
-          {badge}
-        </p>
-        <h1 className="text-2xl font-semibold tracking-[-0.04em] text-[var(--color-ink-900)] sm:text-3xl">
-          {title}
-        </h1>
-        <p className="max-w-2xl text-sm leading-7 text-[var(--color-ink-700)]">
-          {description}
-        </p>
+    <section className="flex min-h-[calc(100vh-9rem)] flex-col gap-6 lg:min-h-[calc(100vh-10rem)]">
+      {showFloatingSuccess ? <FloatingSuccessToast message={status} /> : null}
+
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-end">
+        <div className="space-y-3">
+          <span className={publicBadgeStyles.blue}>{badge}</span>
+          <h1 className="text-3xl font-semibold tracking-[-0.06em] text-[var(--color-deep-navy)]">
+            {title}
+          </h1>
+          <p className="max-w-3xl text-sm leading-7 text-[var(--color-ink-700)]">{description}</p>
+        </div>
+
+        {showInlineStatus ? (
+          <div className="hidden xl:block">
+            <StatusBanner tone={isSaving ? "info" : "error"}>{status}</StatusBanner>
+          </div>
+        ) : null}
       </div>
 
       <div className="lg:hidden">
@@ -51,62 +84,70 @@ export default function EditorScaffold({
           <button
             type="button"
             onClick={() => setMobilePanel("edit")}
-            className={`rounded-2xl px-4 py-2.5 text-sm font-medium transition ${
+            className={cx(
+              "rounded-2xl px-4 py-2.5 text-sm font-medium transition motion-reduce:transition-none",
               mobilePanel === "edit"
                 ? "bg-[var(--color-wix-blue)] text-white shadow-[0_14px_28px_rgba(56,153,236,0.22)]"
-                : "text-[var(--color-ink-700)]"
-            }`}
+                : "text-[var(--color-ink-700)]",
+            )}
           >
             Edit
           </button>
           <button
             type="button"
             onClick={() => setMobilePanel("preview")}
-            className={`rounded-2xl px-4 py-2.5 text-sm font-medium transition ${
+            className={cx(
+              "rounded-2xl px-4 py-2.5 text-sm font-medium transition motion-reduce:transition-none",
               mobilePanel === "preview"
                 ? "bg-slate-950 text-white shadow-[0_14px_28px_rgba(15,23,42,0.18)]"
-                : "text-[var(--color-ink-700)]"
-            }`}
+                : "text-[var(--color-ink-700)]",
+            )}
           >
             Preview
           </button>
         </div>
       </div>
 
-      <div className="grid flex-1 gap-6 lg:grid-cols-[minmax(340px,440px)_minmax(0,1fr)] lg:items-start">
+      <div className="grid flex-1 gap-6 lg:grid-cols-[minmax(340px,420px)_minmax(0,1fr)] lg:items-start">
         <aside
-          className={`rounded-[28px] border border-[color:rgb(146_146_146_/_0.14)] bg-[linear-gradient(180deg,#ffffff_0%,#f7fafc_100%)] p-5 shadow-[0_18px_50px_rgb(54_54_54_/_0.05)] lg:sticky lg:top-6 lg:max-h-[calc(100vh-10rem)] lg:overflow-y-auto ${
-            mobilePanel === "preview" ? "hidden lg:block" : "block"
-          }`}
+          className={cx(
+            publicSurfaceStyles.soft,
+            "p-5 lg:sticky lg:top-6 lg:max-h-[calc(100vh-10rem)] lg:overflow-y-auto",
+            mobilePanel === "preview" ? "hidden lg:block" : "block",
+          )}
         >
-          <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-wix-blue)]">
-            {sidebarTitle}
-          </p>
-          <p className="mt-2 text-sm text-[var(--color-ink-700)]">{status}</p>
-          {isSaving ? (
-            <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-wix-blue)]">
-              Saving...
+          <div className="space-y-3">
+            <span className={publicBadgeStyles.slate}>{sidebarTitle}</span>
+            <p className="text-sm leading-6 text-[var(--color-ink-700)]">
+              {isSaving ? "Saving current changes..." : "Changes update the live preview below."}
             </p>
-          ) : null}
+            {showInlineStatus ? (
+              <div className="xl:hidden">
+                <StatusBanner tone={isSaving ? "info" : "error"}>{status}</StatusBanner>
+              </div>
+            ) : null}
+          </div>
           <div className="mt-4 space-y-4">{sidebar}</div>
         </aside>
 
         <div
-          className={`flex min-h-[70vh] flex-col overflow-hidden rounded-[32px] border border-[color:rgb(146_146_146_/_0.16)] bg-[linear-gradient(180deg,#f8fbff_0%,#edf2f7_100%)] shadow-[0_24px_70px_rgb(54_54_54_/_0.12)] lg:h-[calc(100vh-10rem)] ${
-            mobilePanel === "edit" ? "hidden lg:flex" : "flex"
-          }`}
+          className={cx(
+            publicSurfaceStyles.panel,
+            "flex min-h-[70vh] flex-col overflow-hidden lg:h-[calc(100vh-10rem)]",
+            mobilePanel === "edit" ? "hidden lg:flex" : "flex",
+          )}
         >
-          <div className="flex items-center justify-between gap-4 border-b border-white/70 bg-white/75 px-4 py-3 backdrop-blur">
+          <div className="flex items-center justify-between gap-4 border-b border-white/70 bg-white/76 px-4 py-3 backdrop-blur">
             <div className="flex items-center gap-2">
               <span className="h-3 w-3 rounded-full bg-[#fb7d33]" />
               <span className="h-3 w-3 rounded-full bg-[#ffc233]" />
               <span className="h-3 w-3 rounded-full bg-[#60bc57]" />
             </div>
-            <div className="rounded-full border border-[color:rgb(146_146_146_/_0.14)] bg-white px-3 py-1 text-xs font-medium text-[var(--color-ink-700)]">
+            <div className="rounded-full border border-slate-200 bg-white/92 px-3 py-1 text-xs font-medium text-[var(--color-ink-700)]">
               Preview /editor/{pageName}
             </div>
             <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-500)]">
-              Browser frame
+              Live renderer
             </div>
           </div>
           <div ref={previewRef} className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 lg:p-5">
@@ -117,5 +158,42 @@ export default function EditorScaffold({
         </div>
       </div>
     </section>
+  );
+}
+
+function FloatingSuccessToast({ message }: { message: string }) {
+  return (
+    <div className="pointer-events-none fixed right-4 top-24 z-[70] sm:right-6 lg:right-8">
+      <div className="flex items-center gap-3 rounded-[24px] border border-[rgb(115_175_85_/_0.24)] bg-white/96 px-4 py-3 shadow-[0_20px_46px_-24px_rgba(15,23,42,0.38)] backdrop-blur-xl">
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 130.2 130.2"
+          className="h-11 w-11 shrink-0"
+          fill="none"
+        >
+          <circle
+            cx="65.1"
+            cy="65.1"
+            r="62.1"
+            stroke="#73AF55"
+            strokeWidth="6"
+            strokeMiterlimit="10"
+          />
+          <polyline
+            points="100.2,40.2 51.5,88.8 29.8,67.5"
+            stroke="#73AF55"
+            strokeWidth="6"
+            strokeLinecap="round"
+            strokeMiterlimit="10"
+          />
+        </svg>
+        <div className="space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#73AF55]">
+            Save complete
+          </p>
+          <p className="text-base font-semibold text-[var(--color-deep-navy)]">{message}</p>
+        </div>
+      </div>
+    </div>
   );
 }

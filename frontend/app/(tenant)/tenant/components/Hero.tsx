@@ -2,6 +2,7 @@ import { preferences as defaultPreferences } from "@/visualizer/demo/home/prefer
 import { resolveHomeSectionDesign } from "@/lib/home-design-presets";
 import type { HomeData } from "@/visualizer/demo/home/data";
 import type { HomePreferences } from "@/visualizer/demo/home/preference";
+import TenantImage from "./TenantImage";
 
 export type HeroProps = HomeData["hero"] & {
   preferences?: HomePreferences;
@@ -45,11 +46,11 @@ export default function Hero({
             </span>
           </div>
         </div>
-        <div className={design.color.imageFrameClass}>
-          <img
+        <div className={`${design.color.imageFrameClass} overflow-hidden`}>
+          <TenantImage
             src={image}
             alt={title}
-            className={`h-72 w-full rounded-[1.6rem] object-cover ${design.color.imageShadowClass}`}
+            className={`h-72 w-full rounded-[1.6rem] ${design.color.imageShadowClass}`}
           />
         </div>
       </div>

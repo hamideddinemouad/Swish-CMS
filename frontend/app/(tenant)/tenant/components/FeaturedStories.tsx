@@ -2,6 +2,7 @@ import { preferences as defaultPreferences } from "@/visualizer/demo/home/prefer
 import { resolveHomeSectionDesign } from "@/lib/home-design-presets";
 import type { HomeData } from "@/visualizer/demo/home/data";
 import type { HomePreferences } from "@/visualizer/demo/home/preference";
+import TenantImage from "./TenantImage";
 
 export type FeaturedStoriesProps = HomeData["featuredStories"] & {
   preferences?: HomePreferences;
@@ -29,10 +30,11 @@ export default function FeaturedStories({ title, posts, preferences }: FeaturedS
             <article key={post.slug} className={design.color.cardBaseClass}>
               <div className="flex flex-col gap-4 lg:flex-row">
                 <div className="flex w-full items-center justify-center overflow-hidden rounded-2xl bg-black/5 lg:w-1/2">
-                  <img
+                  <TenantImage
                     src={post.image}
                     alt={post.title}
-                    className="h-auto max-h-56 w-full object-contain"
+                    fit="contain"
+                    className="h-auto max-h-56 w-full"
                   />
                 </div>
                 <div className="space-y-3">

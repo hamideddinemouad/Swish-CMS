@@ -5,6 +5,7 @@ import {
 } from "@/lib/page-design-presets";
 import type { ArticlesData } from "@/visualizer/demo/articles/data";
 import type { ArticlesPreferences } from "@/visualizer/demo/articles/preference";
+import TenantImage from "../../components/TenantImage";
 
 export type FeaturedArticlesProps = ArticlesData["featuredArticles"] & {
   preferences?: ArticlesPreferences;
@@ -29,7 +30,7 @@ export default function FeaturedArticles({ title, subtitle, articles, preference
             className={`${tokens.cards.base} space-y-4`}
           >
             <div className="aspect-[4/3] overflow-hidden rounded-2xl">
-              <img src={article.image} alt={article.title} className="h-full w-full object-cover" />
+              <TenantImage src={article.image} alt={article.title} className="h-full w-full" />
             </div>
             <p className={`text-xs font-semibold uppercase tracking-[0.3em] ${design.color.accentClass}`}>{article.tag}</p>
             <p className={`text-xl font-semibold ${tokens.theme.text.primary}`} style={{ fontFamily: design.headingFont.fontFamily }}>

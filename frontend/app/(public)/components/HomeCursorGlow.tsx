@@ -14,6 +14,11 @@ export default function HomeCursorGlow() {
       return;
     }
 
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) {
+      return;
+    }
+
     const target = {
       x: window.innerWidth * 0.5,
       y: window.innerHeight * 0.28,
@@ -49,13 +54,13 @@ export default function HomeCursorGlow() {
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       <div
         ref={glowRef}
-        className="absolute h-[22rem] w-[22rem] rounded-full bg-[radial-gradient(circle,rgba(56,153,236,0.18)_0%,rgba(56,153,236,0.12)_30%,rgba(56,153,236,0.04)_55%,transparent_72%)] blur-2xl"
+        className="absolute h-[24rem] w-[24rem] rounded-full bg-[radial-gradient(circle,rgba(56,153,236,0.22)_0%,rgba(56,153,236,0.16)_28%,rgba(96,188,87,0.08)_54%,transparent_74%)] blur-3xl"
       />
       <div
         ref={ringRef}
-        className="absolute h-60 w-60 rounded-full border border-[color:rgb(56_153_236_/_0.14)] bg-[radial-gradient(circle,rgba(255,255,255,0.32)_0%,rgba(255,255,255,0.04)_62%,transparent_80%)] blur-xl"
+        className="absolute h-64 w-64 rounded-full border border-[color:rgb(56_153_236_/_0.16)] bg-[radial-gradient(circle,rgba(255,255,255,0.42)_0%,rgba(255,255,255,0.08)_58%,transparent_82%)] blur-xl"
       />
-      <div className="absolute inset-x-0 top-0 h-48 bg-[radial-gradient(circle_at_top,rgba(56,153,236,0.12),transparent_65%)]" />
+      <div className="absolute inset-x-0 top-0 h-56 bg-[radial-gradient(circle_at_top,rgba(56,153,236,0.12),transparent_65%)]" />
     </div>
   );
 }

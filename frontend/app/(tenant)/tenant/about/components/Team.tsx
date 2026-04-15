@@ -5,6 +5,7 @@ import {
 } from "@/lib/page-design-presets";
 import type { AboutData } from "@/visualizer/demo/about/data";
 import type { AboutPreferences } from "@/visualizer/demo/about/preference";
+import TenantImage from "../../components/TenantImage";
 
 export type TeamProps = AboutData["team"] & {
   preferences?: AboutPreferences;
@@ -27,10 +28,10 @@ export default function Team({ title, members, preferences }: TeamProps) {
             key={member.name}
             className={`${tokens.cards.base} space-y-4 transition hover:-translate-y-1 hover:shadow-2xl`}
           >
-            <img
+            <TenantImage
               src={member.avatar}
               alt={member.name}
-              className="h-36 w-full rounded-2xl object-cover"
+              className="h-36 w-full rounded-2xl"
             />
             <div className="space-y-1">
               <p className={`text-lg font-semibold ${tokens.theme.text.primary}`} style={{ fontFamily: design.headingFont.fontFamily }}>{member.name}</p>

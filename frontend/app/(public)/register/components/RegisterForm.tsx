@@ -8,6 +8,13 @@ import {
   type SubmitEvent,
   useState,
 } from "react";
+import {
+  StatusBanner,
+  cx,
+  getInputStateClass,
+  publicButtonStyles,
+  publicInputBaseClass,
+} from "../../shared/public-ui";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -35,10 +42,8 @@ export function RegisterForm() {
   const showEmailValidation = emailTouched && !isEmailFocused;
   const emailIsValid = isValidEmail(email);
   const emailInputStateClass = showEmailValidation
-    ? emailIsValid
-      ? "border-[var(--color-wix-green)] bg-[color:rgb(96_188_87_/_0.05)]"
-      : "border-[var(--color-wix-red)] bg-[color:rgb(224_43_74_/_0.05)]"
-    : "border-[color:rgb(146_146_146_/_0.28)] bg-white";
+    ? getInputStateClass(emailIsValid ? "success" : "error")
+    : getInputStateClass("default");
 
   function handleEmailChange(event: ChangeEvent<HTMLInputElement>) {
     setEmail(event.currentTarget.value);
@@ -105,7 +110,7 @@ export function RegisterForm() {
             value={firstName}
             onChange={(event) => setFirstName(event.currentTarget.value)}
             placeholder="Jane"
-            className="w-full rounded-2xl border border-[color:rgb(146_146_146_/_0.28)] bg-white px-4 py-3 text-sm text-[var(--color-ink-900)] outline-none ring-0 transition focus:border-[var(--color-wix-blue)]"
+            className={publicInputBaseClass}
             required
           />
         </div>
@@ -125,7 +130,7 @@ export function RegisterForm() {
             value={lastName}
             onChange={(event) => setLastName(event.currentTarget.value)}
             placeholder="Doe"
-            className="w-full rounded-2xl border border-[color:rgb(146_146_146_/_0.28)] bg-white px-4 py-3 text-sm text-[var(--color-ink-900)] outline-none ring-0 transition focus:border-[var(--color-wix-blue)]"
+            className={publicInputBaseClass}
             required
           />
         </div>
@@ -149,7 +154,7 @@ export function RegisterForm() {
           onBlur={handleEmailBlur}
           aria-invalid={showEmailValidation && !emailIsValid}
           placeholder="name@company.com"
-          className={`w-full rounded-2xl border px-4 py-3 text-sm text-[var(--color-ink-900)] outline-none ring-0 transition focus:border-[var(--color-wix-blue)] ${emailInputStateClass}`}
+          className={cx(publicInputBaseClass, emailInputStateClass)}
           required
         />
         {showEmailValidation ? (
@@ -180,7 +185,7 @@ export function RegisterForm() {
           placeholder="Create a password"
           value={password}
           onChange={(event) => setPassword(event.currentTarget.value)}
-          className="w-full rounded-2xl border border-[color:rgb(146_146_146_/_0.28)] bg-white px-4 py-3 text-sm text-[var(--color-ink-900)] outline-none ring-0 transition focus:border-[var(--color-wix-blue)]"
+          className={publicInputBaseClass}
           minLength={4}
           required
         />
@@ -201,7 +206,7 @@ export function RegisterForm() {
           placeholder="Used for account recovery"
           value={secretPhrase}
           onChange={(event) => setSecretPhrase(event.currentTarget.value)}
-          className="w-full rounded-2xl border border-[color:rgb(146_146_146_/_0.28)] bg-white px-4 py-3 text-sm text-[var(--color-ink-900)] outline-none ring-0 transition focus:border-[var(--color-wix-blue)]"
+          className={publicInputBaseClass}
           minLength={4}
           required
         />
@@ -210,22 +215,15 @@ export function RegisterForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-wix-blue)] px-5 py-3 text-sm font-semibold text-white shadow-[0_16px_30px_rgb(56_153_236_/_0.18)] hover:bg-[#2f8fe2] disabled:cursor-not-allowed disabled:opacity-70"
+        className={cx(publicButtonStyles.primary, "w-full disabled:cursor-not-allowed disabled:opacity-70")}
       >
         {isSubmitting ? "Creating account..." : "Create account"}
       </button>
 
       {message ? (
-        <p
-          aria-live="polite"
-          className={`rounded-2xl border px-4 py-3 text-sm leading-6 ${
-            isError
-              ? "border-[color:rgb(224_43_74_/_0.18)] bg-[color:rgb(224_43_74_/_0.06)] text-[var(--color-wix-red)]"
-              : "border-[color:rgb(56_153_236_/_0.18)] bg-[color:rgb(56_153_236_/_0.07)] text-[var(--color-ink-700)]"
-          }`}
-        >
+        <StatusBanner aria-live="polite" tone={isError ? "error" : "info"}>
           {message}
-        </p>
+        </StatusBanner>
       ) : null}
     </form>
   );

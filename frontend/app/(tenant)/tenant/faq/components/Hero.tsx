@@ -5,6 +5,7 @@ import {
 } from "@/lib/page-design-presets";
 import type { FAQData } from "@/visualizer/demo/FAQ/data";
 import type { FAQPreferences } from "@/visualizer/demo/FAQ/preference";
+import TenantImage from "../../components/TenantImage";
 
 export type HeroProps = FAQData["hero"] & {
   preferences?: FAQPreferences;
@@ -25,10 +26,11 @@ export default function Hero({ eyebrow, title, subtitle, image, preferences }: H
           <p className={heroTokens.subtitle} style={{ fontFamily: design.bodyFont.fontFamily }}>{subtitle}</p>
         </div>
         <div className={`${design.color.imageFrameClass} flex items-center justify-center`}>
-          <img
+          <TenantImage
             src={image}
             alt={title}
-            className={`h-auto max-h-80 w-full rounded-[1.5rem] object-contain ${design.color.imageShadowClass}`}
+            fit="contain"
+            className={`h-auto max-h-80 w-full rounded-[1.5rem] ${design.color.imageShadowClass}`}
           />
         </div>
       </div>

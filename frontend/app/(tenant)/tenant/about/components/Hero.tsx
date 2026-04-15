@@ -5,6 +5,7 @@ import {
 } from "@/lib/page-design-presets";
 import type { AboutData } from "@/visualizer/demo/about/data";
 import type { AboutPreferences } from "@/visualizer/demo/about/preference";
+import TenantImage from "../../components/TenantImage";
 
 export type HeroProps = AboutData["hero"] & {
   preferences?: AboutPreferences;
@@ -45,11 +46,11 @@ export default function Hero({
         </div>
 
         <div className="relative basis-1/2">
-          <div className={design.color.imageFrameClass}>
-            <img
+          <div className={`${design.color.imageFrameClass} aspect-[4/3] overflow-hidden`}>
+            <TenantImage
               src={image}
               alt={title}
-              className={`h-full w-full rounded-[1.7rem] object-cover ${design.color.imageShadowClass}`}
+              className={`h-full w-full rounded-[1.7rem] ${design.color.imageShadowClass}`}
             />
           </div>
         </div>

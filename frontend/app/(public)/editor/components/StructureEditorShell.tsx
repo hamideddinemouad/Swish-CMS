@@ -6,6 +6,7 @@ import EditorScaffold from "./EditorScaffold";
 import FieldGroup from "./FieldGroup";
 import { scrollPreviewToSection } from "./editor-utils";
 import type { PageComponent, PageConfig } from "../lib/types";
+import { cx, publicButtonStyles } from "../../shared/public-ui";
 
 export default function StructureEditorShell({
   pageName,
@@ -16,6 +17,7 @@ export default function StructureEditorShell({
 }) {
   const [config, setConfig] = useState(initialConfig);
   const [status, setStatus] = useState("Remove components from the page structure.");
+  const [statusTone, setStatusTone] = useState<"neutral" | "success" | "error">("neutral");
   const [isSaving, setIsSaving] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -36,6 +38,7 @@ export default function StructureEditorShell({
     }
 
     setIsSaving(true);
+    setStatusTone("neutral");
     try {
       await axios.delete(
         `/api/editor/pages/${encodeURIComponent(pageName)}/components/${encodeURIComponent(componentType)}`,
@@ -47,8 +50,10 @@ export default function StructureEditorShell({
         ),
       }));
       setStatus(`${componentType} removed from the page.`);
+      setStatusTone("success");
     } catch {
       setStatus(`Failed to remove ${componentType}.`);
+      setStatusTone("error");
     } finally {
       setIsSaving(false);
     }
@@ -67,6 +72,7 @@ export default function StructureEditorShell({
       sidebarTitle="Page Components"
       status={status}
       isSaving={isSaving}
+      statusTone={statusTone}
       previewRef={previewRef}
       config={config}
       sidebar={
@@ -105,7 +111,7 @@ function ComponentRow({
   onDelete: (componentType: string) => void;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-2xl border border-[color:rgb(146_146_146_/_0.16)] bg-white p-4">
+    <div className="flex items-center justify-between gap-4 rounded-[22px] border border-slate-200/80 bg-white/92 p-4">
       <div>
         <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-900)]">
           {component.type}
@@ -120,7 +126,10 @@ function ComponentRow({
         onFocus={() => onFocus(component.type)}
         onMouseEnter={() => onFocus(component.type)}
         onClick={() => onDelete(component.type)}
-        className="inline-flex items-center justify-center rounded-full border border-[color:rgb(224_43_74_/_0.24)] bg-[color:rgb(224_43_74_/_0.08)] px-4 py-2 text-sm font-semibold text-[var(--color-wix-red)] transition hover:bg-[color:rgb(224_43_74_/_0.14)] disabled:cursor-not-allowed disabled:opacity-60"
+        className={cx(
+          publicButtonStyles.danger,
+          "rounded-full disabled:cursor-not-allowed disabled:opacity-60",
+        )}
       >
         Delete
       </button>

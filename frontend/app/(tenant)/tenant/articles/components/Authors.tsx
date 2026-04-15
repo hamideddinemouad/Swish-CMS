@@ -5,6 +5,7 @@ import {
   resolvePageComponentPreferences,
 } from "@/lib/page-design-presets";
 import type { ArticlesPreferences } from "@/visualizer/demo/articles/preference";
+import TenantImage from "../../components/TenantImage";
 
 export type AuthorsProps = ArticlesData["authors"] & {
   preferences?: ArticlesPreferences;
@@ -24,7 +25,7 @@ export default function Authors({ title, people, preferences }: AuthorsProps) {
         {people.map((person) => (
           <article key={person.name} className={`space-y-3 ${tokens.cards.compact}`}>
             <div className="flex items-center gap-4">
-              <img src={person.avatar} alt={person.name} className="h-16 w-16 rounded-full object-cover" />
+              <TenantImage src={person.avatar} alt={person.name} className="h-16 w-16 rounded-full" />
               <div>
                 <p className={`text-lg font-semibold ${tokens.theme.text.primary}`} style={{ fontFamily: design.headingFont.fontFamily }}>{person.name}</p>
                 <p className={`text-xs uppercase tracking-[0.3em] ${design.color.accentClass}`}>{person.role}</p>

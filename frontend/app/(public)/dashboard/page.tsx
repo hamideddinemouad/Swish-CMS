@@ -1,10 +1,20 @@
 "use client";
 
+import Link from "next/link";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/redux/hooks";
 import Loading from "./loading";
+import {
+  ActionLink,
+  PageShell,
+  StatCard,
+  StatusBanner,
+  SurfaceCard,
+  publicBadgeStyles,
+} from "../shared/public-ui";
+import { useHydrated } from "../shared/useHydrated";
 
 type DashboardUserInfo = {
   tenantTemplateId: string | null;
@@ -36,16 +46,16 @@ function titleize(value: string) {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
+function buildTenantHomeUrl(subdomain: string) {
+  return `https://${subdomain}.swish.ltd/`;
+}
+
 export default function DashboardPage() {
   const router = useRouter();
   const user = useAppSelector((state) => state.user.user);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHydrated();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [statsError, setStatsError] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (mounted && !user) {
@@ -118,6 +128,9 @@ export default function DashboardPage() {
   }
 
   const isStatsLoading = !stats && !statsError;
+  const liveSiteHref = user.tenantSubdomain
+    ? buildTenantHomeUrl(user.tenantSubdomain)
+    : null;
 
   const statCards = [
     {
@@ -148,53 +161,106 @@ export default function DashboardPage() {
   ];
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-5.5rem)] w-full max-w-6xl flex-col px-4 py-5 sm:px-6 sm:py-6">
-      <section className="rounded-[32px] border border-[color:rgb(146_146_146_/_0.18)] bg-white/92 p-6 shadow-[0_20px_50px_rgb(54_54_54_/_0.08)] backdrop-blur sm:p-8">
-        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-wix-blue)]">
-          Dashboard
-        </p>
-        <h1 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-[var(--color-ink-900)] sm:text-3xl">
-          Welcome, {user?.firstName} {user?.lastName}
-        </h1>
-        <p className="mt-4 text-sm leading-7 text-[var(--color-ink-700)]">
-          Signed in as {user?.email}.
-        </p>
-
-        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-          {statCards.map((card) => (
-            <article
-              key={card.label}
-              className="rounded-[24px] border border-[color:rgb(146_146_146_/_0.14)] bg-[linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] p-5 shadow-[0_16px_40px_rgb(54_54_54_/_0.04)]"
-            >
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-wix-blue)]">
-                {card.label}
+    <PageShell size="medium">
+      <section className="grid gap-6 lg:grid-cols-[minmax(0,1.08fr)_22rem] lg:items-start">
+        <SurfaceCard tone="hero" className="px-6 py-7 sm:px-8 sm:py-9">
+          <div className="space-y-5">
+            <span className={publicBadgeStyles.blue}>Dashboard</span>
+            <div className="space-y-4">
+              <h1 className="text-3xl font-semibold tracking-[-0.06em] text-[var(--color-deep-navy)] sm:text-4xl">
+                Welcome back, {user.firstName} {user.lastName}.
+              </h1>
+              <p className="max-w-2xl text-sm leading-7 text-[var(--color-ink-700)] sm:text-base">
+                Signed in as {user.email}. This overview keeps the current workspace,
+                template, and editor state easy to scan before you move back into the product.
               </p>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <ActionLink href="/editor/home">Open editor</ActionLink>
+              <ActionLink href="/profile" variant="secondary">
+                Manage profile
+              </ActionLink>
+              {liveSiteHref ? (
+                <Link
+                  href={liveSiteHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center text-sm font-semibold text-[var(--color-deep-blue)] underline decoration-[rgb(56_153_236_/_0.35)] underline-offset-4 transition hover:text-[var(--color-wix-blue)]"
+                >
+                  View live site
+                </Link>
+              ) : null}
+            </div>
+          </div>
+        </SurfaceCard>
+
+        <SurfaceCard tone="soft" className="p-5 sm:p-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-wix-green)]">
+            Workspace status
+          </p>
+          <div className="mt-4 space-y-3">
+            <div className="rounded-[22px] border border-slate-200/80 bg-white/90 px-4 py-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-500)]">
+                Workspace
+              </p>
+              <p className="mt-2 text-sm font-semibold text-[var(--color-ink-900)]">
+                {user.tenantSubdomain}
+              </p>
+            </div>
+            <div className="rounded-[22px] border border-slate-200/80 bg-white/90 px-4 py-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-500)]">
+                Flow state
+              </p>
+              <p className="mt-2 text-sm font-semibold text-[var(--color-ink-900)]">
+                {stats?.editorReady ?? "Preparing overview"}
+              </p>
+            </div>
+            <div className="rounded-[22px] border border-slate-200/80 bg-white/90 px-4 py-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-500)]">
+                Current focus
+              </p>
+              <p className="mt-2 text-sm leading-6 text-[var(--color-ink-700)]">
+                Review the workspace snapshot, then continue into the editor or profile without leaving the current shell.
+              </p>
+            </div>
+          </div>
+        </SurfaceCard>
+      </section>
+
+      <section className="space-y-5">
+        <div className="flex flex-col gap-2">
+          <span className={publicBadgeStyles.purple}>Overview</span>
+          <h2 className="text-2xl font-semibold tracking-[-0.05em] text-[var(--color-deep-navy)]">
+            Current workspace metrics
+          </h2>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+          {statCards.map((card) => (
+            <div key={card.label}>
               {isStatsLoading ? (
-                <div className="mt-3 space-y-3 animate-pulse">
-                  <div className="h-9 w-20 rounded-2xl bg-[color:rgb(56_153_236_/_0.12)]" />
-                  <div className="h-4 w-full rounded-full bg-[color:rgb(146_146_146_/_0.14)]" />
-                  <div className="h-4 w-4/5 rounded-full bg-[color:rgb(146_146_146_/_0.12)]" />
-                </div>
+                <SurfaceCard tone="metric" className="px-4 py-4 sm:px-5">
+                  <div className="animate-pulse space-y-3">
+                    <div className="h-3 w-20 rounded-full bg-[color:rgb(56_153_236_/_0.14)]" />
+                    <div className="h-8 w-24 rounded-2xl bg-[color:rgb(56_153_236_/_0.12)]" />
+                    <div className="h-4 w-full rounded-full bg-[color:rgb(146_146_146_/_0.12)]" />
+                    <div className="h-4 w-4/5 rounded-full bg-[color:rgb(146_146_146_/_0.1)]" />
+                  </div>
+                </SurfaceCard>
               ) : (
-                <>
-                  <p className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[var(--color-ink-900)]">
-                    {card.value}
-                  </p>
-                  <p className="mt-3 text-sm leading-6 text-[var(--color-ink-700)]">
-                    {card.hint}
-                  </p>
-                </>
+                <StatCard label={card.label} value={card.value} hint={card.hint} />
               )}
-            </article>
+            </div>
           ))}
         </div>
 
         {statsError ? (
-          <p className="mt-6 rounded-2xl border border-[color:rgb(224_43_74_/_0.18)] bg-[color:rgb(224_43_74_/_0.06)] px-4 py-3 text-sm text-[var(--color-wix-red)]">
+          <StatusBanner tone="error">
             Dashboard stats could not be loaded right now.
-          </p>
+          </StatusBanner>
         ) : null}
       </section>
-    </main>
+    </PageShell>
   );
 }

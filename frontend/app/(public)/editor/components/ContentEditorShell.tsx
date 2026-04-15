@@ -17,6 +17,7 @@ export default function ContentEditorShell({
 }) {
   const [config, setConfig] = useState(initialConfig);
   const [status, setStatus] = useState("Edit a field and blur to save.");
+  const [statusTone, setStatusTone] = useState<"neutral" | "success" | "error">("neutral");
   const [isSaving, setIsSaving] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
   const dataRef = useRef(initialConfig.data);
@@ -51,13 +52,16 @@ export default function ContentEditorShell({
     }
 
     setIsSaving(true);
+    setStatusTone("neutral");
     try {
       await axios.patch(`/api/editor/pages/${encodeURIComponent(pageName)}/content`, {
         data: dataRef.current,
       });
-      setStatus("Content saved.");
+      setStatus("Saved !");
+      setStatusTone("success");
     } catch {
       setStatus("Failed to save content.");
+      setStatusTone("error");
     } finally {
       setIsSaving(false);
     }
@@ -77,6 +81,7 @@ export default function ContentEditorShell({
       sidebarTitle="Content Fields"
       status={status}
       isSaving={isSaving}
+      statusTone={statusTone}
       previewRef={previewRef}
       config={config}
       sidebar={editableSections.map((component) => {

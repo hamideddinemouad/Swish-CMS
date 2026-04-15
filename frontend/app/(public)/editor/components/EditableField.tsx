@@ -1,6 +1,7 @@
 "use client";
 
 import { titleize } from "./editor-utils";
+import { cx, publicInputBaseClass } from "../../shared/public-ui";
 
 export default function EditableField({
   path,
@@ -81,7 +82,7 @@ export default function EditableField({
           onFocus={() => onFocus(path)}
           onBlur={onBlur}
           rows={3}
-          className="w-full rounded-2xl border border-[color:rgb(146_146_146_/_0.18)] bg-white px-4 py-3 text-sm outline-none focus:border-[var(--color-wix-blue)]"
+          className={cx(publicInputBaseClass, "min-h-[7rem] resize-y")}
         />
       ) : (
         <input
@@ -89,7 +90,7 @@ export default function EditableField({
           onChange={(event) => onChange(path, event.target.value)}
           onFocus={() => onFocus(path)}
           onBlur={onBlur}
-          className="w-full rounded-2xl border border-[color:rgb(146_146_146_/_0.18)] bg-white px-4 py-3 text-sm outline-none focus:border-[var(--color-wix-blue)]"
+          className={publicInputBaseClass}
         />
       )}
     </label>

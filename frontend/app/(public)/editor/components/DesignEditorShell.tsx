@@ -31,15 +31,14 @@ import {
   PAGE_COLOR_PRESETS,
   PAGE_DISPLAY_SIZE_PRESETS,
   PAGE_HEADING_FONT_PRESETS,
-  type PageComponentDesignPreferences,
   type PageBodyFontPresetId,
   type PageBodySizePresetId,
   type PageColorPresetId,
-  type PageDesignPreferences,
   type PageDisplaySizePresetId,
   type PageHeadingFontPresetId,
 } from "@/lib/page-design-presets";
 import type { PageConfig } from "../lib/types";
+import { cx, publicInputBaseClass } from "../../shared/public-ui";
 
 type HomeDesignKey = keyof ReturnType<typeof getDefaultHomeSectionDesign>;
 type PageDesignKey = keyof ReturnType<typeof getDefaultPageDesign>;
@@ -53,6 +52,7 @@ export default function DesignEditorShell({
 }) {
   const [config, setConfig] = useState(initialConfig);
   const [status, setStatus] = useState("Choose a design preset to update the preview.");
+  const [statusTone, setStatusTone] = useState<"neutral" | "success" | "error">("neutral");
   const [isSaving, setIsSaving] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
   const preferenceRef = useRef(initialConfig.preference);
@@ -111,13 +111,16 @@ export default function DesignEditorShell({
     }
 
     setIsSaving(true);
+    setStatusTone("neutral");
     try {
       await axios.patch(`/api/editor/pages/${encodeURIComponent(pageName)}/preference`, {
         preference: nextPreference,
       });
-      setStatus("Design saved.");
+      setStatus("Saved !");
+      setStatusTone("success");
     } catch {
       setStatus("Failed to save design.");
+      setStatusTone("error");
     } finally {
       setIsSaving(false);
     }
@@ -160,6 +163,7 @@ export default function DesignEditorShell({
       sidebarTitle="Design Controls"
       status={status}
       isSaving={isSaving}
+      statusTone={statusTone}
       previewRef={previewRef}
       config={config}
       sidebar={
@@ -246,11 +250,12 @@ function HomeDesignPanel({
                     onFocus(section);
                     onChange("colorPreset", preset.id);
                   }}
-                  className={`space-y-2 rounded-2xl border p-2 text-left transition ${
+                  className={cx(
+                    "space-y-2 rounded-2xl border p-2 text-left transition motion-reduce:transition-none",
                     active
                       ? "border-[var(--color-wix-blue)] bg-[color:rgb(56_153_236_/_0.08)]"
-                      : "border-[color:rgb(146_146_146_/_0.18)] bg-white hover:border-[var(--color-wix-blue)]"
-                  }`}
+                      : "border-[color:rgb(146_146_146_/_0.18)] bg-white hover:border-[var(--color-wix-blue)]",
+                  )}
                 >
                   <span
                     className="block h-10 w-full rounded-xl"
@@ -356,7 +361,7 @@ function PresetSelect({
         value={value}
         onFocus={onFocus}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded-2xl border border-[color:rgb(146_146_146_/_0.18)] bg-white px-4 py-3 text-sm outline-none focus:border-[var(--color-wix-blue)]"
+        className={publicInputBaseClass}
       >
         {options.map((option) => (
           <option key={option.id} value={option.id}>
@@ -401,11 +406,12 @@ function PageDesignPanel({
                   onFocus();
                   onChange("colorPreset", preset.id);
                 }}
-                className={`space-y-2 rounded-2xl border p-2 text-left transition ${
+                className={cx(
+                  "space-y-2 rounded-2xl border p-2 text-left transition motion-reduce:transition-none",
                   active
                     ? "border-[var(--color-wix-blue)] bg-[color:rgb(56_153_236_/_0.08)]"
-                    : "border-[color:rgb(146_146_146_/_0.18)] bg-white hover:border-[var(--color-wix-blue)]"
-                }`}
+                    : "border-[color:rgb(146_146_146_/_0.18)] bg-white hover:border-[var(--color-wix-blue)]",
+                )}
               >
                 <span className="block h-10 w-full rounded-xl" style={{ background: preset.swatch }} />
                 <span className="block text-xs font-semibold text-[var(--color-ink-900)]">

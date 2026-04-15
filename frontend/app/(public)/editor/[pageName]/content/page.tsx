@@ -15,10 +15,9 @@ export default async function EditorContentPage({
   const { homePage, currentPage, pages } = await loadEditorPageData(pageName);
 
   return (
-    <main className="flex min-h-screen w-full flex-col px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
+    <main className="mx-auto flex min-h-[calc(100vh-5.5rem)] w-full max-w-7xl flex-col px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
       <Nav
         logo={homePage.data.nav.logo}
-        cta={homePage.data.nav.cta}
         pages={pages}
         mode="content"
         currentPage={pageName}

@@ -5,6 +5,7 @@ import {
 } from "@/lib/page-design-presets";
 import type { CategoriesData } from "@/visualizer/demo/categories/data";
 import type { CategoriesPreferences } from "@/visualizer/demo/categories/preference";
+import TenantImage from "../../components/TenantImage";
 
 export type CategoryGridProps = CategoriesData["categoryGrid"] & {
   preferences?: CategoriesPreferences;
@@ -33,10 +34,10 @@ export default function CategoryGrid({ title, description, categories, preferenc
               <p className={`${tokens.typography.smallSize} text-white/80`} style={{ fontFamily: design.bodyFont.fontFamily }}>{category.excerpt}</p>
             </div>
             <div className="absolute -right-10 -bottom-10 h-48 w-48 bg-white/30 blur-3xl" />
-            <img
+            <TenantImage
               src={category.image}
               alt={category.name}
-              className="absolute right-0 top-0 h-full w-1/2 object-cover opacity-80"
+              className="absolute right-0 top-0 h-full w-1/2 opacity-80"
             />
           </div>
         ))}

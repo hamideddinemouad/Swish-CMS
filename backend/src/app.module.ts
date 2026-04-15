@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -9,7 +9,6 @@ import { PagesModule } from './pages/pages.module';
 import { AuthModule } from './auth/auth.module';
 import { ComponentsModule } from './components/components.module';
 import { SetupModule } from './setup/setup.module';
-import { HttpLoggerMiddleware } from './common/middleware/http-logger.middleware';
 //composant recuperer la liste de tout les utilisasteurs dans la base de donne
 //consomation 
 @Module({
@@ -47,8 +46,4 @@ import { HttpLoggerMiddleware } from './common/middleware/http-logger.middleware
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(HttpLoggerMiddleware).forRoutes('*');
-  }
-}
+export class AppModule {}

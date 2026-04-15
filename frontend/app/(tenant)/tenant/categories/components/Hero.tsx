@@ -5,6 +5,7 @@ import {
 } from "@/lib/page-design-presets";
 import type { CategoriesData } from "@/visualizer/demo/categories/data";
 import type { CategoriesPreferences } from "@/visualizer/demo/categories/preference";
+import TenantImage from "../../components/TenantImage";
 
 export type HeroProps = CategoriesData["hero"] & {
   preferences?: CategoriesPreferences;
@@ -26,11 +27,11 @@ export default function Hero({ title, subtitle, ctaText, ctaLink, image, prefere
             {ctaText}
           </span>
         </div>
-        <div className={design.color.imageFrameClass}>
-          <img
+        <div className={`${design.color.imageFrameClass} overflow-hidden`}>
+          <TenantImage
             src={image}
             alt={title}
-            className={`h-72 w-full rounded-[1.6rem] object-cover ${design.color.imageShadowClass}`}
+            className={`h-72 w-full rounded-[1.6rem] ${design.color.imageShadowClass}`}
           />
         </div>
       </div>
