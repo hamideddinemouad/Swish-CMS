@@ -51,6 +51,7 @@ These values appear in Wix's official design assets under typography and black h
 - Use `wix-purple` as a supporting accent, not the main action color.
 - Avoid placing all five accent colors in the same screen section.
 
+
 ## Suggested CSS Tokens
 ```css
 :root {

@@ -36,6 +36,7 @@ export function LoginForm() {
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const showEmailValidation = emailTouched && !isEmailFocused;
   const emailIsValid = isValidEmail(email);
   const emailInputStateClass = showEmailValidation
@@ -60,6 +61,7 @@ export function LoginForm() {
     event.preventDefault();
     setMessage("");
     setIsError(false);
+    setIsSubmitting(true);
 
     const formData = new FormData(event.currentTarget);
     const email = formData.get("email");
@@ -84,6 +86,8 @@ export function LoginForm() {
       }
 
       setMessage("Login failed");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -143,9 +147,13 @@ export function LoginForm() {
 
       <button
         type="submit"
-        className={cx(publicButtonStyles.primary, "w-full")}
+        disabled={isSubmitting}
+        className={cx(
+          publicButtonStyles.primary,
+          "w-full disabled:cursor-not-allowed disabled:opacity-70"
+        )}
       >
-        Sign in
+        {isSubmitting ? "Signing in..." : "Sign in"}
       </button>
 
       {message ? (

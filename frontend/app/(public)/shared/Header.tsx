@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { cx, publicBadgeStyles, publicButtonStyles } from "./public-ui";
+import { cx, publicButtonStyles } from "./public-ui";
+import { InstantDemoButton } from "./RecruiterDemoAccess";
 import { clearUser } from "@/redux/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { persistor } from "@/redux/store/store";
@@ -85,11 +86,11 @@ export function Header() {
 
   return (
     <header className={cx(isEditorRoute ? "relative" : "sticky top-0 z-50")}>
-      <div className="mx-auto w-full max-w-7xl px-3 pt-2 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-7xl px-3 pt-1 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[30px] border border-white/72 bg-[linear-gradient(145deg,rgba(255,255,255,0.88),rgba(244,249,255,0.82))] shadow-[0_24px_64px_-46px_rgba(15,23,42,0.42)] backdrop-blur-xl">
           <div className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(56,153,236,0.45),transparent)]" />
-          <div className="flex flex-col gap-3 px-4 py-3 sm:px-5">
-            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-col gap-2 px-4 py-2.5 sm:px-5">
+            <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex items-center gap-3">
                 <Link href="/" aria-label="Swish CMS home" className="flex items-center">
                   <Image
@@ -97,7 +98,7 @@ export function Header() {
                     alt="Swish CMS logo"
                     width={288}
                     height={188}
-                    className="h-7 w-auto sm:h-8"
+                    className="h-7 w-auto sm:h-[1.9rem]"
                     priority
                   />
                 </Link>
@@ -111,9 +112,14 @@ export function Header() {
                       {user.tenantSubdomain ? `${user.tenantSubdomain}.swish.ltd` : "Setup pending"}
                     </span>
                   </div>
-                ) : (
-                  <span className={publicBadgeStyles.slate}>Product showcase</span>
-                )}
+                ) : null}
+                {!user ? (
+                  <InstantDemoButton
+                    label="Instant Demo"
+                    loadingLabel="Opening demo..."
+                    className="rounded-full px-3.5 py-2 text-[13px]"
+                  />
+                ) : null}
                 {tenantHomeHref ? (
                   <a
                     href={tenantHomeHref}
@@ -147,7 +153,7 @@ export function Header() {
                     href={link.href}
                     aria-current={active ? "page" : undefined}
                     className={cx(
-                      "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[13px] transition motion-reduce:transition-none",
+                      "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[13px] transition motion-reduce:transition-none",
                       active
                         ? "border-[rgb(56_153_236_/_0.18)] bg-[linear-gradient(135deg,#3899ec_0%,#2f7be6_100%)] text-white shadow-[0_16px_30px_-18px_rgba(56,153,236,0.88)]"
                         : "border-white/80 bg-white/82 text-slate-700 hover:border-slate-200 hover:bg-white hover:text-slate-900",

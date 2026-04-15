@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { LoginForm } from "@/app/(public)/login/components/LoginForm";
 import { useAppSelector } from "@/redux/hooks";
 import Loading from "./loading";
+import { RecruiterDemoAccess } from "../shared/RecruiterDemoAccess";
 import {
   ActionLink,
   PageShell,
@@ -16,9 +17,9 @@ import {
 import { useHydrated } from "../shared/useHydrated";
 
 const highlights = [
-  "Jump back into the dashboard without re-learning the layout.",
-  "Keep setup, profile, and editor pages inside one coherent public shell.",
-  "Use the same account to continue from workspace setup to page editing.",
+  "Continue setup",
+  "Open the dashboard",
+  "Jump into the editor",
 ];
 
 export default function LoginPage() {
@@ -30,7 +31,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (mounted && user) {
-      router.replace("/dashboard");
+      router.replace(user.tenantSubdomain ? "/dashboard" : "/setup");
     }
   }, [mounted, router, user]);
 
@@ -39,33 +40,34 @@ export default function LoginPage() {
   }
 
   return (
-    <PageShell size="medium" className="justify-center">
+    <PageShell size="medium" className="gap-6 justify-center">
+      <RecruiterDemoAccess />
+
       <section className="grid gap-6 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-stretch">
-        <SurfaceCard tone="dark" className="p-6 sm:p-8 lg:p-10">
+        <SurfaceCard tone="soft" className="p-6 sm:p-8 lg:p-10">
           <div className="space-y-5">
             <span className={publicBadgeStyles.blue}>Login</span>
-            <div className="space-y-4">
-              <h1 className="text-3xl font-semibold tracking-[-0.06em] text-white sm:text-4xl">
-                Welcome back to your Swish workspace.
+            <div className="space-y-3">
+              <h1 className="text-3xl font-semibold tracking-[-0.06em] text-[var(--color-deep-navy)] sm:text-4xl">
+                Pick up where you left off.
               </h1>
-              <p className="max-w-xl text-sm leading-7 text-slate-300 sm:text-base">
-                Sign in to continue through setup, manage your workspace, or jump straight
-                into the editor. The functionality stays the same; the interface is simply clearer.
+              <p className="max-w-xl text-sm leading-7 text-[var(--color-ink-700)] sm:text-base">
+                Use your account to continue through setup, manage the workspace, or move straight into editing.
               </p>
             </div>
-            <div className="space-y-3">
+            <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
               {highlights.map((item) => (
                 <div
                   key={item}
-                  className="rounded-[24px] border border-white/10 bg-white/6 px-4 py-4 text-sm leading-6 text-slate-200"
+                  className="rounded-[24px] border border-white/80 bg-white/84 px-4 py-4 text-sm font-medium leading-6 text-[var(--color-ink-700)]"
                 >
                   {item}
                 </div>
               ))}
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+            <div className="flex flex-col gap-3 sm:flex-row">
               <ActionLink href="/register">Create an account</ActionLink>
-              <ActionLink href="/" variant="secondary">
+              <ActionLink href="/" variant="quiet">
                 Back home
               </ActionLink>
             </div>
@@ -77,10 +79,10 @@ export default function LoginPage() {
             <span className={publicBadgeStyles.slate}>Account access</span>
             <div className="space-y-3">
               <h2 className="text-2xl font-semibold tracking-[-0.05em] text-[var(--color-deep-navy)] sm:text-3xl">
-                Sign in to manage your content.
+                Sign in
               </h2>
               <p className="text-sm leading-7 text-[var(--color-ink-700)]">
-                Use the existing login flow to open the dashboard and continue where you left off.
+                Use your account below, or take the instant demo above for the fastest path into setup.
               </p>
             </div>
 

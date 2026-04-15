@@ -43,6 +43,8 @@ export const publicSurfaceStyles = {
 export const publicButtonStyles = {
   primary:
     "inline-flex items-center justify-center rounded-[20px] bg-[linear-gradient(135deg,#3899ec_0%,#2f7be6_52%,#0f5fd7_100%)] px-5 py-3.5 text-sm font-semibold text-white shadow-[0_18px_36px_-22px_rgba(56,153,236,0.86)] transition hover:-translate-y-0.5 hover:shadow-[0_22px_42px_-20px_rgba(56,153,236,0.92)] motion-reduce:transition-none",
+  special:
+    "inline-flex items-center justify-center rounded-[20px] bg-[linear-gradient(135deg,#ff6b6b_0%,#ff477e_55%,#ff2d55_100%)] px-5 py-3.5 text-sm font-semibold text-white shadow-[0_20px_40px_-20px_rgba(255,71,126,0.92)] transition hover:-translate-y-0.5 hover:shadow-[0_26px_48px_-18px_rgba(255,71,126,0.98)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[rgb(255_107_107_/_0.28)] motion-reduce:transition-none",
   secondary:
     "inline-flex items-center justify-center rounded-[20px] border border-slate-200 bg-white/90 px-5 py-3.5 text-sm font-semibold text-slate-800 shadow-[0_14px_34px_-26px_rgba(15,23,42,0.3)] transition hover:border-slate-300 hover:bg-white motion-reduce:transition-none",
   quiet:
