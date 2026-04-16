@@ -5,6 +5,7 @@ import { useMemo, useRef, useState } from "react";
 import EditableField from "./EditableField";
 import EditorScaffold, { type MobileEditorSection } from "./EditorScaffold";
 import FieldGroup from "./FieldGroup";
+import MobileEditorAccordion from "./MobileEditorAccordion";
 import { scrollPreviewToSection, setDeepValue, titleize } from "./editor-utils";
 import type { PageConfig } from "../lib/types";
 
@@ -19,6 +20,8 @@ export default function ContentEditorShell({
   const [status, setStatus] = useState("Edit a field and blur to save.");
   const [statusTone, setStatusTone] = useState<"neutral" | "success" | "error">("neutral");
   const [isSaving, setIsSaving] = useState(false);
+  const [openDesktopSectionId, setOpenDesktopSectionId] = useState<string | null>(null);
+  const [highlightedSectionId, setHighlightedSectionId] = useState<string | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const dataRef = useRef(initialConfig.data);
 
@@ -78,6 +81,12 @@ export default function ContentEditorShell({
           },
         ];
 
+  const activeDesktopSectionId = sectionEntries.some(
+    (section) => section.id === openDesktopSectionId,
+  )
+    ? openDesktopSectionId
+    : null;
+
   function updateAtPath(path: string, next: unknown) {
     setConfig((current) => {
       const updatedData = setDeepValue(current.data, path, next);
@@ -113,7 +122,18 @@ export default function ContentEditorShell({
 
   function focusSection(path: string) {
     const section = path.split(".")[0];
+    setOpenDesktopSectionId(section);
+    setHighlightedSectionId(section);
     scrollPreviewToSection(previewRef, section);
+  }
+
+  function toggleDesktopSection(sectionId: string | null) {
+    setOpenDesktopSectionId(sectionId);
+    setHighlightedSectionId(sectionId);
+
+    if (sectionId) {
+      scrollPreviewToSection(previewRef, sectionId);
+    }
   }
 
   return (
@@ -126,6 +146,8 @@ export default function ContentEditorShell({
       status={status}
       isSaving={isSaving}
       statusTone={statusTone}
+      highlightedSectionId={highlightedSectionId}
+      onSectionToggle={setHighlightedSectionId}
       previewRef={previewRef}
       config={config}
       sidebar={sectionEntries.map((section) => (
@@ -139,6 +161,13 @@ export default function ContentEditorShell({
             />
           </FieldGroup>
       ))}
+      desktopSidebar={
+        <MobileEditorAccordion
+          sections={mobileSections}
+          openSectionId={activeDesktopSectionId}
+          onToggleSection={toggleDesktopSection}
+        />
+      }
       mobileSections={mobileSections}
     />
   );

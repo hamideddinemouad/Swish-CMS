@@ -23,6 +23,17 @@ export const publicBadgeStyles = {
     "inline-flex items-center rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-ink-500)]",
 } as const;
 
+export const editorBadgeStyles = {
+  blue:
+    "inline-flex items-center rounded-full border border-[rgb(56_153_236_/_0.16)] bg-[rgb(56_153_236_/_0.08)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-wix-blue)]",
+  green:
+    "inline-flex items-center rounded-full border border-[rgb(96_188_87_/_0.16)] bg-[rgb(96_188_87_/_0.08)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-wix-green)]",
+  slate:
+    "inline-flex items-center rounded-full border border-[color:rgb(146_146_146_/_0.14)] bg-[color:rgb(146_146_146_/_0.05)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-ink-500)]",
+  orange:
+    "inline-flex items-center rounded-full border border-[rgb(251_125_51_/_0.16)] bg-[rgb(251_125_51_/_0.08)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-wix-orange)]",
+} as const;
+
 export const publicSurfaceStyles = {
   hero:
     "relative overflow-hidden rounded-[34px] border border-white/80 bg-[linear-gradient(145deg,rgba(255,255,255,0.96),rgba(243,249,255,0.92))] shadow-[0_30px_90px_-46px_rgba(15,23,42,0.34)] backdrop-blur-xl",
@@ -40,6 +51,21 @@ export const publicSurfaceStyles = {
     "rounded-[24px] border border-white/80 bg-white/78 shadow-[0_18px_42px_-34px_rgba(15,23,42,0.28)] backdrop-blur",
 } as const;
 
+export const editorSurfaceStyles = {
+  header:
+    "rounded-[22px] border border-[color:rgb(146_146_146_/_0.16)] bg-white shadow-[0_16px_38px_-30px_rgba(15,23,42,0.22)]",
+  panel:
+    "rounded-[22px] border border-[color:rgb(146_146_146_/_0.16)] bg-white shadow-[0_18px_42px_-32px_rgba(15,23,42,0.24)]",
+  muted:
+    "rounded-[18px] border border-[color:rgb(146_146_146_/_0.14)] bg-[color:rgb(248_249_251)]",
+  inset:
+    "rounded-[18px] border border-[color:rgb(146_146_146_/_0.14)] bg-[color:rgb(250_251_252)]",
+  chrome:
+    "border-b border-[color:rgb(146_146_146_/_0.14)] bg-[color:rgb(250_251_252)]",
+  overlay:
+    "rounded-[24px] border border-[color:rgb(146_146_146_/_0.14)] bg-white shadow-[0_24px_60px_-34px_rgba(15,23,42,0.32)]",
+} as const;
+
 export const publicButtonStyles = {
   primary:
     "inline-flex items-center justify-center rounded-[20px] bg-[linear-gradient(135deg,#3899ec_0%,#2f7be6_52%,#0f5fd7_100%)] px-5 py-3.5 text-sm font-semibold text-white shadow-[0_18px_36px_-22px_rgba(56,153,236,0.86)] transition hover:-translate-y-0.5 hover:shadow-[0_22px_42px_-20px_rgba(56,153,236,0.92)] motion-reduce:transition-none",
@@ -55,8 +81,20 @@ export const publicButtonStyles = {
     "inline-flex items-center justify-center rounded-[18px] border border-[color:rgb(224_43_74_/_0.22)] bg-[color:rgb(224_43_74_/_0.08)] px-4 py-2.5 text-sm font-semibold text-[var(--color-wix-red)] transition hover:bg-[color:rgb(224_43_74_/_0.12)] motion-reduce:transition-none",
 } as const;
 
+export const editorButtonStyles = {
+  primary:
+    "inline-flex items-center justify-center rounded-[14px] bg-[var(--color-wix-blue)] px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#2f86d3] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[rgb(56_153_236_/_0.18)] motion-reduce:transition-none",
+  secondary:
+    "inline-flex items-center justify-center rounded-[14px] border border-[color:rgb(146_146_146_/_0.18)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--color-ink-900)] transition-colors duration-200 hover:bg-[color:rgb(248_249_251)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[rgb(56_153_236_/_0.12)] motion-reduce:transition-none",
+  danger:
+    "inline-flex items-center justify-center rounded-[14px] border border-[color:rgb(224_43_74_/_0.16)] bg-[color:rgb(224_43_74_/_0.06)] px-4 py-2.5 text-sm font-semibold text-[var(--color-wix-red)] transition-colors duration-200 hover:bg-[color:rgb(224_43_74_/_0.1)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[rgb(224_43_74_/_0.12)] motion-reduce:transition-none",
+} as const;
+
 export const publicInputBaseClass =
   "w-full rounded-[20px] border border-[color:rgb(146_146_146_/_0.18)] bg-white px-4 py-3.5 text-sm text-[var(--color-ink-900)] outline-none transition focus:border-[var(--color-wix-blue)] focus:shadow-[0_0_0_4px_rgb(56_153_236_/_0.08)] motion-reduce:transition-none";
+
+export const editorInputBaseClass =
+  "w-full rounded-[14px] border border-[color:rgb(146_146_146_/_0.18)] bg-white px-3.5 py-3 text-sm text-[var(--color-ink-900)] outline-none transition-colors duration-200 focus:border-[var(--color-wix-blue)] focus:shadow-[0_0_0_4px_rgb(56_153_236_/_0.08)] motion-reduce:transition-none";
 
 export function getInputStateClass(state: "default" | "success" | "error" = "default") {
   switch (state) {

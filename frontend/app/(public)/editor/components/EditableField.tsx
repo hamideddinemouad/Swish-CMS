@@ -1,7 +1,7 @@
 "use client";
 
 import { titleize } from "./editor-utils";
-import { cx, publicInputBaseClass } from "../../shared/public-ui";
+import { cx, editorInputBaseClass } from "../../shared/public-ui";
 
 export default function EditableField({
   path,
@@ -24,7 +24,7 @@ export default function EditableField({
         {value.map((item, index) => (
           <div
             key={`${path}.${index}`}
-            className="space-y-3 rounded-2xl border border-[color:rgb(146_146_146_/_0.14)] bg-[linear-gradient(180deg,#ffffff_0%,#fbfdff_100%)] p-3"
+            className="space-y-3 rounded-[14px] border border-[color:rgb(146_146_146_/_0.14)] bg-[color:rgb(250_251_252)] p-3"
           >
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-500)]">
               Item {index + 1}
@@ -82,7 +82,7 @@ export default function EditableField({
           onFocus={() => onFocus(path)}
           onBlur={onBlur}
           rows={3}
-          className={cx(publicInputBaseClass, "min-h-[7rem] resize-y")}
+          className={cx(editorInputBaseClass, "min-h-[7rem] resize-y")}
         />
       ) : (
         <input
@@ -90,7 +90,7 @@ export default function EditableField({
           onChange={(event) => onChange(path, event.target.value)}
           onFocus={() => onFocus(path)}
           onBlur={onBlur}
-          className={publicInputBaseClass}
+          className={editorInputBaseClass}
         />
       )}
     </label>

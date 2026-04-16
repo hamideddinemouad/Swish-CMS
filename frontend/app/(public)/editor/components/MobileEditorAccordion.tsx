@@ -1,7 +1,7 @@
 "use client";
 
 import type { MobileEditorSection } from "./EditorScaffold";
-import { publicSurfaceStyles } from "../../shared/public-ui";
+import { editorSurfaceStyles } from "../../shared/public-ui";
 
 export default function MobileEditorAccordion({
   sections,
@@ -14,7 +14,7 @@ export default function MobileEditorAccordion({
 }) {
   if (sections.length === 0) {
     return (
-      <div className={`${publicSurfaceStyles.inset} p-4`}>
+      <div className={`${editorSurfaceStyles.inset} p-4`}>
         <p className="text-sm font-semibold text-[var(--color-ink-900)]">Nothing to edit yet</p>
         <p className="mt-2 text-sm leading-6 text-[var(--color-ink-700)]">
           This page does not have editable sections available on mobile right now.
@@ -31,7 +31,7 @@ export default function MobileEditorAccordion({
         return (
           <section
             key={section.id}
-            className={`${publicSurfaceStyles.soft} overflow-hidden border-white/80 transition-shadow motion-reduce:transition-none ${isOpen ? "shadow-[0_22px_48px_-36px_rgba(56,153,236,0.34)]" : ""}`}
+            className={`${editorSurfaceStyles.panel} overflow-hidden transition-colors duration-200 motion-reduce:transition-none ${isOpen ? "border-[rgb(56_153_236_/_0.18)]" : ""}`}
           >
             <button
               type="button"
@@ -40,7 +40,7 @@ export default function MobileEditorAccordion({
               className="flex min-h-[44px] w-full items-start justify-between gap-3 px-4 py-4 text-left touch-manipulation"
             >
               <div className="min-w-0">
-                <p className="text-base font-semibold tracking-[-0.03em] text-[var(--color-deep-navy)]">
+                <p className="text-base font-semibold tracking-[-0.03em] text-[var(--color-ink-900)]">
                   {section.title}
                 </p>
                 {section.description ? (
@@ -49,7 +49,7 @@ export default function MobileEditorAccordion({
                   </p>
                 ) : null}
               </div>
-              <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[rgb(56_153_236_/_0.14)] bg-white/88 text-[var(--color-wix-blue)]">
+              <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] border border-[color:rgb(146_146_146_/_0.14)] bg-[color:rgb(248_249_251)] text-[var(--color-wix-blue)]">
                 <svg
                   aria-hidden="true"
                   viewBox="0 0 20 20"
@@ -68,7 +68,7 @@ export default function MobileEditorAccordion({
             </button>
 
             {isOpen ? (
-              <div className="border-t border-[rgb(56_153_236_/_0.1)] px-4 pb-4 pt-4">
+              <div className="border-t border-[color:rgb(146_146_146_/_0.12)] px-4 pb-4 pt-4">
                 {section.content}
               </div>
             ) : null}

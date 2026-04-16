@@ -4,6 +4,7 @@ import axios from "axios";
 import { useMemo, useRef, useState } from "react";
 import EditorScaffold, { type MobileEditorSection } from "./EditorScaffold";
 import FieldGroup from "./FieldGroup";
+import MobileEditorAccordion from "./MobileEditorAccordion";
 import { scrollPreviewToSection, setDeepValue, titleize } from "./editor-utils";
 import {
   getDefaultHomeSectionDesign,
@@ -38,7 +39,7 @@ import {
   type PageHeadingFontPresetId,
 } from "@/lib/page-design-presets";
 import type { PageConfig } from "../lib/types";
-import { cx, publicInputBaseClass } from "../../shared/public-ui";
+import { cx, editorInputBaseClass } from "../../shared/public-ui";
 
 type HomeDesignKey = keyof ReturnType<typeof getDefaultHomeSectionDesign>;
 type PageDesignKey = keyof ReturnType<typeof getDefaultPageDesign>;
@@ -54,6 +55,8 @@ export default function DesignEditorShell({
   const [status, setStatus] = useState("Choose a design preset to update the preview.");
   const [statusTone, setStatusTone] = useState<"neutral" | "success" | "error">("neutral");
   const [isSaving, setIsSaving] = useState(false);
+  const [openDesktopSectionId, setOpenDesktopSectionId] = useState<string | null>(null);
+  const [highlightedSectionId, setHighlightedSectionId] = useState<string | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const preferenceRef = useRef(initialConfig.preference);
   const isHomePage = pageName.toLowerCase() === "home";
@@ -134,13 +137,32 @@ export default function DesignEditorShell({
           },
         ];
 
+  const activeDesktopSectionId = mobileSections.some(
+    (section) => section.id === openDesktopSectionId,
+  )
+    ? openDesktopSectionId
+    : null;
+
   function focusSection(section: HomeDesignSectionKey) {
+    setOpenDesktopSectionId(section);
+    setHighlightedSectionId(section);
     scrollPreviewToSection(previewRef, section);
   }
 
   function focusPreferencePath(path: string) {
     const section = path.split(".")[0];
+    setOpenDesktopSectionId(section);
+    setHighlightedSectionId(section);
     scrollPreviewToSection(previewRef, section);
+  }
+
+  function toggleDesktopSection(sectionId: string | null) {
+    setOpenDesktopSectionId(sectionId);
+    setHighlightedSectionId(sectionId);
+
+    if (sectionId) {
+      scrollPreviewToSection(previewRef, sectionId);
+    }
   }
 
   function updatePageDesignPreference(
@@ -226,6 +248,8 @@ export default function DesignEditorShell({
       status={status}
       isSaving={isSaving}
       statusTone={statusTone}
+      highlightedSectionId={highlightedSectionId}
+      onSectionToggle={setHighlightedSectionId}
       previewRef={previewRef}
       config={config}
       sidebar={
@@ -270,6 +294,13 @@ export default function DesignEditorShell({
           </div>
         )
       }
+      desktopSidebar={
+        <MobileEditorAccordion
+          sections={mobileSections}
+          openSectionId={activeDesktopSectionId}
+          onToggleSection={toggleDesktopSection}
+        />
+      }
       mobileSections={mobileSections}
     />
   );
@@ -301,7 +332,7 @@ function HomeDesignPanel({
       {controls.color ? (
         <div className="space-y-2">
           <p className="text-sm font-medium text-[var(--color-ink-700)]">Color Palette</p>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-2">
             {HOME_COLOR_PRESETS.map((preset) => {
               const active = selected.colorPreset === preset.id;
 
@@ -314,7 +345,7 @@ function HomeDesignPanel({
                     onChange("colorPreset", preset.id);
                   }}
                   className={cx(
-                    "space-y-2 rounded-2xl border p-2 text-left transition motion-reduce:transition-none",
+                    "min-w-0 space-y-2 rounded-[14px] border p-2 text-left transition motion-reduce:transition-none",
                     active
                       ? "border-[var(--color-wix-blue)] bg-[color:rgb(56_153_236_/_0.08)]"
                       : "border-[color:rgb(146_146_146_/_0.18)] bg-white hover:border-[var(--color-wix-blue)]",
@@ -324,7 +355,7 @@ function HomeDesignPanel({
                     className="block h-10 w-full rounded-xl"
                     style={{ background: preset.swatch }}
                   />
-                  <span className="block text-xs font-semibold text-[var(--color-ink-900)]">
+                  <span className="block break-words text-xs font-semibold leading-5 text-[var(--color-ink-900)]">
                     {preset.label}
                   </span>
                 </button>
@@ -424,7 +455,7 @@ function PresetSelect({
         value={value}
         onFocus={onFocus}
         onChange={(event) => onChange(event.target.value)}
-        className={publicInputBaseClass}
+        className={editorInputBaseClass}
       >
         {options.map((option) => (
           <option key={option.id} value={option.id}>
@@ -457,7 +488,7 @@ function PageDesignPanel({
     <div className="space-y-5">
       <div className="space-y-2">
         <p className="text-sm font-medium text-[var(--color-ink-700)]">Color Palette</p>
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-2">
           {PAGE_COLOR_PRESETS.map((preset) => {
             const active = selected.colorPreset === preset.id;
 
@@ -470,14 +501,14 @@ function PageDesignPanel({
                   onChange("colorPreset", preset.id);
                 }}
                 className={cx(
-                  "space-y-2 rounded-2xl border p-2 text-left transition motion-reduce:transition-none",
+                  "min-w-0 space-y-2 rounded-[14px] border p-2 text-left transition motion-reduce:transition-none",
                   active
                     ? "border-[var(--color-wix-blue)] bg-[color:rgb(56_153_236_/_0.08)]"
                     : "border-[color:rgb(146_146_146_/_0.18)] bg-white hover:border-[var(--color-wix-blue)]",
                 )}
               >
                 <span className="block h-10 w-full rounded-xl" style={{ background: preset.swatch }} />
-                <span className="block text-xs font-semibold text-[var(--color-ink-900)]">
+                <span className="block break-words text-xs font-semibold leading-5 text-[var(--color-ink-900)]">
                   {preset.label}
                 </span>
               </button>

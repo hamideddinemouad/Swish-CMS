@@ -1,6 +1,6 @@
 "use client";
 
-import { publicButtonStyles, publicSurfaceStyles } from "../../shared/public-ui";
+import { editorButtonStyles, editorSurfaceStyles } from "../../shared/public-ui";
 
 export default function MobileEditorStatusBar({
   status,
@@ -18,13 +18,13 @@ export default function MobileEditorStatusBar({
   return (
     <div className="sticky bottom-3 z-20 mt-2 pb-[calc(env(safe-area-inset-bottom)+0.25rem)]">
       <div
-        className={`${publicSurfaceStyles.soft} ${meta.className} flex items-center gap-3 px-3 py-3 shadow-[0_22px_52px_-34px_rgba(15,23,42,0.34)] backdrop-blur-xl`}
+        className={`${editorSurfaceStyles.overlay} ${meta.className} flex items-center gap-3 px-3 py-3`}
       >
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-ink-500)]">
             {meta.label}
           </p>
-          <p className="truncate text-sm font-medium text-[var(--color-deep-navy)]">
+          <p className="truncate text-sm font-medium text-[var(--color-ink-900)]">
             {meta.message}
           </p>
         </div>
@@ -36,7 +36,7 @@ export default function MobileEditorStatusBar({
             </span>
             <span
               aria-hidden="true"
-              className="preview-cue inline-flex h-9 w-9 items-center justify-center rounded-full border border-[rgb(56_153_236_/_0.18)] bg-[linear-gradient(135deg,rgba(255,255,255,0.98),rgba(236,246,255,0.98))] text-[var(--color-wix-blue)] shadow-[0_14px_28px_-22px_rgba(56,153,236,0.45)]"
+              className="preview-cue inline-flex h-9 w-9 items-center justify-center rounded-[12px] border border-[rgb(56_153_236_/_0.16)] bg-[rgb(56_153_236_/_0.08)] text-[var(--color-wix-blue)]"
             >
               <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none">
                 <path
@@ -53,7 +53,7 @@ export default function MobileEditorStatusBar({
           <button
             type="button"
             onClick={onOpenPreview}
-            className={`${publicButtonStyles.primary} min-h-[44px] shrink-0 rounded-[18px] px-4 py-2.5 text-sm ring-4 ring-[rgb(56_153_236_/_0.12)] touch-manipulation`}
+            className={`${editorButtonStyles.primary} min-h-[44px] shrink-0 touch-manipulation`}
           >
             Live Preview
           </button>
@@ -98,7 +98,7 @@ function getStatusMeta(
       label: "Saving",
       message: "Current changes are being synced.",
       className:
-        "border-[rgb(56_153_236_/_0.18)] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(239,247,255,0.96))]",
+        "border-[rgb(56_153_236_/_0.16)]",
     };
   }
 
@@ -107,7 +107,7 @@ function getStatusMeta(
       label: "Saved",
       message: status,
       className:
-        "border-[rgb(96_188_87_/_0.2)] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(245,252,243,0.96))]",
+        "border-[rgb(96_188_87_/_0.18)]",
     };
   }
 
@@ -116,7 +116,7 @@ function getStatusMeta(
       label: "Needs attention",
       message: status,
       className:
-        "border-[rgb(224_43_74_/_0.18)] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(255,244,246,0.96))]",
+        "border-[rgb(224_43_74_/_0.16)]",
     };
   }
 
@@ -124,6 +124,6 @@ function getStatusMeta(
     label: "Autosave",
     message: "Changes save when a field loses focus.",
     className:
-      "border-[rgb(56_153_236_/_0.16)] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(245,250,255,0.96))]",
+      "border-[color:rgb(146_146_146_/_0.14)]",
   };
 }

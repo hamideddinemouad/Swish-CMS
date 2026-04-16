@@ -6,7 +6,7 @@ import EditorScaffold, { type MobileEditorSection } from "./EditorScaffold";
 import FieldGroup from "./FieldGroup";
 import { scrollPreviewToSection, titleize } from "./editor-utils";
 import type { PageComponent, PageConfig } from "../lib/types";
-import { cx, publicButtonStyles } from "../../shared/public-ui";
+import { cx, editorButtonStyles, editorSurfaceStyles } from "../../shared/public-ui";
 
 export default function StructureEditorShell({
   pageName,
@@ -19,6 +19,7 @@ export default function StructureEditorShell({
   const [status, setStatus] = useState("Remove components from the page structure.");
   const [statusTone, setStatusTone] = useState<"neutral" | "success" | "error">("neutral");
   const [isSaving, setIsSaving] = useState(false);
+  const [highlightedSectionId, setHighlightedSectionId] = useState<string | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
 
   const removableComponents = useMemo(
@@ -87,6 +88,7 @@ export default function StructureEditorShell({
   }
 
   function focusSection(componentType: string) {
+    setHighlightedSectionId(componentType);
     scrollPreviewToSection(previewRef, componentType);
   }
 
@@ -100,6 +102,7 @@ export default function StructureEditorShell({
       status={status}
       isSaving={isSaving}
       statusTone={statusTone}
+      highlightedSectionId={highlightedSectionId}
       previewRef={previewRef}
       config={config}
       sidebar={
@@ -139,8 +142,8 @@ function ComponentRow({
   onDelete: (componentType: string) => void;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-[22px] border border-slate-200/80 bg-white/92 p-4">
-      <div>
+    <div className={`${editorSurfaceStyles.inset} space-y-4 p-4`}>
+      <div className="min-w-0">
         <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-900)]">
           {component.type}
         </p>
@@ -148,19 +151,30 @@ function ComponentRow({
           Remove this block from the page structure and preview.
         </p>
       </div>
-      <button
-        type="button"
-        disabled={disabled}
-        onFocus={() => onFocus(component.type)}
-        onMouseEnter={() => onFocus(component.type)}
-        onClick={() => onDelete(component.type)}
-        className={cx(
-          publicButtonStyles.danger,
-          "rounded-full disabled:cursor-not-allowed disabled:opacity-60",
-        )}
-      >
-        Delete
-      </button>
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => onFocus(component.type)}
+          className={cx(
+            editorButtonStyles.secondary,
+            "w-full min-w-0 sm:w-auto disabled:cursor-not-allowed disabled:opacity-60",
+          )}
+        >
+          Preview section
+        </button>
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => onDelete(component.type)}
+          className={cx(
+            editorButtonStyles.danger,
+            "w-full min-w-0 sm:w-auto disabled:cursor-not-allowed disabled:opacity-60",
+          )}
+        >
+          Delete
+        </button>
+      </div>
     </div>
   );
 }

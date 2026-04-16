@@ -5,9 +5,9 @@ import type { ReactNode, RefObject } from "react";
 import Renderer from "../[pageName]/components/renderer";
 import type { PageConfig } from "../lib/types";
 import {
+  editorBadgeStyles,
+  editorSurfaceStyles,
   StatusBanner,
-  publicBadgeStyles,
-  publicSurfaceStyles,
 } from "../../shared/public-ui";
 import MobileEditorAccordion from "./MobileEditorAccordion";
 import MobileEditorHeader from "./MobileEditorHeader";
@@ -34,6 +34,9 @@ type EditorScaffoldProps = {
   config: PageConfig;
   sidebar: ReactNode;
   mobileSections: MobileEditorSection[];
+  desktopSidebar?: ReactNode;
+  highlightedSectionId?: string | null;
+  onSectionToggle?: (sectionId: string | null) => void;
 };
 
 export default function EditorScaffold({
@@ -49,18 +52,24 @@ export default function EditorScaffold({
   config,
   sidebar,
   mobileSections,
+  desktopSidebar,
+  highlightedSectionId = null,
+  onSectionToggle,
 }: EditorScaffoldProps) {
   const [isMobilePreviewOpen, setIsMobilePreviewOpen] = useState(false);
-  const [openMobileSectionId, setOpenMobileSectionId] = useState<string | null>(
-    mobileSections[0]?.id ?? null,
-  );
+  const [openMobileSectionId, setOpenMobileSectionId] = useState<string | null>(null);
 
   const showInlineStatus = isSaving || statusTone === "error";
   const activeMobileSectionId = mobileSections.some(
     (section) => section.id === openMobileSectionId,
   )
     ? openMobileSectionId
-    : mobileSections[0]?.id ?? null;
+    : null;
+
+  function handleMobileToggle(sectionId: string | null) {
+    setOpenMobileSectionId(sectionId);
+    onSectionToggle?.(sectionId);
+  }
 
   return (
     <section className="flex min-h-[calc(100dvh-9rem)] flex-col gap-6 lg:min-h-[calc(100vh-10rem)]">
@@ -68,8 +77,8 @@ export default function EditorScaffold({
 
       <div className="hidden gap-4 lg:grid xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-end">
         <div className="space-y-3">
-          <span className={publicBadgeStyles.blue}>{badge}</span>
-          <h1 className="text-3xl font-semibold tracking-[-0.06em] text-[var(--color-deep-navy)]">
+          <span className={editorBadgeStyles.blue}>{badge}</span>
+          <h1 className="text-3xl font-semibold tracking-[-0.05em] text-[var(--color-ink-900)]">
             {title}
           </h1>
           <p className="max-w-3xl text-sm leading-7 text-[var(--color-ink-700)]">{description}</p>
@@ -95,7 +104,7 @@ export default function EditorScaffold({
         <MobileEditorAccordion
           sections={mobileSections}
           openSectionId={activeMobileSectionId}
-          onToggleSection={setOpenMobileSectionId}
+          onToggleSection={handleMobileToggle}
         />
         <MobileEditorStatusBar
           status={status}
@@ -105,10 +114,10 @@ export default function EditorScaffold({
         />
       </div>
 
-      <div className="hidden flex-1 gap-6 lg:grid lg:grid-cols-[minmax(340px,420px)_minmax(0,1fr)] lg:items-start">
-        <aside className={`${publicSurfaceStyles.soft} p-5 lg:sticky lg:top-6 lg:max-h-[calc(100vh-10rem)] lg:overflow-y-auto`}>
+      <div className="hidden flex-1 gap-5 lg:grid lg:grid-cols-[minmax(300px,340px)_minmax(0,1fr)] lg:items-start xl:grid-cols-[320px_minmax(0,1fr)]">
+        <aside className={`${editorSurfaceStyles.panel} p-4 lg:sticky lg:top-6 lg:max-h-[calc(100vh-10rem)] lg:overflow-y-auto`}>
           <div className="space-y-3">
-            <span className={publicBadgeStyles.slate}>{sidebarTitle}</span>
+            <span className={editorBadgeStyles.slate}>{sidebarTitle}</span>
             <p className="text-sm leading-6 text-[var(--color-ink-700)]">
               {isSaving ? "Saving current changes..." : "Changes update the live preview below."}
             </p>
@@ -118,27 +127,33 @@ export default function EditorScaffold({
               </div>
             ) : null}
           </div>
-          <div className="mt-4 space-y-4">{sidebar}</div>
+          <div className="mt-4 space-y-3">{desktopSidebar ?? sidebar}</div>
         </aside>
 
-        <div className={`${publicSurfaceStyles.panel} flex min-h-[70vh] flex-col overflow-hidden lg:h-[calc(100vh-10rem)]`}>
-          <div className="flex items-center justify-between gap-4 border-b border-white/70 bg-white/76 px-4 py-3 backdrop-blur">
+        <div className={`${editorSurfaceStyles.panel} flex min-h-[70vh] flex-col overflow-hidden lg:h-[calc(100vh-10rem)]`}>
+          <div className={`${editorSurfaceStyles.chrome} flex items-center justify-between gap-4 px-4 py-3`}>
             <div className="flex items-center gap-2">
-              <span className="h-3 w-3 rounded-full bg-[#fb7d33]" />
-              <span className="h-3 w-3 rounded-full bg-[#ffc233]" />
-              <span className="h-3 w-3 rounded-full bg-[#60bc57]" />
+              <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-wix-red)]" />
+              <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-wix-yellow)]" />
+              <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-wix-green)]" />
             </div>
-            <div className="rounded-full border border-slate-200 bg-white/92 px-3 py-1 text-xs font-medium text-[var(--color-ink-700)]">
+            <div className="rounded-full border border-[color:rgb(146_146_146_/_0.16)] bg-white px-3 py-1 text-xs font-medium text-[var(--color-ink-700)]">
               Preview /editor/{pageName}
             </div>
             <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-500)]">
               Live renderer
             </div>
           </div>
-          <div ref={previewRef} className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 lg:p-5">
-            <div className="overflow-hidden rounded-[28px] border border-white/80 bg-white shadow-[0_18px_50px_rgb(54_54_54_/_0.08)]">
-              <Renderer pageName={pageName} config={config} />
-            </div>
+          <div
+            ref={previewRef}
+            className="flex-1 min-h-0 overflow-y-auto bg-[color:rgb(248_249_251)] p-2 sm:p-3 lg:p-3"
+          >
+            <Renderer
+              pageName={pageName}
+              config={config}
+              highlightedSectionId={highlightedSectionId}
+            />
+            
           </div>
         </div>
       </div>
@@ -148,6 +163,7 @@ export default function EditorScaffold({
         pageName={pageName}
         config={config}
         previewRef={previewRef}
+        highlightedSectionId={highlightedSectionId}
         onClose={() => setIsMobilePreviewOpen(false)}
       />
     </section>
@@ -160,7 +176,7 @@ function FloatingSuccessToast({ message }: { message: string }) {
       <div
         role="status"
         aria-live="polite"
-        className="floating-success-toast flex items-center gap-3 rounded-[24px] border border-[rgb(115_175_85_/_0.24)] bg-white/96 px-4 py-3 shadow-[0_20px_46px_-24px_rgba(15,23,42,0.38)] backdrop-blur-xl"
+        className="floating-success-toast flex items-center gap-3 rounded-[18px] border border-[rgb(96_188_87_/_0.18)] bg-white px-4 py-3 shadow-[0_18px_42px_-28px_rgba(15,23,42,0.28)]"
       >
         <svg
           aria-hidden="true"
@@ -188,7 +204,7 @@ function FloatingSuccessToast({ message }: { message: string }) {
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#73AF55]">
             Save complete
           </p>
-          <p className="text-base font-semibold text-[var(--color-deep-navy)]">{message}</p>
+          <p className="text-base font-semibold text-[var(--color-ink-900)]">{message}</p>
         </div>
       </div>
       <style jsx>{`
