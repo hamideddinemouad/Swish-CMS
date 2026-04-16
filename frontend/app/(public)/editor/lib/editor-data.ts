@@ -1,5 +1,6 @@
 import axios from "axios";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { env } from "@/lib/env";
 import type { AvailablePage, EditorIdentity, PageConfig } from "./types";
 
@@ -20,11 +21,19 @@ export async function loadEditorPageData(pageName: string) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
 
+  if (!accessToken) {
+    redirect("/login");
+  }
+
   const meResponse = await axios.get<EditorIdentity>(`${env.API}/users/update-user-info`, {
     headers: { Cookie: `accessToken=${accessToken}` },
   });
 
   const subdomain = meResponse.data.tenantSubdomain;
+
+  if (!subdomain) {
+    redirect("/setup");
+  }
 
   const [homeResponse, pageResponse, pagesResponse] = await Promise.all([
     axios.get<HomePageResponse>(

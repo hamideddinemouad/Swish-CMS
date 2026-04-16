@@ -21,7 +21,7 @@ export type AvailablePage = {
 export type EditorIdentity = {
   sub: string;
   email: string;
-  tenantId: string;
-  tenantSubdomain: string;
+  tenantId: string | null;
+  tenantSubdomain: string | null;
   type: "access";
 };
