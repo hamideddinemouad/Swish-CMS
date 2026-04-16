@@ -15,7 +15,7 @@ import { User } from '../../users/entities/user.entity';
 @Entity({ name: 'tenants' })
 @Check(`"subdomain" ~ '^[a-z0-9-]+$'`)
 @Check(
-  `"subdomain" NOT IN ('www','app','api','admin','static','assets','cdn','mail')`,
+  `"subdomain" NOT IN ('www','app','api','admin','static','assets','cdn','mail','swish','root','support','help','docs','status','login','auth','signup','register','dashboard','portal','account','accounts','billing','payments','checkout','secure','webmail','ftp','smtp','imap','pop','mx','dns','ns1','ns2','dev','test','staging','stage','prod','production','beta','preview','demo','internal','console','manage','management','system','core','proxy','gateway','edge','origin','cache','monitor','metrics','logs','telemetry','analytics','images','media','files','uploads','storage','db','database')`,
 )
 export class Tenant {
   @PrimaryGeneratedColumn('uuid')

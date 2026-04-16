@@ -163,7 +163,7 @@ Current tenant page set:
 - Set the frontend `API` variable to the deployed backend base URL.
 - If the backend is deployed on `api.<your-domain>`, set `API=https://api.<your-domain>`.
 - Make sure the frontend and backend share the same auth secret values.
-- Reserve infrastructure subdomains like `api` and `www` so they are not used as tenant names.
+- Reserve infrastructure, brand, and auth/system subdomains like `www`, `api`, `swish`, `docs`, `status`, `login`, `dashboard`, `smtp`, and `ns1` so they are not used as tenant names.
 - If you use subdomain-based tenant routing in production, configure your proxy or hosting platform to forward the host/subdomain information correctly.
 - The current product model assumes one workspace per user and template-seeded pages.
 - Tenant isolation is backed by PostgreSQL Row Level Security migrations in the backend.
